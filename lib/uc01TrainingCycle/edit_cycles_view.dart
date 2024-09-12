@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/uc01TrainingCycle/add_training_cycle_view.dart';
 
 class EditCyclesView extends StatefulWidget {
   const EditCyclesView({super.key});
@@ -23,7 +24,10 @@ class _EditCyclesViewState extends State<EditCyclesView> {
             [
               ElevatedButton(
                 onPressed: () {
-                  //TODO add a new cycle
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddTrainingCycleView()));
                 },
                 child: const Text("Add Cycle"),
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/costum_widgets/day_field_calendar.dart';
-import 'package:trainingplaner/views/edit_cycles_view.dart';
+import 'package:trainingplaner/uc01TrainingCycle/edit_cycles_view.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({super.key});
