@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/uc01TrainingCycle/add_training_cycle_view.dart';
+import 'package:trainingplaner/uc01TrainingCycle/cycle_draggable.dart';
 
 class EditCyclesView extends StatefulWidget {
   const EditCyclesView({super.key});
@@ -33,38 +34,6 @@ class _EditCyclesViewState extends State<EditCyclesView> {
               ),
             ],
       ),
-    );
-  }
-}
-
-class CycleDraggable extends StatelessWidget {
-  final int index;
-  const CycleDraggable({
-    super.key,
-    required this.index,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Draggable(
-      child: Container(
-        height: 100,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
-          ),
-          shape: BoxShape.rectangle,
-          color: Colors.blue,
-        ),
-        child: Text("Cycle $index"),
-      ),
-      feedback: Text("Drag me!"),
-      childWhenDragging: Text("I'm being dragged!"),
-      onDragEnd: (details) {
-        print(details.offset);
-        //TODO update the list
-      },
     );
   }
 }

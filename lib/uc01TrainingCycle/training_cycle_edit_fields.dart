@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/functions/functions_trainingsplaner.dart';
 
 class TrainingCycleEditFields extends StatefulWidget {
   final TextEditingController nameController;
@@ -22,6 +24,8 @@ class _TrainingCycleEditFieldsState extends State<TrainingCycleEditFields> {
   late final TextEditingController _emphasisController;
   late DateTime _startDate;
   late DateTime _endDate;
+  late final TextEditingController _startDateController;
+  late final TextEditingController _endDateController;
 
   @override
   void initState() {
@@ -33,15 +37,21 @@ class _TrainingCycleEditFieldsState extends State<TrainingCycleEditFields> {
     //TODO: start and end date from parent later
     _startDate = DateTime.now();
     _endDate = DateTime.now();
+    _startDateController = TextEditingController();
+    _endDateController = TextEditingController();
+    _startDateController.text = getDateStringForDisplay(_startDate);
+    _endDateController.text = getDateStringForDisplay(_endDate);
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextField(
-          controller: _nameController,
-          decoration: const InputDecoration(labelText: 'Name'),
+        Center(
+          child: TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
         ),
         TextField(
           controller: _descriptionController,
@@ -51,49 +61,48 @@ class _TrainingCycleEditFieldsState extends State<TrainingCycleEditFields> {
           controller: _emphasisController,
           decoration: const InputDecoration(labelText: 'Emphasis'),
         ),
-        Row(
-          children: [
-            Text('Start Date: ${_startDate.toIso8601String()}'),
-            ElevatedButton(
-              onPressed: () {
-                showDatePicker(
-                  context: context,
-                  initialDate: _startDate,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(const Duration(days: 365)),
-                ).then((value) {
-                  if (value != null) {
-                    setState(() {
-                      _startDate = value;
-                    });
-                  }
-                });
-              },
-              child: const Text('Change'),
-            ),
+        DatePickerSheer(
+          initialDateTime: _startDate,
+          onDateTimeChanged: (DateTime newDateTime) {
+            setState(() {
+              _startDate = newDateTime;
+            });
+          },
+          dateController: _startDateController,
+        ),
+        DatePickerSheer(
+          initialDateTime: _endDate,
+          onDateTimeChanged: (DateTime newDateTime) {
+            setState(() {
+              _endDate = newDateTime;
+            });
+          },
+          dateController: _endDateController,
+        ),
+        //TODO: make dropdown select the existing training cycles
+        //and make them selectable
+        //when selected, the field should be filled with the name and the parent value of the selected cycle should be set to this cycleID
+        DropdownMenu(
+          width: MediaQuery.of(context).size.width,
+          label: const Text("parent"),
+          onSelected: (selected) {
+            return null;
+          },
+          dropdownMenuEntries: [
+            DropdownMenuEntry(value: "1", label: "alksd"),
+            DropdownMenuEntry(value: "2", label: "parent")
           ],
         ),
-        Row(
-          children: [
-            Text('End Date: ${_endDate.toIso8601String()}'),
-            ElevatedButton(
-              onPressed: () {
-                showDatePicker(
-                  context: context,
-                  initialDate: _endDate,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(const Duration(days: 365)),
-                ).then((value) {
-                  if (value != null) {
-                    setState(() {
-                      _endDate = value;
-                    });
-                  }
-                });
-              },
-              child: const Text('Change'),
-            ),
-          ],
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: ElevatedButton(
+            onPressed: () {
+              //TODO: implement saving the training cycle
+              //and navigate back to the previous view
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
         ),
       ],
     );

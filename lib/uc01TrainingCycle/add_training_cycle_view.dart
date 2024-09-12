@@ -16,6 +16,9 @@ class _AddTrainingCycleViewState extends State<AddTrainingCycleView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Add Training Cycle"),
+      ),
       body: TrainingCycleEditFields(
           nameController: _nameController,
           descriptionController: _descriptionController,
