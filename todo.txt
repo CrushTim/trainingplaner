@@ -1,0 +1,5 @@
+
+workout
+    excercise
+        non expanded: fix button layout 
+                        - planned and actual maybe in a column? -> keep them aligned 

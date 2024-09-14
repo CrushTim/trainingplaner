@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/views/overview_view.dart';
+import 'package:trainingplaner/workout_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
         body: TabBarView(
           controller: _tabController,
-          children: [const OverviewView(), Container()],
+          children: [const OverviewView(), WorkoutView()],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _tabController!.index,
