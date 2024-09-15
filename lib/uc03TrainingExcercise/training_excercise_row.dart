@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/costum_widgets/reps_weights_row.dart';
+import 'package:trainingplaner/uc03TrainingExcercise/reps_weights_row.dart';
 
 class TrainingExcerciseRow extends StatefulWidget {
   const TrainingExcerciseRow({
@@ -59,10 +59,11 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
               )
             : IntrinsicHeight(
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
                       flex: 1,
-                      child: Text("Squat "),
+                      child: Text("Squat"),
                     ),
                     Flexible(
                       child: VerticalDivider(
@@ -72,8 +73,17 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                     ),
                     Expanded(
                         flex: 2,
-                        child: Text(
-                            "Planned: 5x100kg, 5x100kg, 5x100kg, 5x100kg, 5x100kg")),
+                        child: Column(
+                          children: [
+                            Text("Planned",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text("5 x 100kg"),
+                            Text("5 x 100kg"),
+                            Text("5 x 100kg"),
+                            Text("5 x 100kg"),
+                            Text("5 x 100kg"),
+                          ],
+                        )),
                     Flexible(
                       child: VerticalDivider(
                         color: Colors.black,
@@ -82,15 +92,22 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                     ),
                     Expanded(
                         flex: 2,
-                        child:
-                            Text("Actual: 5x100kg, 5x100kg, 5x100kg, 4x100kg")),
+                        child: Column(
+                          children: [
+                            Text("Actual",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text("5 x 100kg"),
+                            Text("5 x 100kg"),
+                            Text("4 x 100kg"),
+                          ],
+                        )),
                     Flexible(
                       child: VerticalDivider(
                         color: Colors.black,
                         thickness: 1,
                       ),
                     ),
-                    Expanded(
+                    Flexible(
                       child: Row(
                         children: [
                           Flexible(

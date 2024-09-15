@@ -12,20 +12,23 @@ class RepsWeightsRow extends StatefulWidget {
 class _RepsWeightsRowState extends State<RepsWeightsRow> {
   TextEditingController repsController = TextEditingController();
   TextEditingController weightController = TextEditingController();
+  late bool isFailure;
 
   @override
   void initState() {
     super.initState();
     repsController.text = "5";
     weightController.text = "100";
+    isFailure = false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Expanded(
-          flex: 5,
+          flex: 4,
           child: TextField(
             controller: repsController,
             decoration: const InputDecoration(
@@ -34,12 +37,24 @@ class _RepsWeightsRowState extends State<RepsWeightsRow> {
           ),
         ),
         Expanded(
-          flex: 5,
+          flex: 4,
           child: TextField(
             controller: weightController,
             decoration: const InputDecoration(
               labelText: "Weight",
             ),
+          ),
+        ),
+        Flexible(
+          child: Checkbox(
+            value: isFailure,
+            onChanged: (value) {
+              //TODO implement checkbox
+              setState(() {
+                isFailure = !isFailure;
+              });
+              print(isFailure);
+            },
           ),
         ),
         Flexible(
