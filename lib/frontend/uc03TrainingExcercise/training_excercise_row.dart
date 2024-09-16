@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/uc03TrainingExcercise/reps_weights_row.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/reps_weights_row.dart';
 
 class TrainingExcerciseRow extends StatefulWidget {
   const TrainingExcerciseRow({

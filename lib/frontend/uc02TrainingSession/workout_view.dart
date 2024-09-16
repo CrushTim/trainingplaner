@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/costum_widgets/date_picker_sheer.dart';
-import 'package:trainingplaner/uc03TrainingExcercise/training_excercise_row.dart';
-import 'package:trainingplaner/functions/functions_trainingsplaner.dart';
+import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
+import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 
 ///
 /// This class represents the view of a workout.

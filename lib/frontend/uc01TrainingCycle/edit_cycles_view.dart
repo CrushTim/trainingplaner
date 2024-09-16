@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/uc01TrainingCycle/add_training_cycle_view.dart';
-import 'package:trainingplaner/uc01TrainingCycle/cycle_draggable.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/add_training_cycle_view.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/cycle_draggable.dart';
 
 class EditCyclesView extends StatefulWidget {
   const EditCyclesView({super.key});

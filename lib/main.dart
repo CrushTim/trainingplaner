@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/home_page.dart';
+import 'package:trainingplaner/frontend/home_page.dart';
 
 void main() {
   runApp(const Main());

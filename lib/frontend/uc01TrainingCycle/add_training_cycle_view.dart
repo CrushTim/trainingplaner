@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/uc01TrainingCycle/training_cycle_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_edit_fields.dart';
 
 class AddTrainingCycleView extends StatefulWidget {
   const AddTrainingCycleView({super.key});

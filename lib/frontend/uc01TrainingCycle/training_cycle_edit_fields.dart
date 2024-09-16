@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/costum_widgets/date_picker_sheer.dart';
-import 'package:trainingplaner/functions/functions_trainingsplaner.dart';
+import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 
 class TrainingCycleEditFields extends StatefulWidget {
   final TextEditingController nameController;
