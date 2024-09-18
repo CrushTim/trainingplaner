@@ -53,6 +53,7 @@ class TrainingSessionBus {
     isPlanned = true;
   }
 
+  //maps all attributes of another instance into this object called mapFormOtherInstance
   void mapFromOtherInstance(TrainingSessionBus other) {
     trainingSessionId = other.trainingSessionId;
     trainingSessionName = other.trainingSessionName;
