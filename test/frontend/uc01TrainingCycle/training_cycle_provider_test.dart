@@ -106,16 +106,15 @@ void main() async {
         listenerCalled = true;
       });
 
-      provider.setTrainingCycleForAdd(mockTrainingCycleBus);
+      provider.setTrainingCycleForAdd(mockTrainingCycleBus, notify: false);
 
       //act
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
-            onPressed: () {
-              provider.addTrainingCycle(
-                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
-                  notify: false);
+            onPressed: () async {
+              await provider.addTrainingCycle(
+                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
           ),
@@ -134,6 +133,37 @@ void main() async {
       verify(mockTrainingCycleBus.reset()).called(1);
     });
 
+    testWidgets("positive - with notify false", (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setTrainingCycleForAdd(mockTrainingCycleBus, notify: false);
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.addTrainingCycle(
+                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+                  notify: false);
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      //assert
+      expect(listenerCalled, false);
+    });
+
     testWidgets("negative - future error", (WidgetTester tester) async {
       //arrange
       bool listenerCalled = false;
@@ -150,8 +180,8 @@ void main() async {
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
-            onPressed: () {
-              provider.addTrainingCycle(
+            onPressed: () async {
+              await provider.addTrainingCycle(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
                   notify: false);
             },
@@ -178,7 +208,7 @@ void main() async {
         listenerCalled = true;
       });
 
-      provider.setTrainingCycleForAdd(mockTrainingCycleBus);
+      provider.setTrainingCycleForAdd(mockTrainingCycleBus, notify: false);
 
       when(mockTrainingCycleBus.addTrainingCycle()).thenThrow("error");
 
@@ -186,10 +216,9 @@ void main() async {
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
-            onPressed: () {
-              provider.addTrainingCycle(
-                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
-                  notify: false);
+            onPressed: () async {
+              await provider.addTrainingCycle(
+                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
           ),
@@ -206,23 +235,62 @@ void main() async {
       verify(mockTrainingCycleBus.addTrainingCycle()).called(1);
       verify(mockTrainingCycleBus.reset()).called(1);
     });
+  });
 
-    testWidgets("notify false", (WidgetTester tester) async {
+  group("updateTrainingCycle", () {
+    testWidgets("positive - should update a training cycle",
+        (WidgetTester tester) async {
       //arrange
       bool listenerCalled = false;
       provider.addListener(() {
         listenerCalled = true;
       });
 
-      provider.setTrainingCycleForAdd(mockTrainingCycleBus, notify: false);
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus, notify: false);
 
       //act
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
-            onPressed: () {
-              provider.addTrainingCycle(
-                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+            onPressed: () async {
+              await provider.updateTrainingCycle(
+                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      print(find.text("Updated ${mockTrainingCycleBus.cycleName}"));
+      //assert
+      expect(find.text("Updated ${mockTrainingCycleBus.cycleName}"),
+          findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingCycleBus.updateTrainingCycle()).called(1);
+      expect(provider.getSelectedTrainingCycle, null);
+    });
+
+    testWidgets("positive - with notify false", (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus, notify: false);
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.updateTrainingCycle(
+                  ScaffoldMessenger.of(
+                    tester.element(find.byType(Scaffold)),
+                  ),
                   notify: false);
             },
             child: const Text("test"),
@@ -236,6 +304,229 @@ void main() async {
 
       //assert
       expect(listenerCalled, false);
+    });
+
+    testWidgets("negative - future error", (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus);
+
+      when(mockTrainingCycleBus.updateTrainingCycle())
+          .thenAnswer((_) => Future.error("error"));
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.updateTrainingCycle(
+                  ScaffoldMessenger.of(
+                    tester.element(find.byType(Scaffold)),
+                  ),
+                  notify: false);
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      //assert
+      expect(find.text("error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingCycleBus.updateTrainingCycle()).called(1);
+      expect(provider.getSelectedTrainingCycle, null);
+    });
+
+    testWidgets("negative - Exception error", (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus);
+
+      when(mockTrainingCycleBus.updateTrainingCycle()).thenThrow("error");
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.updateTrainingCycle(
+                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+                  notify: false);
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      //assert
+      expect(find.text("error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingCycleBus.updateTrainingCycle()).called(1);
+      expect(provider.getSelectedTrainingCycle, null);
+    });
+  });
+
+  group("deleteTrainingCycle", () {
+    testWidgets("positive - should delete a training cycle",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus);
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.deleteTrainingCycle(
+                  ScaffoldMessenger.of(
+                    tester.element(find.byType(Scaffold)),
+                  ),
+                  notify: false);
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      //assert
+      expect(find.text("Deleted ${mockTrainingCycleBus.cycleName}"),
+          findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingCycleBus.deleteTrainingCycle()).called(1);
+      expect(provider.getSelectedTrainingCycle, null);
+    });
+
+    testWidgets("positive - with notify false", (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus, notify: false);
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.deleteTrainingCycle(
+                  ScaffoldMessenger.of(
+                    tester.element(find.byType(Scaffold)),
+                  ),
+                  notify: false);
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      //assert
+      expect(listenerCalled, false);
+    });
+
+    testWidgets("negative - future error", (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus);
+
+      when(mockTrainingCycleBus.deleteTrainingCycle())
+          .thenAnswer((_) => Future.error("error"));
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.deleteTrainingCycle(
+                  ScaffoldMessenger.of(
+                    tester.element(find.byType(Scaffold)),
+                  ),
+                  notify: false);
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      //assert
+      expect(find.text("error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingCycleBus.deleteTrainingCycle()).called(1);
+      expect(provider.getSelectedTrainingCycle, null);
+    });
+
+    testWidgets("negative - Exception error", (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      provider.setSelectedTrainingCycle(mockTrainingCycleBus);
+
+      when(mockTrainingCycleBus.deleteTrainingCycle()).thenThrow("error");
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.deleteTrainingCycle(
+                  ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+                  notify: false);
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      //assert
+      expect(find.text("error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingCycleBus.deleteTrainingCycle()).called(1);
+      expect(provider.getSelectedTrainingCycle, null);
     });
   });
 }
