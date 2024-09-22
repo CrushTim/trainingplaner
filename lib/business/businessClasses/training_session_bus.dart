@@ -23,6 +23,9 @@ class TrainingSessionBus {
   ///wether the training session is a planned one or one that is a diary entry
   bool isPlanned;
 
+  ///the cycle the session is in
+  String trainingCycleId;
+
   ///constructor of the training cycle
   TrainingSessionBus({
     required this.trainingSessionId,
@@ -33,6 +36,7 @@ class TrainingSessionBus {
     required this.trainingSessionExcercises,
     required this.trainingSessionEmphasis,
     required this.isPlanned,
+    required this.trainingCycleId,
   });
 
   ///factory method to create a training cycle from a data base object
@@ -51,6 +55,7 @@ class TrainingSessionBus {
     trainingSessionExcercises = [];
     trainingSessionEmphasis = "";
     isPlanned = true;
+    trainingCycleId = "";
   }
 
   //maps all attributes of another instance into this object
@@ -63,6 +68,7 @@ class TrainingSessionBus {
     trainingSessionExcercises = other.trainingSessionExcercises;
     trainingSessionEmphasis = other.trainingSessionEmphasis;
     isPlanned = other.isPlanned;
+    trainingCycleId = other.trainingCycleId;
   }
 
   // //////////////////////////////////////////////////////////////

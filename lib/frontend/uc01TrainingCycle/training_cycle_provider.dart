@@ -25,7 +25,7 @@ class TrainingCycleProvider extends ChangeNotifier {
   List<TrainingCycleBus> trainingCycles = [];
 
   // //////////////////////////////////////////////////////////////
-  //                Getter and Setter                         //
+  //                              Setter                         //
   // //////////////////////////////////////////////////////////////
 
   ///set the selected training cycle

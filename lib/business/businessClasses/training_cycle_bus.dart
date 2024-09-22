@@ -1,5 +1,3 @@
-import 'dart:math';
-
 class TrainingCycleBus {
   /// Unique identifier for the training cycle
   String trainingCycleID;
@@ -85,7 +83,6 @@ class TrainingCycleBus {
     try {
       //TODO: implement the updateTrainingCycle method
     } on Exception catch (e) {
-      int a = 0;
       return Future.error(Exception(e));
     }
   }
