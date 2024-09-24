@@ -114,7 +114,7 @@ class TrainingSessionProvider extends ChangeNotifier {
   /// throws: Exception if the update fails
   Future<void> updateTrainingSession(ScaffoldMessengerState scaffoldMessenger,
       {bool notify = true}) async {
-    String result = "Updated ${_selectedTrainingSession!.trainingSessionName}";
+    String result = "Updated ${_selectedTrainingSession?.trainingSessionName}";
 
     try {
       await _selectedTrainingSession!
