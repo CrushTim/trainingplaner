@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PerspectiveProvider<businessClass, reportTask> extends ChangeNotifier {
+class PerspectiveProvider<businessClass extends BusinessClasss, reportTask>
+    extends ChangeNotifier {
   PerspectiveProvider({required this.businessClassForAdd});
 
   //report task to get the business Class from the database
@@ -69,7 +70,7 @@ class PerspectiveProvider<businessClass, reportTask> extends ChangeNotifier {
   ///the method is called in the view
   ///@return void
   void resetBusinessClassForAdd() {
-    //businessClassForAdd.reset();
+    businessClassForAdd.reset();
   }
 
   ///reset the selected business class
@@ -84,4 +85,39 @@ class PerspectiveProvider<businessClass, reportTask> extends ChangeNotifier {
   // //////////////////////////////////////////////////////////////
   //                Getters                                      //
   // //////////////////////////////////////////////////////////////
+
+  ///get the selected business class
+  ///returns null if no business class is selected
+  ///the method is called when the view needs the selected business class
+  ///usually when the user wants to change or delete a business class
+  ///and the view needs to show the attributes of the selected business class
+  ///returns null if no business class is selected
+  ///@return businessClass the selected business class
+  businessClass? get getSelectedBusinessClass {
+    return _selectedBusinessClass;
+  }
+
+  ///get the business class for addition
+  ///the method is called when the view needs the business class for addition
+  ///usually when the user wants to add a new business class
+  ///and the view needs to show the attributes of the business class for addition
+  ///@return businessClass the business class for addition
+  businessClass get getBusinessClassForAdd {
+    return businessClassForAdd;
+  }
+
+  //
+}
+
+abstract class BusinessClasss {
+  void reset();
+
+  void addBusinessClass(ScaffoldMessengerState scaffoldMessengerState,
+      {bool notify = true});
+
+  void updateBusinessClass(ScaffoldMessengerState scaffoldMessengerState,
+      {bool notify = true});
+
+  void deleteBusinessClass(ScaffoldMessengerState scaffoldMessengerState,
+      {bool notify = true});
 }
