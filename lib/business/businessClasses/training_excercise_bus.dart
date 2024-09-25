@@ -1,4 +1,7 @@
-class TrainingExcerciseBus {
+import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
+
+class TrainingExcerciseBus
+    implements TrainingsplanerBusInterface<TrainingExcerciseBus> {
   /// Unique identifier for the training excercise
   String trainingExcerciseID;
 
@@ -41,11 +44,19 @@ class TrainingExcerciseBus {
 
   ///factory method to create a training excercise from a data base object
   //TODO: implement the factory method
+  factory TrainingExcerciseBus.fromData() {
+    throw UnimplementedError();
+  }
 
   ///method to convert the training excercise to a data base object
   //TODO: implement the toData method
+  @override
+  toData() {
+    throw UnimplementedError();
+  }
 
   //maps all attributes of another instance into this object called mapFormOtherInstance
+  @override
   void mapFromOtherInstance(TrainingExcerciseBus otherInstance) {
     trainingExcerciseID = otherInstance.trainingExcerciseID;
     excerciseName = otherInstance.excerciseName;
@@ -58,6 +69,7 @@ class TrainingExcerciseBus {
   }
 
   //resets every field of the training excercise to the default value
+  @override
   void reset() {
     trainingExcerciseID = "";
     excerciseName = "";
@@ -70,22 +82,34 @@ class TrainingExcerciseBus {
   }
 
   // //////////////////////////////////////////////////////////////
+  //                              Getter                         //
+  // //////////////////////////////////////////////////////////////
+
+  @override
+  String getId() {
+    return trainingExcerciseID;
+  }
+
+  @override
+  String getName() {
+    return excerciseName;
+  }
+
+  // //////////////////////////////////////////////////////////////
   //                CRUD-Operations                           //
   // //////////////////////////////////////////////////////////////
 
   //add a training excercise to the database
   //Future.error(Exception(e)) is used to return an error to the caller
-  Future<void> addTrainingExcercise() async {
-    try {
-      //TODO: implement the addTrainingExcercise method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  @override
+  Future<void> add() async {
+    //TODO: implement the addTrainingExcercise method
   }
 
   //update a training excercise in the database
   //Future.error(Exception(e)) is used to return an error to the caller
-  Future<void> updateTrainingExcercise() async {
+  @override
+  Future<void> update() async {
     try {
       //TODO: implement the updateTrainingExcercise method
     } on Exception catch (e) {
@@ -95,7 +119,8 @@ class TrainingExcerciseBus {
 
   //delete a training excercise from the database
   //Future.error(Exception(e)) is used to return an error to the caller
-  Future<void> deleteTrainingExcercise() async {
+  @override
+  Future<void> delete() async {
     try {
       //TODO: implement the deleteTrainingExcercise method
     } on Exception catch (e) {
@@ -108,6 +133,7 @@ class TrainingExcerciseBus {
   // //////////////////////////////////////////////////////////////
 
   //validate the training excercise for add operation
+  @override
   void validateForAdd() {
     //check if the weights and reps are of the same length
     if (excerciseWeights.length != excerciseReps.length) {
@@ -135,6 +161,7 @@ class TrainingExcerciseBus {
   }
 
   //validate the training excercise for update operation
+  @override
   void validateForUpdate() {
     //TODO: implement validation of is the current working user
 
@@ -169,6 +196,7 @@ class TrainingExcerciseBus {
   }
 
   //validate the training excercise for delete operation
+  @override
   void validateForDelete() {
     //TODO: implement validation of is the current working user
 

@@ -1,4 +1,7 @@
-class ExcerciseFoundationBus {
+import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
+
+class ExcerciseFoundationBus
+    implements TrainingsplanerBusInterface<ExcerciseFoundationBus> {
   ///represents the id of the excercise
   String excerciseFoundationId;
 
@@ -33,11 +36,20 @@ class ExcerciseFoundationBus {
 
   ///factory method to create a training cycle from a data base object
   //TODO: implement the factory method
+  factory ExcerciseFoundationBus.fromData() {
+    throw UnimplementedError();
+  }
 
   ///method to convert the training cycle to a data base object
   //TODO: implement the toData method
+  @override
+  toData() {
+    // TODO: implement toData
+    throw UnimplementedError();
+  }
 
   ///resets every field of the excercise foundation to the default value
+  @override
   void reset() {
     excerciseFoundationId = "";
     excerciseFoundationName = "";
@@ -49,6 +61,7 @@ class ExcerciseFoundationBus {
   }
 
   ///maps all attributes of another instance into this object
+  @override
   void mapFromOtherInstance(ExcerciseFoundationBus other) {
     excerciseFoundationId = other.excerciseFoundationId;
     excerciseFoundationName = other.excerciseFoundationName;
@@ -60,34 +73,38 @@ class ExcerciseFoundationBus {
   }
 
   // //////////////////////////////////////////////////////////////
+  //                              Getter                         //
+  // //////////////////////////////////////////////////////////////
+
+  @override
+  String getId() {
+    return excerciseFoundationId;
+  }
+
+  @override
+  String getName() {
+    return excerciseFoundationName;
+  }
+
+  // //////////////////////////////////////////////////////////////
   //                CRUD-Operations                           //
   // //////////////////////////////////////////////////////////////
 
-  Future<void> addExcerciseFoundation() async {
+  @override
+  Future<void> add() async {
     validateForAdd();
-    try {
-      //TODO: implement the addExcerciseFoundation method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+    //TODO: implement the addExcerciseFoundation method
   }
 
-  Future<void> updateExcerciseFoundation() async {
+  @override
+  Future<void> update() async {
     validateForUpdate();
-    try {
-      //TODO: implement the updateExcerciseFoundation method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+    //TODO: implement the updateExcerciseFoundation method
   }
 
-  Future<void> deleteExcerciseFoundation() async {
-    validateForDelete();
-    try {
-      //TODO: implement the deleteExcerciseFoundation method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  @override
+  Future<void> delete() async {
+    //TODO: implement the deleteExcerciseFoundation method
   }
 
   // //////////////////////////////////////////////////////////////
@@ -95,6 +112,7 @@ class ExcerciseFoundationBus {
   // //////////////////////////////////////////////////////////////
 
   ///validates the excercise foundation for add operations
+  @override
   void validateForAdd() {
     //check if the excercise got a name
     if (excerciseFoundationName.isEmpty) {
@@ -108,6 +126,7 @@ class ExcerciseFoundationBus {
   }
 
   ///validates the excercise foundation for update operations
+  @override
   void validateForUpdate() {
     //check if the id is not empty
     if (excerciseFoundationId.isEmpty) {
@@ -125,6 +144,7 @@ class ExcerciseFoundationBus {
     }
   }
 
+  @override
   void validateForDelete() {
     //check if the id is not empty
     if (excerciseFoundationId.isEmpty) {

@@ -86,7 +86,7 @@ class TrainingCycleProvider extends ChangeNotifier {
 
     try {
       await trainingCycleForAdd
-          .addTrainingCycle()
+          .add()
           .onError((error, stackTrace) => result = error.toString());
     } catch (e) {
       result = e.toString();
@@ -108,7 +108,7 @@ class TrainingCycleProvider extends ChangeNotifier {
 
     try {
       await _selectedTrainingCycle!
-          .updateTrainingCycle()
+          .update()
           .onError((error, stackTrace) => result = error.toString());
     } catch (e) {
       result = e.toString();
@@ -130,7 +130,7 @@ class TrainingCycleProvider extends ChangeNotifier {
 
     try {
       await _selectedTrainingCycle!
-          .deleteTrainingCycle()
+          .delete()
           .onError((error, stackTrace) => result = error.toString());
     } catch (e) {
       result = e.toString();

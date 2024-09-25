@@ -220,9 +220,53 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
       );
 
   @override
-  _i4.Future<void> addTrainingCycle() => (super.noSuchMethod(
+  String getId() => (super.noSuchMethod(
         Invocation.method(
-          #addTrainingCycle,
+          #getId,
+          [],
+        ),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getId,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getId,
+            [],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String getName() => (super.noSuchMethod(
+        Invocation.method(
+          #getName,
+          [],
+        ),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getName,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getName,
+            [],
+          ),
+        ),
+      ) as String);
+
+  @override
+  _i4.Future<void> add() => (super.noSuchMethod(
+        Invocation.method(
+          #add,
           [],
         ),
         returnValue: _i4.Future<void>.value(),
@@ -230,9 +274,9 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<void> updateTrainingCycle() => (super.noSuchMethod(
+  _i4.Future<void> update() => (super.noSuchMethod(
         Invocation.method(
-          #updateTrainingCycle,
+          #update,
           [],
         ),
         returnValue: _i4.Future<void>.value(),
@@ -240,9 +284,9 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<void> deleteTrainingCycle() => (super.noSuchMethod(
+  _i4.Future<void> delete() => (super.noSuchMethod(
         Invocation.method(
-          #deleteTrainingCycle,
+          #delete,
           [],
         ),
         returnValue: _i4.Future<void>.value(),

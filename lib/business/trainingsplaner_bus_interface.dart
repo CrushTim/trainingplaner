@@ -1,17 +1,40 @@
-import 'package:flutter/material.dart';
+abstract class TrainingsplanerBusInterface<
+    Subclass extends TrainingsplanerBusInterface<Subclass>> {
+  // //////////////////////////////////////////////////////////////
+  //                Getter                                      //
+  // //////////////////////////////////////////////////////////////
 
-abstract class TrainingsplanerBusInterface {
-  String name = "";
+  String getName();
+
+  String getId();
+
+  // //////////////////////////////////////////////////////////////
+  //                Business-Operations                           //
+  // //////////////////////////////////////////////////////////////
+
   void reset();
 
-  Future<void> addBusinessClass(ScaffoldMessengerState scaffoldMessengerState,
-      {bool notify = true});
+  void mapFromOtherInstance(Subclass other);
 
-  Future<void> updateBusinessClass(
-      ScaffoldMessengerState scaffoldMessengerState,
-      {bool notify = true});
+  toData();
 
-  Future<void> deleteBusinessClass(
-      ScaffoldMessengerState scaffoldMessengerState,
-      {bool notify = true});
+  // //////////////////////////////////////////////////////////////
+  //                CRUD-Operations                           //
+  // //////////////////////////////////////////////////////////////
+
+  Future<void> add();
+
+  Future<void> update();
+
+  Future<void> delete();
+
+  // //////////////////////////////////////////////////////////////
+  //                              Validation                     //
+  // //////////////////////////////////////////////////////////////
+
+  void validateForAdd();
+
+  void validateForUpdate();
+
+  void validateForDelete();
 }

@@ -1,4 +1,7 @@
-class TrainingCycleBus {
+import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
+
+class TrainingCycleBus
+    implements TrainingsplanerBusInterface<TrainingCycleBus> {
   /// Unique identifier for the training cycle
   String trainingCycleID;
 
@@ -36,11 +39,20 @@ class TrainingCycleBus {
 
   ///factory method to create a training cycle from a data base object
   //TODO: implement the factory method
+  factory TrainingCycleBus.fromData() {
+    throw UnimplementedError();
+  }
 
   ///method to convert the training cycle to a data base object
   //TODO: implement the toData method
+  @override
+  toData() {
+    // TODO: implement toData
+    throw UnimplementedError();
+  }
 
   //maps all attributes of another instance into this object called mapFormOtherInstance
+  @override
   void mapFromOtherInstance(TrainingCycleBus otherInstance) {
     trainingCycleID = otherInstance.trainingCycleID;
     cycleName = otherInstance.cycleName;
@@ -53,6 +65,7 @@ class TrainingCycleBus {
   }
 
   //resets every field of the training cycle to the default value
+  @override
   void reset() {
     trainingCycleID = "";
     cycleName = "";
@@ -64,37 +77,42 @@ class TrainingCycleBus {
   }
 
   // //////////////////////////////////////////////////////////////
+  //                Getter                                      //
+  // //////////////////////////////////////////////////////////////
+
+  @override
+  String getId() {
+    return trainingCycleID;
+  }
+
+  @override
+  String getName() {
+    return cycleName;
+  }
+
+  // //////////////////////////////////////////////////////////////
   //                CRUD-Operations                           //
   // //////////////////////////////////////////////////////////////
 
   //add a training cycle to the database
   //Future.error(Exception(e)) is used to return an error to the caller
-  Future<void> addTrainingCycle() async {
-    try {
-      //TODO: implement the addTrainingCycle method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  @override
+  Future<void> add() async {
+    //TODO: implement the addTrainingCycle method
   }
 
   //update a training cycle in the database
   //Future.error(Exception(e)) is used to return an error to the caller
-  Future<void> updateTrainingCycle() async {
-    try {
-      //TODO: implement the updateTrainingCycle method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  @override
+  Future<void> update() async {
+    //TODO: implement the updateTrainingCycle method
   }
 
   //delete a training cycle from the database
   //Future.error(Exception(e)) is used to return an error to the caller
-  Future<void> deleteTrainingCycle() async {
-    try {
-      //TODO: implement the deleteTrainingCycle method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  @override
+  Future<void> delete() async {
+    //TODO: implement the deleteTrainingCycle method
   }
 
   // //////////////////////////////////////////////////////////////
@@ -102,6 +120,7 @@ class TrainingCycleBus {
   // //////////////////////////////////////////////////////////////
 
   //validate the training cycle for add operation
+  @override
   void validateForAdd() {
     //check if the begin date is before the end date
     if (beginDate.isAfter(endDate)) {
@@ -119,6 +138,7 @@ class TrainingCycleBus {
   }
 
   //validate the training cycle for update operation
+  @override
   void validateForUpdate() {
     //TODO: implement validation of is the current working user
     //check if the begin date is before the end date
@@ -137,6 +157,7 @@ class TrainingCycleBus {
   }
 
   //validate the training cycle for delete operation
+  @override
   void validateForDelete() {
     //TODO: implement validation of is the current working user
     //check if the id is empty

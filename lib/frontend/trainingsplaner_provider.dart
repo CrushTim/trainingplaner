@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
-class TrainingsplanerProvider<businessClass extends TrainingsplanerBusInterface,
+class TrainingsplanerProvider<
+    businessClass extends TrainingsplanerBusInterface<businessClass>,
     reportTask> extends ChangeNotifier {
   TrainingsplanerProvider({required this.businessClassForAdd});
 
@@ -114,10 +115,10 @@ class TrainingsplanerProvider<businessClass extends TrainingsplanerBusInterface,
   /// @return Future<void> with the result of the additio
   Future<void> addBusinessClass(ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
-    String message = "added ${businessClassForAdd.name}";
+    String message = "added ${businessClassForAdd.getName()}";
     try {
       await businessClassForAdd
-          .addBusinessClass(scaffoldMessengerState)
+          .add()
           .onError((error, stackTrace) => message = error.toString());
     } catch (e) {
       message = e.toString();
@@ -146,10 +147,10 @@ class TrainingsplanerProvider<businessClass extends TrainingsplanerBusInterface,
   Future<void> updateBusinessClass(
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
-    String message = "updated ${_selectedBusinessClass?.name}";
+    String message = "updated ${_selectedBusinessClass?.getName()}";
     try {
       await _selectedBusinessClass!
-          .updateBusinessClass(scaffoldMessengerState)
+          .update()
           .onError((error, stackTrace) => message = error.toString());
     } catch (e) {
       message = e.toString();
@@ -177,10 +178,10 @@ class TrainingsplanerProvider<businessClass extends TrainingsplanerBusInterface,
   Future<void> deleteBusinessClass(
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
-    String message = "deleted ${_selectedBusinessClass?.name}";
+    String message = "deleted ${_selectedBusinessClass?.getName()}";
     try {
       await _selectedBusinessClass!
-          .deleteBusinessClass(scaffoldMessengerState)
+          .delete()
           .onError((error, stackTrace) => message = error.toString());
     } catch (e) {
       message = e.toString();

@@ -94,7 +94,7 @@ class TrainingSessionProvider extends ChangeNotifier {
 
     try {
       await trainingSessionForAdd
-          .addTrainingSession()
+          .add()
           .onError((error, stackTrace) => result = error.toString());
     } catch (e) {
       result = e.toString();
@@ -118,7 +118,7 @@ class TrainingSessionProvider extends ChangeNotifier {
 
     try {
       await _selectedTrainingSession!
-          .updateTrainingSession()
+          .update()
           .onError((error, stackTrace) => result = error.toString());
     } catch (e) {
       result = e.toString();
@@ -141,7 +141,7 @@ class TrainingSessionProvider extends ChangeNotifier {
 
     try {
       await _selectedTrainingSession!
-          .deleteTrainingSession()
+          .delete()
           .onError((error, stackTrace) => result = error.toString());
     } catch (e) {
       result = e.toString();

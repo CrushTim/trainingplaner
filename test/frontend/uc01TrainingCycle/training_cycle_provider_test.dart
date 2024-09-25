@@ -129,7 +129,7 @@ void main() async {
       expect(
           find.text("Added ${mockTrainingCycleBus.cycleName}"), findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.addTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.add()).called(1);
       verify(mockTrainingCycleBus.reset()).called(1);
     });
 
@@ -173,8 +173,7 @@ void main() async {
 
       provider.setTrainingCycleForAdd(mockTrainingCycleBus);
 
-      when(mockTrainingCycleBus.addTrainingCycle())
-          .thenAnswer((_) => Future.error("error"));
+      when(mockTrainingCycleBus.add()).thenAnswer((_) => Future.error("error"));
 
       //act
       await tester.pumpWidget(MaterialApp(
@@ -197,7 +196,7 @@ void main() async {
       //assert
       expect(find.text("error"), findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.addTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.add()).called(1);
       verify(mockTrainingCycleBus.reset()).called(1);
     });
 
@@ -210,7 +209,7 @@ void main() async {
 
       provider.setTrainingCycleForAdd(mockTrainingCycleBus, notify: false);
 
-      when(mockTrainingCycleBus.addTrainingCycle()).thenThrow("error");
+      when(mockTrainingCycleBus.add()).thenThrow("error");
 
       //act
       await tester.pumpWidget(MaterialApp(
@@ -232,7 +231,7 @@ void main() async {
       //assert
       expect(find.text("error"), findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.addTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.add()).called(1);
       verify(mockTrainingCycleBus.reset()).called(1);
     });
   });
@@ -269,7 +268,7 @@ void main() async {
       expect(find.text("Updated ${mockTrainingCycleBus.cycleName}"),
           findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.updateTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.update()).called(1);
       expect(provider.getSelectedTrainingCycle, null);
     });
 
@@ -315,7 +314,7 @@ void main() async {
 
       provider.setSelectedTrainingCycle(mockTrainingCycleBus);
 
-      when(mockTrainingCycleBus.updateTrainingCycle())
+      when(mockTrainingCycleBus.update())
           .thenAnswer((_) => Future.error("error"));
 
       //act
@@ -341,7 +340,7 @@ void main() async {
       //assert
       expect(find.text("error"), findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.updateTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.update()).called(1);
       expect(provider.getSelectedTrainingCycle, null);
     });
 
@@ -354,7 +353,7 @@ void main() async {
 
       provider.setSelectedTrainingCycle(mockTrainingCycleBus);
 
-      when(mockTrainingCycleBus.updateTrainingCycle()).thenThrow("error");
+      when(mockTrainingCycleBus.update()).thenThrow("error");
 
       //act
       await tester.pumpWidget(MaterialApp(
@@ -377,7 +376,7 @@ void main() async {
       //assert
       expect(find.text("error"), findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.updateTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.update()).called(1);
       expect(provider.getSelectedTrainingCycle, null);
     });
   });
@@ -417,7 +416,7 @@ void main() async {
       expect(find.text("Deleted ${mockTrainingCycleBus.cycleName}"),
           findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.deleteTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.delete()).called(1);
       expect(provider.getSelectedTrainingCycle, null);
     });
 
@@ -463,7 +462,7 @@ void main() async {
 
       provider.setSelectedTrainingCycle(mockTrainingCycleBus);
 
-      when(mockTrainingCycleBus.deleteTrainingCycle())
+      when(mockTrainingCycleBus.delete())
           .thenAnswer((_) => Future.error("error"));
 
       //act
@@ -489,7 +488,7 @@ void main() async {
       //assert
       expect(find.text("error"), findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.deleteTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.delete()).called(1);
       expect(provider.getSelectedTrainingCycle, null);
     });
 
@@ -502,7 +501,7 @@ void main() async {
 
       provider.setSelectedTrainingCycle(mockTrainingCycleBus);
 
-      when(mockTrainingCycleBus.deleteTrainingCycle()).thenThrow("error");
+      when(mockTrainingCycleBus.delete()).thenThrow("error");
 
       //act
       await tester.pumpWidget(MaterialApp(
@@ -525,7 +524,7 @@ void main() async {
       //assert
       expect(find.text("error"), findsOneWidget);
       expect(listenerCalled, true);
-      verify(mockTrainingCycleBus.deleteTrainingCycle()).called(1);
+      verify(mockTrainingCycleBus.delete()).called(1);
       expect(provider.getSelectedTrainingCycle, null);
     });
   });

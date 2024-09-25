@@ -1,4 +1,7 @@
-class TrainingSessionBus {
+import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
+
+class TrainingSessionBus
+    implements TrainingsplanerBusInterface<TrainingSessionBus> {
   ///represents the id of the training session
   String trainingSessionId;
 
@@ -41,11 +44,19 @@ class TrainingSessionBus {
 
   ///factory method to create a training cycle from a data base object
   //TODO: implement the factory method
+  factory TrainingSessionBus.fromData() {
+    throw UnimplementedError();
+  }
 
   ///method to convert the training cycle to a data base object
   //TODO: implement the toData method
+  @override
+  toData() {
+    throw UnimplementedError();
+  }
 
   ///resets every field of the training cycle to the default value
+  @override
   void reset() {
     trainingSessionId = "";
     trainingSessionName = "";
@@ -58,7 +69,8 @@ class TrainingSessionBus {
     trainingCycleId = "";
   }
 
-  //maps all attributes of another instance into this object
+  ///maps all attributes of another instance into this object
+  @override
   void mapFromOtherInstance(TrainingSessionBus other) {
     trainingSessionId = other.trainingSessionId;
     trainingSessionName = other.trainingSessionName;
@@ -72,40 +84,46 @@ class TrainingSessionBus {
   }
 
   // //////////////////////////////////////////////////////////////
+  //                Getter                                      //
+  // //////////////////////////////////////////////////////////////
+
+  @override
+  String getId() {
+    return trainingSessionId;
+  }
+
+  @override
+  String getName() {
+    return trainingSessionName;
+  }
+
+  // //////////////////////////////////////////////////////////////
   //                CRUD-Operations                           //
   // //////////////////////////////////////////////////////////////
 
-  Future<void> addTrainingSession() async {
+  @override
+  Future<void> add() async {
     validateForAdd();
-    try {
-      //TODO: implement the addTrainingCycle method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+    //TODO: implement the addTrainingCycle method
   }
 
-  Future<void> updateTrainingSession() async {
+  @override
+  Future<void> update() async {
     validateForUpdate();
-    try {
-      //TODO: implement the updateTrainingCycle method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+    //TODO: implement the updateTrainingCycle method
   }
 
-  Future<void> deleteTrainingSession() async {
+  @override
+  Future<void> delete() async {
     validateForDelete();
-    try {
-      //TODO: implement the deleteTrainingCycle method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+    //TODO: implement the deleteTrainingCycle method
   }
 
   // //////////////////////////////////////////////////////////////
   //                Validation Methods                         //
   // //////////////////////////////////////////////////////////////
 
+  @override
   void validateForAdd() {
     if (trainingSessionName.isEmpty) {
       throw Exception("The training session name is empty");
@@ -119,6 +137,7 @@ class TrainingSessionBus {
     //TODO: implement validation of is in training cycle(maybe in provider)
   }
 
+  @override
   void validateForUpdate() {
     if (trainingSessionId.isEmpty) {
       throw Exception("The training session id is empty");
@@ -134,6 +153,7 @@ class TrainingSessionBus {
     }
   }
 
+  @override
   void validateForDelete() {
     if (trainingSessionId.isEmpty) {
       throw Exception("The training session id is empty");

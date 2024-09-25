@@ -1,4 +1,7 @@
-class UserSpecificExcerciseData {
+import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
+
+class UserSpecificExcerciseData
+    implements TrainingsplanerBusInterface<UserSpecificExcerciseData> {
   ///the id of the user specific excercise data link
   String excerciseLinkID;
 
@@ -24,11 +27,19 @@ class UserSpecificExcerciseData {
 
   ///factory method to create a training cycle from a data base object
   //TODO: implement the factory method
+  factory UserSpecificExcerciseData.fromData() {
+    throw UnimplementedError();
+  }
 
   ///method to convert the training cycle to a data base object
   //TODO: implement the toData method
+  @override
+  toData() {
+    throw UnimplementedError();
+  }
 
   ///resets every field of the training cycle to the default value
+  @override
   void reset() {
     excerciseLinkID = "";
     userID = "";
@@ -38,6 +49,7 @@ class UserSpecificExcerciseData {
   }
 
   ///maps all attributes of another instance into this object
+  @override
   void mapFromOtherInstance(UserSpecificExcerciseData other) {
     excerciseLinkID = other.excerciseLinkID;
     userID = other.userID;
@@ -47,37 +59,44 @@ class UserSpecificExcerciseData {
   }
 
   // //////////////////////////////////////////////////////////////
-  //                CRUD-Operations                           //
+  //                Getter                                      //
   // //////////////////////////////////////////////////////////////
 
-  Future<void> addUserSpecificExcerciseData() async {
-    try {
-      //TODO: implement the add method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  @override
+  String getId() {
+    return excerciseLinkID;
   }
 
-  Future<void> updateUserSpecificExcerciseData() async {
-    try {
-      //TODO: implement the update method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  @override
+  String getName() {
+    return foundationId;
   }
 
-  Future<void> deleteUserSpecificExcerciseData() async {
-    try {
-      //TODO: implement the delete method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+  // //////////////////////////////////////////////////////////////
+  //                CRUD-Operations                           //
+  // //////////////////////////////////////////////////////////////
+  @override
+  Future<void> add() async {
+    validateForAdd();
+    //TODO: implement the add method
+  }
+
+  @override
+  Future<void> update() async {
+    validateForUpdate();
+    //TODO: implement the update method
+  }
+
+  @override
+  Future<void> delete() async {
+    validateForDelete();
+    //TODO: implement the delete method
   }
 
 // //////////////////////////////////////////////////////////////
 //                Validation Methods                         //
 // //////////////////////////////////////////////////////////////
-
+  @override
   void validateForAdd() {
     //check if foundationId is empty
     if (foundationId.isEmpty) {
@@ -90,6 +109,7 @@ class UserSpecificExcerciseData {
     }
   }
 
+  @override
   void validateForUpdate() {
     //check if excerciseLinkID is empty
     if (excerciseLinkID.isEmpty) {
@@ -107,6 +127,7 @@ class UserSpecificExcerciseData {
     }
   }
 
+  @override
   void validateForDelete() {
     //check if excerciseLinkID is empty
     if (excerciseLinkID.isEmpty) {
