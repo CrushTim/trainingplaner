@@ -115,7 +115,7 @@ class TrainingsplanerProvider<
   /// @return Future<void> with the result of the additio
   Future<void> addBusinessClass(ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
-    String message = "added ${businessClassForAdd.getName()}";
+    String message = "Added ${businessClassForAdd.getName()}";
     try {
       await businessClassForAdd
           .add()
@@ -147,23 +147,28 @@ class TrainingsplanerProvider<
   Future<void> updateBusinessClass(
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
-    String message = "updated ${_selectedBusinessClass?.getName()}";
+    String message = "Updated ${_selectedBusinessClass?.getName()}";
     try {
+      if (_selectedBusinessClass == null) {
+        throw const FormatException("No business class selected");
+      }
       await _selectedBusinessClass!
           .update()
           .onError((error, stackTrace) => message = error.toString());
     } catch (e) {
+      print(e.runtimeType);
       message = e.toString();
     } finally {
       if (notify) {
         notifyListeners();
       }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
+      print(message);
     }
-    scaffoldMessengerState.showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
   }
 
   ///delete a business class from the database
@@ -180,6 +185,9 @@ class TrainingsplanerProvider<
       {bool notify = true}) async {
     String message = "deleted ${_selectedBusinessClass?.getName()}";
     try {
+      if (_selectedBusinessClass == null) {
+        throw const FormatException("No business class selected");
+      }
       await _selectedBusinessClass!
           .delete()
           .onError((error, stackTrace) => message = error.toString());
@@ -190,11 +198,12 @@ class TrainingsplanerProvider<
       if (notify) {
         notifyListeners();
       }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
+      print(message);
     }
-    scaffoldMessengerState.showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
   }
 }
