@@ -156,7 +156,6 @@ class TrainingsplanerProvider<
           .update()
           .onError((error, stackTrace) => message = error.toString());
     } catch (e) {
-      print(e.runtimeType);
       message = e.toString();
     } finally {
       if (notify) {
@@ -167,7 +166,6 @@ class TrainingsplanerProvider<
           content: Text(message),
         ),
       );
-      print(message);
     }
   }
 

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/home_page.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 
 void main() {
   runApp(const Main());
@@ -14,27 +17,30 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-          inputDecorationTheme: InputDecorationTheme(
-        border: const OutlineInputBorder(
+          inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.green),
         ),
-        enabledBorder: const OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.green),
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.green),
         ),
-        errorBorder: const OutlineInputBorder(
+        errorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.green),
         ),
-        focusedErrorBorder: const OutlineInputBorder(
+        focusedErrorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.green),
         ),
-        disabledBorder: const OutlineInputBorder(
+        disabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.green),
         ),
       )),
-      home: const HomePage(),
+      home: MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => TrainingSessionProvider()),
+        ChangeNotifierProvider(create: (context) => TrainingCycleProvider()),
+      ], child: const HomePage()),
     );
   }
 }

@@ -2,3 +2,10 @@
 workout
     excercise
         non expanded: fix button layout 
+
+
+
+- make first usage of reports and make provider view methods
+    -trainingsession
+    -trainingcycle selection
+    

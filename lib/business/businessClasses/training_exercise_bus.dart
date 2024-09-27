@@ -1,54 +1,54 @@
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
-class TrainingExcerciseBus
-    implements TrainingsplanerBusInterface<TrainingExcerciseBus> {
-  /// Unique identifier for the training excercise
-  String trainingExcerciseID;
+class TrainingExerciseBus
+    implements TrainingsplanerBusInterface<TrainingExerciseBus> {
+  /// Unique identifier for the training exercise
+  String trainingExerciseID;
 
-  /// Name of the training excercise
-  String excerciseName;
+  /// Name of the training exercise
+  String exerciseName;
 
-  /// Detailed description of the training excercise
-  String excerciseDescription;
+  /// Detailed description of the training exercise
+  String exerciseDescription;
 
-  /// the link to the underlying excercise in the database
-  String excerciseFoundationID;
+  /// the link to the underlying exercise in the database
+  String exerciseFoundationID;
 
-  /// the weights of the training excercise ordered by the set
-  List<double> excerciseWeights;
+  /// the weights of the training exercise ordered by the set
+  List<double> exerciseWeights;
 
-  /// the reps of the training excercise ordered by the set
-  List<int> excerciseReps;
+  /// the reps of the training exercise ordered by the set
+  List<int> exerciseReps;
 
-  /// the target % of the 1RM for the excercise
+  /// the target % of the 1RM for the exercise
   int targetPercentageOf1RM;
 
-  ///declares wether the excercise is a planned one laying in the future
-  ///or if its a diary entry representing a past training session
+  ///declares whether the exercise is a planned one laying in the future
+  ///or if it's a diary entry representing a past training session
   bool isPlanned;
 
-  ///the date when the training excercise begins
+  ///the date when the training exercise begins
   DateTime date;
 
-  TrainingExcerciseBus({
-    required this.trainingExcerciseID,
-    required this.excerciseName,
-    required this.excerciseDescription,
+  TrainingExerciseBus({
+    required this.trainingExerciseID,
+    required this.exerciseName,
+    required this.exerciseDescription,
     required this.date,
-    required this.excerciseFoundationID,
-    required this.excerciseReps,
-    required this.excerciseWeights,
+    required this.exerciseFoundationID,
+    required this.exerciseReps,
+    required this.exerciseWeights,
     required this.isPlanned,
     required this.targetPercentageOf1RM,
   });
 
-  ///factory method to create a training excercise from a data base object
+  ///factory method to create a training exercise from a database object
   //TODO: implement the factory method
-  factory TrainingExcerciseBus.fromData() {
+  factory TrainingExerciseBus.fromData() {
     throw UnimplementedError();
   }
 
-  ///method to convert the training excercise to a data base object
+  ///method to convert the training exercise to a database object
   //TODO: implement the toData method
   @override
   toData() {
@@ -57,26 +57,26 @@ class TrainingExcerciseBus
 
   //maps all attributes of another instance into this object called mapFormOtherInstance
   @override
-  void mapFromOtherInstance(TrainingExcerciseBus otherInstance) {
-    trainingExcerciseID = otherInstance.trainingExcerciseID;
-    excerciseName = otherInstance.excerciseName;
-    excerciseDescription = otherInstance.excerciseDescription;
-    excerciseFoundationID = otherInstance.excerciseFoundationID;
-    excerciseReps = otherInstance.excerciseReps;
-    excerciseWeights = otherInstance.excerciseWeights;
+  void mapFromOtherInstance(TrainingExerciseBus otherInstance) {
+    trainingExerciseID = otherInstance.trainingExerciseID;
+    exerciseName = otherInstance.exerciseName;
+    exerciseDescription = otherInstance.exerciseDescription;
+    exerciseFoundationID = otherInstance.exerciseFoundationID;
+    exerciseReps = otherInstance.exerciseReps;
+    exerciseWeights = otherInstance.exerciseWeights;
     isPlanned = otherInstance.isPlanned;
     targetPercentageOf1RM = otherInstance.targetPercentageOf1RM;
   }
 
-  //resets every field of the training excercise to the default value
+  //resets every field of the training exercise to the default value
   @override
   void reset() {
-    trainingExcerciseID = "";
-    excerciseName = "";
-    excerciseDescription = "";
-    excerciseFoundationID = "";
-    excerciseReps = [];
-    excerciseWeights = [];
+    trainingExerciseID = "";
+    exerciseName = "";
+    exerciseDescription = "";
+    exerciseFoundationID = "";
+    exerciseReps = [];
+    exerciseWeights = [];
     isPlanned = false;
     targetPercentageOf1RM = 0;
   }
@@ -87,42 +87,42 @@ class TrainingExcerciseBus
 
   @override
   String getId() {
-    return trainingExcerciseID;
+    return trainingExerciseID;
   }
 
   @override
   String getName() {
-    return excerciseName;
+    return exerciseName;
   }
 
   // //////////////////////////////////////////////////////////////
   //                CRUD-Operations                           //
   // //////////////////////////////////////////////////////////////
 
-  //add a training excercise to the database
+  //add a training exercise to the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> add() async {
-    //TODO: implement the addTrainingExcercise method
+    //TODO: implement the addTrainingExercise method
   }
 
-  //update a training excercise in the database
+  //update a training exercise in the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> update() async {
     try {
-      //TODO: implement the updateTrainingExcercise method
+      //TODO: implement the updateTrainingExercise method
     } on Exception catch (e) {
       return Future.error(Exception(e));
     }
   }
 
-  //delete a training excercise from the database
+  //delete a training exercise from the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> delete() async {
     try {
-      //TODO: implement the deleteTrainingExcercise method
+      //TODO: implement the deleteTrainingExercise method
     } on Exception catch (e) {
       return Future.error(Exception(e));
     }
@@ -132,25 +132,25 @@ class TrainingExcerciseBus
   //                Validation Methods                         //
   // //////////////////////////////////////////////////////////////
 
-  //validate the training excercise for add operation
+  //validate the training exercise for add operation
   @override
   void validateForAdd() {
     //check if the weights and reps are of the same length
-    if (excerciseWeights.length != excerciseReps.length) {
+    if (exerciseWeights.length != exerciseReps.length) {
       throw Exception("The weights and reps are of different length");
     }
 
     //check if the weights are greater equals 0
-    for (double weight in excerciseWeights) {
+    for (double weight in exerciseWeights) {
       if (weight < 0) {
         throw Exception("The weight is less than 0");
       }
     }
 
-    //check if the reps are greater then 0
-    for (int rep in excerciseReps) {
+    //check if the reps are greater than 0
+    for (int rep in exerciseReps) {
       if (rep <= 0) {
-        throw Exception("The rep is less than 0");
+        throw Exception("The rep is less than or equal to 0");
       }
     }
 
@@ -160,32 +160,32 @@ class TrainingExcerciseBus
     }
   }
 
-  //validate the training excercise for update operation
+  //validate the training exercise for update operation
   @override
   void validateForUpdate() {
     //TODO: implement validation of is the current working user
 
-    //chekc if the id is not empty
-    if (trainingExcerciseID.isEmpty) {
-      throw Exception("The training excercise id is empty");
+    //check if the id is not empty
+    if (trainingExerciseID.isEmpty) {
+      throw Exception("The training exercise id is empty");
     }
 
     //check if the weights and reps are of the same length
-    if (excerciseWeights.length != excerciseReps.length) {
+    if (exerciseWeights.length != exerciseReps.length) {
       throw Exception("The weights and reps are of different length");
     }
 
     //check if the weights are greater equals 0
-    for (double weight in excerciseWeights) {
+    for (double weight in exerciseWeights) {
       if (weight < 0) {
         throw Exception("The weight is less than 0");
       }
     }
 
-    //check if the reps are greater then 0
-    for (int rep in excerciseReps) {
+    //check if the reps are greater than 0
+    for (int rep in exerciseReps) {
       if (rep <= 0) {
-        throw Exception("The rep is less than 0");
+        throw Exception("The rep is less than or equal to 0");
       }
     }
 
@@ -195,14 +195,14 @@ class TrainingExcerciseBus
     }
   }
 
-  //validate the training excercise for delete operation
+  //validate the training exercise for delete operation
   @override
   void validateForDelete() {
     //TODO: implement validation of is the current working user
 
     //check if the id is not empty
-    if (trainingExcerciseID.isEmpty) {
-      throw Exception("The training excercise id is empty");
+    if (trainingExerciseID.isEmpty) {
+      throw Exception("The training exercise id is empty");
     }
   }
 }

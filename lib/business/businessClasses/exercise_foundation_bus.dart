@@ -1,0 +1,154 @@
+import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
+
+class ExerciseFoundationBus
+    implements TrainingsplanerBusInterface<ExerciseFoundationBus> {
+  ///represents the id of the exercise
+  String exerciseFoundationId;
+
+  ///represents the name of the exercise
+  String exerciseFoundationName;
+
+  ///represents the description of the exercise
+  String exerciseFoundationDescription;
+
+  ///represents the path of media connected to the exercise
+  String exerciseFoundationPicturePath;
+
+  ///represents the exercise type of the exercise
+  List<String> exerciseFoundationCategories;
+
+  ///represents the exercise foundation of the exercise
+  List<String> exerciseFoundationMuscleGroups;
+
+  ///represents the amount of people that are required to perform the exercise
+  int exerciseFoundationAmountOfPeople;
+
+  ///constructor of the exercise foundation
+  ExerciseFoundationBus({
+    required this.exerciseFoundationId,
+    required this.exerciseFoundationName,
+    required this.exerciseFoundationDescription,
+    required this.exerciseFoundationPicturePath,
+    required this.exerciseFoundationCategories,
+    required this.exerciseFoundationMuscleGroups,
+    required this.exerciseFoundationAmountOfPeople,
+  });
+
+  ///factory method to create a training cycle from a data base object
+  //TODO: implement the factory method
+  factory ExerciseFoundationBus.fromData() {
+    throw UnimplementedError();
+  }
+
+  ///method to convert the training cycle to a data base object
+  //TODO: implement the toData method
+  @override
+  toData() {
+    // TODO: implement toData
+    throw UnimplementedError();
+  }
+
+  ///resets every field of the exercise foundation to the default value
+  @override
+  void reset() {
+    exerciseFoundationId = "";
+    exerciseFoundationName = "";
+    exerciseFoundationDescription = "";
+    exerciseFoundationPicturePath = "";
+    exerciseFoundationCategories = [];
+    exerciseFoundationMuscleGroups = [];
+    exerciseFoundationAmountOfPeople = 0;
+  }
+
+  ///maps all attributes of another instance into this object
+  @override
+  void mapFromOtherInstance(ExerciseFoundationBus other) {
+    exerciseFoundationId = other.exerciseFoundationId;
+    exerciseFoundationName = other.exerciseFoundationName;
+    exerciseFoundationDescription = other.exerciseFoundationDescription;
+    exerciseFoundationPicturePath = other.exerciseFoundationPicturePath;
+    exerciseFoundationCategories = other.exerciseFoundationCategories;
+    exerciseFoundationMuscleGroups = other.exerciseFoundationMuscleGroups;
+    exerciseFoundationAmountOfPeople = other.exerciseFoundationAmountOfPeople;
+  }
+
+  // //////////////////////////////////////////////////////////////
+  //                              Getter                         //
+  // //////////////////////////////////////////////////////////////
+
+  @override
+  String getId() {
+    return exerciseFoundationId;
+  }
+
+  @override
+  String getName() {
+    return exerciseFoundationName;
+  }
+
+  // //////////////////////////////////////////////////////////////
+  //                CRUD-Operations                           //
+  // //////////////////////////////////////////////////////////////
+
+  @override
+  Future<void> add() async {
+    validateForAdd();
+    //TODO: implement the addExerciseFoundation method
+  }
+
+  @override
+  Future<void> update() async {
+    validateForUpdate();
+    //TODO: implement the updateExerciseFoundation method
+  }
+
+  @override
+  Future<void> delete() async {
+    //TODO: implement the deleteExerciseFoundation method
+  }
+
+  // //////////////////////////////////////////////////////////////
+  //                Validation-Operations                           //
+  // //////////////////////////////////////////////////////////////
+
+  ///validates the exercise foundation for add operations
+  @override
+  void validateForAdd() {
+    //check if the exercise got a name
+    if (exerciseFoundationName.isEmpty) {
+      throw Exception("The exercise needs a name");
+    }
+
+    //check if the categories are not empty
+    if (exerciseFoundationCategories.isEmpty) {
+      throw Exception("The exercise needs at least one category");
+    }
+  }
+
+  ///validates the exercise foundation for update operations
+  @override
+  void validateForUpdate() {
+    //check if the id is not empty
+    if (exerciseFoundationId.isEmpty) {
+      throw Exception("The exercise needs an id");
+    }
+
+    //check if the exercise got a name
+    if (exerciseFoundationName.isEmpty) {
+      throw Exception("The exercise needs a name");
+    }
+
+    //check if the categories are not empty
+    if (exerciseFoundationCategories.isEmpty) {
+      throw Exception("The exercise needs at least one category");
+    }
+  }
+
+  @override
+  void validateForDelete() {
+    //check if the id is not empty
+    if (exerciseFoundationId.isEmpty) {
+      throw Exception("The exercise needs an id");
+    }
+  }
+}

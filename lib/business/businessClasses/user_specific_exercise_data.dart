@@ -1,9 +1,9 @@
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
-class UserSpecificExcerciseData
-    implements TrainingsplanerBusInterface<UserSpecificExcerciseData> {
+class UserSpecificExerciseData
+    implements TrainingsplanerBusInterface<UserSpecificExerciseData> {
   ///the id of the user specific excercise data link
-  String excerciseLinkID;
+  String exerciseLinkID;
 
   ///the id of the user
   String userID;
@@ -17,8 +17,8 @@ class UserSpecificExcerciseData
   ///the current one Rep Max
   double oneRepMax;
 
-  UserSpecificExcerciseData({
-    required this.excerciseLinkID,
+  UserSpecificExerciseData({
+    required this.exerciseLinkID,
     required this.userID,
     required this.foundationId,
     required this.notes,
@@ -27,7 +27,7 @@ class UserSpecificExcerciseData
 
   ///factory method to create a training cycle from a data base object
   //TODO: implement the factory method
-  factory UserSpecificExcerciseData.fromData() {
+  factory UserSpecificExerciseData.fromData() {
     throw UnimplementedError();
   }
 
@@ -41,7 +41,7 @@ class UserSpecificExcerciseData
   ///resets every field of the training cycle to the default value
   @override
   void reset() {
-    excerciseLinkID = "";
+    exerciseLinkID = "";
     userID = "";
     foundationId = "";
     notes = "";
@@ -50,8 +50,8 @@ class UserSpecificExcerciseData
 
   ///maps all attributes of another instance into this object
   @override
-  void mapFromOtherInstance(UserSpecificExcerciseData other) {
-    excerciseLinkID = other.excerciseLinkID;
+  void mapFromOtherInstance(UserSpecificExerciseData other) {
+    exerciseLinkID = other.exerciseLinkID;
     userID = other.userID;
     foundationId = other.foundationId;
     notes = other.notes;
@@ -64,7 +64,7 @@ class UserSpecificExcerciseData
 
   @override
   String getId() {
-    return excerciseLinkID;
+    return exerciseLinkID;
   }
 
   @override
@@ -112,7 +112,7 @@ class UserSpecificExcerciseData
   @override
   void validateForUpdate() {
     //check if excerciseLinkID is empty
-    if (excerciseLinkID.isEmpty) {
+    if (exerciseLinkID.isEmpty) {
       throw Exception("The excerciseLinkID is empty");
     }
 
@@ -130,7 +130,7 @@ class UserSpecificExcerciseData
   @override
   void validateForDelete() {
     //check if excerciseLinkID is empty
-    if (excerciseLinkID.isEmpty) {
+    if (exerciseLinkID.isEmpty) {
       throw Exception("The excerciseLinkID is empty");
     }
   }
