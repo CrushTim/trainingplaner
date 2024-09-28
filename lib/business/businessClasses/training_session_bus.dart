@@ -1,3 +1,4 @@
+import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
 class TrainingSessionBus
@@ -18,7 +19,14 @@ class TrainingSessionBus
   int trainingSessionLength;
 
   ///represents the excercises as a list of ids of the training session
-  List<String> trainingSessionExcercises;
+  ///the list is used to map the exercises from the the exercise report into the
+  ///trainingSessionExercises list in this bus
+  List<String> trainingSessionExcercisesIds;
+
+  ///represents the list of the training session exercises
+  ///this List is changed in the perspective by maping the trainingSessionExcercisesIds
+  ///to the trainingSessionExercises in the exercise report
+  List<TrainingExerciseBus> trainingSessionExercises = [];
 
   ///represents the emphasis of the training session
   String trainingSessionEmphasis;
@@ -36,7 +44,7 @@ class TrainingSessionBus
     required this.trainingSessionDescription,
     required this.trainingSessionStartDate,
     required this.trainingSessionLength,
-    required this.trainingSessionExcercises,
+    required this.trainingSessionExcercisesIds,
     required this.trainingSessionEmphasis,
     required this.isPlanned,
     required this.trainingCycleId,
@@ -63,7 +71,7 @@ class TrainingSessionBus
     trainingSessionDescription = "";
     trainingSessionStartDate = DateTime.now();
     trainingSessionLength = 1;
-    trainingSessionExcercises = [];
+    trainingSessionExcercisesIds = [];
     trainingSessionEmphasis = "";
     isPlanned = true;
     trainingCycleId = "";
@@ -77,7 +85,7 @@ class TrainingSessionBus
     trainingSessionDescription = other.trainingSessionDescription;
     trainingSessionStartDate = other.trainingSessionStartDate;
     trainingSessionLength = other.trainingSessionLength;
-    trainingSessionExcercises = other.trainingSessionExcercises;
+    trainingSessionExcercisesIds = other.trainingSessionExcercisesIds;
     trainingSessionEmphasis = other.trainingSessionEmphasis;
     isPlanned = other.isPlanned;
     trainingCycleId = other.trainingCycleId;
@@ -131,7 +139,7 @@ class TrainingSessionBus
     if (trainingSessionLength < 1) {
       throw Exception("The training session length is less than 1");
     }
-    if (trainingSessionExcercises.isEmpty) {
+    if (trainingSessionExcercisesIds.isEmpty) {
       throw Exception("The training session excercises are empty");
     }
     //TODO: implement validation of is in training cycle(maybe in provider)
@@ -148,7 +156,7 @@ class TrainingSessionBus
     if (trainingSessionLength < 1) {
       throw Exception("The training session length is less than 1");
     }
-    if (trainingSessionExcercises.isEmpty) {
+    if (trainingSessionExcercisesIds.isEmpty) {
       throw Exception("The training session excercises are empty");
     }
   }

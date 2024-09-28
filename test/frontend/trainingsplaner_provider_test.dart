@@ -13,6 +13,15 @@ class MockTrainingsplanerBusInterfaceImpl
     extends MockTrainingsplanerBusInterface<Tester>
     implements TrainingsplanerBusInterface<Tester> {}
 
+class MockTrainingsplanerBusReportInterfaceImpl
+    implements TrainingsplanerBusReportInterface {
+  @override
+  Stream<List> getAll() {
+    // TODO: implement getAll
+    throw UnimplementedError();
+  }
+}
+
 //class MockTrainingsplanerBusInterface extends Mock implements TrainingsplanerBusInterface<MockTrainingsplanerBusInterface> {}
 @GenerateNiceMocks([MockSpec<TrainingsplanerBusInterface>()])
 void main() async {
@@ -29,6 +38,7 @@ void main() async {
       provider = TrainingsplanerProvider<TrainingsplanerBusInterface<Tester>,
           TrainingsplanerBusReportInterface>(
         businessClassForAdd: mockTrainingsplanerBusInterface,
+        reportTaskVar: MockTrainingsplanerBusReportInterfaceImpl(),
       );
     },
   );

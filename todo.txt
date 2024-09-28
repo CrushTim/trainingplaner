@@ -1,4 +1,8 @@
 
+backend:
+    make trainingsessionexercise have parent id and map by that -> should be more efficient
+
+
 workout
     excercise
         non expanded: fix button layout 

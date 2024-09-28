@@ -4,11 +4,12 @@ import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 class TrainingsplanerProvider<
     businessClass extends TrainingsplanerBusInterface<businessClass>,
     reportTask> extends ChangeNotifier {
-  TrainingsplanerProvider({required this.businessClassForAdd});
+  TrainingsplanerProvider(
+      {required this.businessClassForAdd, required this.reportTaskVar});
 
   //report task to get the business Class from the database
   //accesable to be mocked in the test
-  reportTask? reportTaskVar;
+  reportTask reportTaskVar;
 
   ///the selected business class
   ///it is null if no business class is selected

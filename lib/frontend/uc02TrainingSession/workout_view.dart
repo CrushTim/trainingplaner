@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
-import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 
 ///
 /// This class represents the view of a workout.
@@ -17,42 +18,34 @@ class WorkoutView extends StatefulWidget {
 }
 
 class _WorkoutViewState extends State<WorkoutView> {
-  TextEditingController workoutLengthController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  DateTime _startDate = DateTime.now();
+  final TextEditingController workoutLengthController = TextEditingController();
+  final TextEditingController workoutNameController = TextEditingController();
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController sessionDescriptionController =
+      TextEditingController();
+  final TextEditingController sessionEmphasisController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    startDateController.text = DateTime.now().toString();
+    workoutLengthController.text = "60";
+    workoutNameController.text = "Workout1 - name - emphasis";
+  }
+
   @override
   Widget build(BuildContext context) {
+    TrainingSessionProvider sessionProvider =
+        Provider.of<TrainingSessionProvider>(context);
     return ListView(
       children: <Widget>[
-            Center(
-              child: Text(
-                "Workout1 - name - emphasis",
-                style: TextStyle(
-                    fontSize: 24,
-                    decoration: TextDecoration.underline,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            TextField(
-              controller: workoutLengthController,
-              decoration: const InputDecoration(
-                labelText: "Workout Length in minutes",
-              ),
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                workoutLengthController.text = value;
-              },
-            ),
-            //TODO: make date time Picker
-
-            DatePickerSheer(
-              initialDateTime: _startDate,
-              onDateTimeChanged: (DateTime newDateTime) {
-                setState(() {
-                  _startDate = newDateTime;
-                });
-              },
-              dateController: _startDateController,
+            TrainingSessionEditFields(
+              workoutLengthController: workoutLengthController,
+              workoutNameController: workoutNameController,
+              startDateController: startDateController,
+              sessionDescriptionController: sessionDescriptionController,
+              sessionEmphasisController: sessionEmphasisController,
             ),
           ] +
           List<Widget>.generate(10, (index) {
@@ -74,6 +67,7 @@ class _WorkoutViewState extends State<WorkoutView> {
                       onPressed: () {
                         print("Pressed upate");
                         //TODO: implement provider update of selected workout
+                        //and make sure the workout is now planned = false
                       }),
                 ),
                 Expanded(
@@ -88,5 +82,35 @@ class _WorkoutViewState extends State<WorkoutView> {
             )
           ],
     );
+  }
+}
+
+class TrainingSessionEditFields extends StatefulWidget {
+  final TextEditingController workoutLengthController;
+  final TextEditingController workoutNameController;
+  final TextEditingController startDateController;
+  final TextEditingController sessionDescriptionController;
+  final TextEditingController sessionEmphasisController;
+
+  const TrainingSessionEditFields({
+    super.key,
+    required this.workoutLengthController,
+    required this.workoutNameController,
+    required this.startDateController,
+    required this.sessionDescriptionController,
+    required this.sessionEmphasisController,
+  });
+
+  @override
+  State<TrainingSessionEditFields> createState() =>
+      _TrainingSessionEditFieldsState();
+}
+
+class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
+  @override
+  Widget build(BuildContext context) {
+    TrainingSessionProvider sessionProvider =
+        Provider.of<TrainingSessionProvider>(context);
+    return sessionProvider.getCurrentTrainingSessionStreamBuilder();
   }
 }

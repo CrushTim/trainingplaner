@@ -13,5 +13,6 @@ class TrainingCycleProvider
                 emphasis: "",
                 userID: "",
                 beginDate: DateTime.now(),
-                endDate: DateTime.now()));
+                endDate: DateTime.now()),
+            reportTaskVar: TrainingCycleBusReport());
 }
