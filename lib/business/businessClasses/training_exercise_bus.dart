@@ -30,6 +30,9 @@ class TrainingExerciseBus
   ///the date when the training exercise begins
   DateTime date;
 
+  /// ID of the planned exercise this actual exercise is based on (null for planned exercises)
+  String? plannedExerciseId;
+
   TrainingExerciseBus({
     required this.trainingExerciseID,
     required this.exerciseName,
@@ -40,6 +43,7 @@ class TrainingExerciseBus
     required this.exerciseWeights,
     required this.isPlanned,
     required this.targetPercentageOf1RM,
+    this.plannedExerciseId,
   });
 
   ///factory method to create a training exercise from a database object
@@ -204,5 +208,21 @@ class TrainingExerciseBus
     if (trainingExerciseID.isEmpty) {
       throw Exception("The training exercise id is empty");
     }
+  }
+
+  /// Create an actual exercise based on this planned exercise
+  TrainingExerciseBus createActualExercise() {
+    return TrainingExerciseBus(
+      trainingExerciseID: "",
+      exerciseName: this.exerciseName,
+      exerciseDescription: this.exerciseDescription,
+      date: this.date,
+      exerciseFoundationID: this.exerciseFoundationID,
+      exerciseReps: [],
+      exerciseWeights: [],
+      isPlanned: false,
+      targetPercentageOf1RM: this.targetPercentageOf1RM,
+      plannedExerciseId: this.trainingExerciseID,
+    );
   }
 }

@@ -3,6 +3,10 @@ backend:
     make trainingsessionexercise have parent id and map by that -> should be more efficient
 
 
+frontend:
+    make reps and weights editing save in actual exercise 
+
+
 workout
     excercise
         non expanded: fix button layout 
@@ -13,3 +17,22 @@ workout
     -trainingsession
     -trainingcycle selection
     
+
+
+
+
+
+PLANNED AND ACTUAL WORKFLOW
+
+by design, my app works in the way so that if the current selected workout gets actual exercises, there will be a copy generated from the seleted planned 
+session and each exercise that gets updated in workout view expanded part, an actual exercise copy is also created. 
+These actual and planned exercises and session will be used to compare and display the planned exercises and the actual exercises.
+Maybe make a map after resolving the stream in which a planned workout gets mapped to the actual workouts if they exist.
+ maybe add a planned workout id attribute to the session bus to make those mappings possible. do the same for exercises.
+now when the session gets updated in the button in the workout view, we need to check if a planned exercise and session exist and
+if not, create them, otherwise update them
+
+
+
+todo add function to sessionprovider for non selected or for  add stuff
+use methods to update when doing actual and planned logic

@@ -6,13 +6,15 @@ import 'package:trainingplaner/business/reports/training_exercise_bus_report.dar
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<
     TrainingSessionBus, TrainingSessionBusReport> {
-  ///the report task for the exercises to get the exercises from the database
-  ///and map them to the session
   TrainingExerciseBusReport trainingExerciseBusReport =
       TrainingExerciseBusReport();
+
+  Map<TrainingSessionBus, TrainingSessionBus?> plannedToActualSessions = {};
+  Map<TrainingExerciseBus, TrainingExerciseBus?> plannedToActualExercises = {};
 
   TrainingSessionProvider()
       : super(
@@ -74,7 +76,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
 
     return Column(
-      children: [
+      children: <Widget>[
         TextField(
           controller: workoutNameController,
           decoration: const InputDecoration(labelText: "Workout Name"),
@@ -107,6 +109,17 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           },
           dateController: TextEditingController(text: startDate.toString()),
         ),
+        ...getSelectedBusinessClass!.trainingSessionExercises
+            .map((plannedExercise) {
+          return TrainingExerciseRow(
+            plannedExercise: plannedExercise,
+            actualExercise: plannedToActualExercises[plannedExercise],
+            onUpdate: (updatedExercise) {
+              plannedToActualExercises[plannedExercise] = updatedExercise;
+              // You might want to call a method here to persist changes or update state
+            },
+          );
+        })
       ],
     );
   }
@@ -118,27 +131,55 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       builder: (context, snapshots) {
         if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
             snapshots.snapshot2.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshots.snapshot1.hasError ||
             snapshots.snapshot2.hasError) {
-          return Text("Error");
+          return const Text("Error");
         } else {
-          List<TrainingSessionBus> trainingSessions = snapshots.snapshot1.data!;
-          List<TrainingExerciseBus> trainingExercises =
-              snapshots.snapshot2.data!;
+          List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
+          List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
 
-          for (TrainingSessionBus trainingSession in trainingSessions) {
-            trainingSession.trainingSessionExercises = trainingExercises
-                .where((exercise) =>
-                    exercise.trainingExerciseID ==
-                    trainingSession.trainingSessionId)
+          // Clear and rebuild the maps
+          plannedToActualSessions.clear();
+          plannedToActualExercises.clear();
+
+          // Map all sessions (planned and actual)
+          for (var session in allSessions) {
+            if (session.isPlanned) {
+              plannedToActualSessions[session] = null;
+            } else {
+              var plannedSession = allSessions.firstWhere(
+                (s) => s.trainingSessionId == session.plannedSessionId,
+                orElse: () => session,
+              );
+              plannedToActualSessions[plannedSession] = session;
+            }
+          }
+
+          // Map all exercises (planned and actual)
+          for (var exercise in allExercises) {
+            if (exercise.isPlanned) {
+              plannedToActualExercises[exercise] = null;
+            } else {
+              var plannedExercise = allExercises.firstWhere(
+                (e) => e.trainingExerciseID == exercise.plannedExerciseId,
+                orElse: () => exercise,
+              );
+              plannedToActualExercises[plannedExercise] = exercise;
+            }
+          }
+
+          // Assign exercises to sessions
+          for (var session in allSessions) {
+            session.trainingSessionExercises = allExercises
+                .where((exercise) => session.trainingSessionExcercisesIds
+                    .contains(exercise.trainingExerciseID))
                 .toList();
           }
 
           // Assuming you want to display the first session
-          // You might want to implement a way to select a specific session
-          if (trainingSessions.isNotEmpty) {
-            setSelectedBusinessClass(trainingSessions.first);
+          if (allSessions.isNotEmpty) {
+            setSelectedBusinessClass(allSessions.first);
             return buildTrainingSessionEditFields();
           } else {
             return Text("No training sessions available");
@@ -146,5 +187,39 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         }
       },
     );
+  }
+
+  void updateSession(
+      TrainingSessionBus session, ScaffoldMessengerState scaffoldMessenger) {
+    if (session.isPlanned) {
+      TrainingSessionBus? actualSession = plannedToActualSessions[session];
+      if (actualSession == null) {
+        actualSession = session.createActualSession();
+        plannedToActualSessions[session] = actualSession;
+        // TODO: Add this actual session to the database
+      }
+
+      for (var plannedExercise in session.trainingSessionExercises) {
+        var actualExercise = plannedToActualExercises[plannedExercise];
+
+        if (actualExercise != null) {
+          // Update existing actual exercise
+          actualExercise.exerciseReps = plannedExercise.exerciseReps;
+          actualExercise.exerciseWeights = plannedExercise.exerciseWeights;
+          // TODO: Update this actual exercise in the database
+        } else {
+          // Create new actual exercise
+          actualExercise = plannedExercise.createActualExercise();
+          plannedToActualExercises[plannedExercise] = actualExercise;
+          actualSession.trainingSessionExcercisesIds
+              .add(actualExercise.trainingExerciseID);
+          // TODO: Add this actual exercise to the database
+        }
+      }
+
+      // TODO: Update the actual session in the database
+    }
+
+    // TODO: Update the planned session in the database
   }
 }

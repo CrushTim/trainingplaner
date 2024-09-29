@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 
 class RepsWeightsRow extends StatefulWidget {
+  final int reps;
+  final double weight;
+  final Function(int reps, double weight) onUpdate;
+  final VoidCallback onDelete;
+
   const RepsWeightsRow({
     super.key,
+    required this.reps,
+    required this.weight,
+    required this.onUpdate,
+    required this.onDelete,
   });
 
   @override
@@ -10,15 +19,15 @@ class RepsWeightsRow extends StatefulWidget {
 }
 
 class _RepsWeightsRowState extends State<RepsWeightsRow> {
-  TextEditingController repsController = TextEditingController();
-  TextEditingController weightController = TextEditingController();
+  late TextEditingController repsController;
+  late TextEditingController weightController;
   late bool isFailure;
 
   @override
   void initState() {
     super.initState();
-    repsController.text = "5";
-    weightController.text = "100";
+    repsController = TextEditingController(text: widget.reps.toString());
+    weightController = TextEditingController(text: widget.weight.toString());
     isFailure = false;
   }
 
@@ -34,6 +43,12 @@ class _RepsWeightsRowState extends State<RepsWeightsRow> {
             decoration: const InputDecoration(
               labelText: "Reps",
             ),
+            onChanged: (value) {
+              int? reps = int.tryParse(value);
+              if (reps != null) {
+                widget.onUpdate(reps, widget.weight);
+              }
+            },
           ),
         ),
         Expanded(
@@ -43,25 +58,27 @@ class _RepsWeightsRowState extends State<RepsWeightsRow> {
             decoration: const InputDecoration(
               labelText: "Weight",
             ),
+            onChanged: (value) {
+              double? weight = double.tryParse(value);
+              if (weight != null) {
+                widget.onUpdate(widget.reps, weight);
+              }
+            },
           ),
         ),
         Flexible(
           child: Checkbox(
             value: isFailure,
             onChanged: (value) {
-              //TODO implement checkbox
               setState(() {
-                isFailure = !isFailure;
+                isFailure = value ?? false;
               });
-              print(isFailure);
             },
           ),
         ),
         Flexible(
           child: IconButton(
-            onPressed: () {
-              //TODO implment delete set
-            },
+            onPressed: widget.onDelete,
             icon: const Icon(Icons.delete),
           ),
         ),

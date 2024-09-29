@@ -1,143 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/reps_weights_row.dart';
 
-class TrainingExcerciseRow extends StatefulWidget {
-  const TrainingExcerciseRow({
-    super.key,
-  });
+class TrainingExerciseRow extends StatefulWidget {
+  final TrainingExerciseBus plannedExercise;
+  final TrainingExerciseBus? actualExercise;
+  final Function(TrainingExerciseBus) onUpdate;
+
+  const TrainingExerciseRow({
+    Key? key,
+    required this.plannedExercise,
+    this.actualExercise,
+    required this.onUpdate,
+  }) : super(key: key);
 
   @override
-  State<TrainingExcerciseRow> createState() => _TrainingExcerciseRowState();
+  _TrainingExerciseRowState createState() => _TrainingExerciseRowState();
 }
 
-class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
-  bool isExpanded = false;
+class _TrainingExerciseRowState extends State<TrainingExerciseRow> {
+  late TrainingExerciseBus _editableExercise;
+  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _editableExercise =
+        widget.actualExercise ?? widget.plannedExercise.createActualExercise();
+  }
+
+  void _updateExercise() {
+    widget.onUpdate(_editableExercise);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.black,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 500),
-        child: isExpanded
-            ? Column(
-                children: [
-                  RepsWeightsRow(),
-                  RepsWeightsRow(),
-                  RepsWeightsRow(),
-                  RepsWeightsRow(),
-                  RepsWeightsRow(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: IconButton(
-                            onPressed: () {
-                              //TODO: implement add set
-                            },
-                            icon: const Icon(Icons.add)),
-                      ),
-                      Expanded(
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_drop_up),
-                          onPressed: () {
-                            print("Pressed up");
-                            //TODO: implement save of the excercise with all sets and reps
-                            setState(() {
-                              isExpanded = false;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              )
-            : IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Text("Squat"),
-                    ),
-                    Flexible(
-                      child: VerticalDivider(
-                        color: Colors.black,
-                        thickness: 1,
-                      ),
-                    ),
-                    Expanded(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            Text("Planned",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text("5 x 100kg"),
-                            Text("5 x 100kg"),
-                            Text("5 x 100kg"),
-                            Text("5 x 100kg"),
-                            Text("5 x 100kg"),
-                          ],
-                        )),
-                    Flexible(
-                      child: VerticalDivider(
-                        color: Colors.black,
-                        thickness: 1,
-                      ),
-                    ),
-                    Expanded(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            Text("Actual",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text("5 x 100kg"),
-                            Text("5 x 100kg"),
-                            Text("4 x 100kg"),
-                          ],
-                        )),
-                    Flexible(
-                      child: VerticalDivider(
-                        color: Colors.black,
-                        thickness: 1,
-                      ),
-                    ),
-                    Flexible(
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                print("Pressed delete");
-                                //TODO: make delit button work
-                              },
-                            ),
-                          ),
-                          Flexible(
-                            child: IconButton(
-                              icon: Icon(Icons.arrow_drop_down),
-                              onPressed: () {
-                                print("Pressed");
-                                setState(() {
-                                  isExpanded = !isExpanded;
-                                });
-                                //TODO:
-                                //EXPAND THE ROW TO A COLUMN WITH EVERY SET AND REPS TO MAKE IT SAVABBLE AND EDITABLE TO MAKE IT A DIARY ENTRY
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            title: Text(widget.plannedExercise.exerciseName),
+            subtitle: Text(widget.plannedExercise.exerciseDescription),
+            trailing: IconButton(
+              icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
+              onPressed: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+            ),
+          ),
+          if (_isExpanded)
+            Column(
+              children: [
+                ..._editableExercise.exerciseReps.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  return RepsWeightsRow(
+                    reps: _editableExercise.exerciseReps[index],
+                    weight: _editableExercise.exerciseWeights[index],
+                    onUpdate: (reps, weight) {
+                      setState(() {
+                        _editableExercise.exerciseReps[index] = reps;
+                        _editableExercise.exerciseWeights[index] = weight;
+                        _updateExercise();
+                      });
+                    },
+                    onDelete: () {
+                      setState(() {
+                        _editableExercise.exerciseReps.removeAt(index);
+                        _editableExercise.exerciseWeights.removeAt(index);
+                        _updateExercise();
+                      });
+                    },
+                  );
+                }).toList(),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _editableExercise.exerciseReps.add(0);
+                      _editableExercise.exerciseWeights.add(0.0);
+                      _updateExercise();
+                    });
+                  },
+                  child: Text('Add Set'),
                 ),
-              ),
+              ],
+            ),
+        ],
       ),
     );
   }

@@ -37,6 +37,12 @@ class TrainingSessionBus
   ///the cycle the session is in
   String trainingCycleId;
 
+  /// ID of the planned session this actual session is based on (null for planned sessions)
+  String? plannedSessionId;
+
+  /// List of actual exercises (only for actual sessions)
+  List<TrainingExerciseBus> actualExercises = [];
+
   ///constructor of the training cycle
   TrainingSessionBus({
     required this.trainingSessionId,
@@ -48,6 +54,7 @@ class TrainingSessionBus
     required this.trainingSessionEmphasis,
     required this.isPlanned,
     required this.trainingCycleId,
+    this.plannedSessionId,
   });
 
   ///factory method to create a training cycle from a data base object
@@ -166,5 +173,21 @@ class TrainingSessionBus
     if (trainingSessionId.isEmpty) {
       throw Exception("The training session id is empty");
     }
+  }
+
+  /// Create an actual session based on this planned session
+  TrainingSessionBus createActualSession() {
+    return TrainingSessionBus(
+      trainingSessionId: "",
+      trainingSessionName: this.trainingSessionName,
+      trainingSessionDescription: this.trainingSessionDescription,
+      trainingSessionStartDate: DateTime.now(),
+      trainingSessionLength: this.trainingSessionLength,
+      trainingSessionExcercisesIds: [],
+      trainingSessionEmphasis: this.trainingSessionEmphasis,
+      isPlanned: false,
+      trainingCycleId: this.trainingCycleId,
+      plannedSessionId: this.trainingSessionId,
+    );
   }
 }
