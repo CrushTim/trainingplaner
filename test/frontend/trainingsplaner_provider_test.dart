@@ -59,7 +59,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addBusinessClass(
+              await provider.addForAddBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -94,7 +94,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addBusinessClass(
+              await provider.addForAddBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
                   notify: false);
             },
@@ -132,7 +132,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addBusinessClass(
+              await provider.addForAddBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -169,7 +169,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addBusinessClass(
+              await provider.addForAddBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -204,7 +204,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.updateBusinessClass(
+              await provider.updateSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -237,7 +237,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.updateBusinessClass(
+              await provider.updateSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
                   notify: false);
             },
@@ -275,7 +275,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.updateBusinessClass(
+              await provider.updateSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -306,7 +306,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.updateBusinessClass(
+              await provider.updateSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -341,7 +341,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.deleteBusinessClass(
+              await provider.deleteSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -376,7 +376,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.deleteBusinessClass(
+              await provider.deleteSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
                   notify: false);
             },
@@ -414,7 +414,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.deleteBusinessClass(
+              await provider.deleteSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -445,7 +445,7 @@ void main() async {
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.deleteBusinessClass(
+              await provider.deleteSelectedBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -460,6 +460,355 @@ void main() async {
       expect(find.text("FormatException: No business class selected"),
           findsOneWidget);
       expect(listenerCalled, true);
+    });
+  });
+
+  group("addBusinessClass", () {
+    testWidgets("positive - should add a business class",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.addBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Added ${mockTrainingsplanerBusInterface.getName()}"),
+          findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingsplanerBusInterface.add()).called(1);
+    });
+
+    testWidgets(
+        "positive - should add a business class without notifying listeners",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.addBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+                notify: false,
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Added ${mockTrainingsplanerBusInterface.getName()}"),
+          findsOneWidget);
+      expect(listenerCalled, false);
+      verify(mockTrainingsplanerBusInterface.add()).called(1);
+    });
+
+    testWidgets("negative - should show error when method throws error",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      when(mockTrainingsplanerBusInterface.add()).thenThrow("Error");
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.addBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingsplanerBusInterface.add()).called(1);
+    });
+
+    testWidgets("negative - should show error when method future.error",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      when(mockTrainingsplanerBusInterface.add())
+          .thenAnswer((_) => Future.error("Future Error"));
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.addBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Future Error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingsplanerBusInterface.add()).called(1);
+    });
+  });
+
+  group("updateBusinessClass", () {
+    testWidgets("positive - should update a business class",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.updateBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Updated ${mockTrainingsplanerBusInterface.getName()}"),
+          findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingsplanerBusInterface.update()).called(1);
+    });
+
+    testWidgets(
+        "positive - should update a business class without notifying listeners",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.updateBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+                notify: false,
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Updated ${mockTrainingsplanerBusInterface.getName()}"),
+          findsOneWidget);
+      expect(listenerCalled, false);
+      verify(mockTrainingsplanerBusInterface.update()).called(1);
+    });
+
+    testWidgets("negative - should show error when method future.error",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      when(mockTrainingsplanerBusInterface.update())
+          .thenAnswer((_) => Future.error("Future Error"));
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.updateBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Future Error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingsplanerBusInterface.update()).called(1);
+    });
+  });
+
+  group("deleteBusinessClass", () {
+    testWidgets("positive - should delete a business class",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.deleteBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("deleted ${mockTrainingsplanerBusInterface.getName()}"),
+          findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingsplanerBusInterface.delete()).called(1);
+    });
+
+    testWidgets(
+        "positive - should delete a business class without notifying listeners",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.deleteBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+                notify: false,
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("deleted ${mockTrainingsplanerBusInterface.getName()}"),
+          findsOneWidget);
+      expect(listenerCalled, false);
+      verify(mockTrainingsplanerBusInterface.delete()).called(1);
+    });
+
+    testWidgets("negative - should show error when method future.error",
+        (WidgetTester tester) async {
+      //arrange
+      bool listenerCalled = false;
+      provider.addListener(() {
+        listenerCalled = true;
+      });
+
+      when(mockTrainingsplanerBusInterface.delete())
+          .thenAnswer((_) => Future.error("Future Error"));
+
+      //act
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () async {
+              await provider.deleteBusinessClass(
+                mockTrainingsplanerBusInterface,
+                ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
+              );
+            },
+            child: const Text("test"),
+          ),
+        ),
+      ));
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      //assert
+      expect(find.text("Future Error"), findsOneWidget);
+      expect(listenerCalled, true);
+      verify(mockTrainingsplanerBusInterface.delete()).called(1);
     });
   });
 }

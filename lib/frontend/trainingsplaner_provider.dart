@@ -107,14 +107,15 @@ class TrainingsplanerProvider<
   //                CRUD-Operations                             //
   // //////////////////////////////////////////////////////////////
 
-  ///add a business class to the database
+  ///add the business class for addition to the database
   /// uses a ScaffoldMessengerState to show a snackbar
   /// the method is called when the user wants to add a new business class
   /// the method is called in the view and acts on the business class for addition
   /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
   /// @param notify if true the listeners are notified
-  /// @return Future<void> with the result of the additio
-  Future<void> addBusinessClass(ScaffoldMessengerState scaffoldMessengerState,
+  /// @return Future<void> with the result of the addition
+  Future<void> addForAddBusinessClass(
+      ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
     String message = "Added ${businessClassForAdd.getName()}";
     try {
@@ -137,7 +138,7 @@ class TrainingsplanerProvider<
     }
   }
 
-  ///update a business class in the database
+  ///update the selected business class in the database
   /// uses a ScaffoldMessengerState to show a snackbar
   /// the method is called when the user wants to update a business class
   /// the method is called in the view and acts on the selected business class
@@ -145,7 +146,7 @@ class TrainingsplanerProvider<
   /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
   /// @param notify if true the listeners are notified
   /// @return Future<void> with the result of the update
-  Future<void> updateBusinessClass(
+  Future<void> updateSelectedBusinessClass(
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
     String message = "Updated ${_selectedBusinessClass?.getName()}";
@@ -170,7 +171,7 @@ class TrainingsplanerProvider<
     }
   }
 
-  ///delete a business class from the database
+  ///delete the selected business class from the database
   /// uses a ScaffoldMessengerState to show a snackbar
   /// the method is called when the user wants to delete a business class
   /// the method is called in the view and acts on the selected business class
@@ -178,8 +179,7 @@ class TrainingsplanerProvider<
   /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
   /// @param notify if true the listeners are notified
   /// @return Future<void> with the result of the deletion
-
-  Future<void> deleteBusinessClass(
+  Future<void> deleteSelectedBusinessClass(
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
     String message = "deleted ${_selectedBusinessClass?.getName()}";
@@ -202,7 +202,90 @@ class TrainingsplanerProvider<
           content: Text(message),
         ),
       );
-      print(message);
+    }
+  }
+
+  ///add a business class to the database
+  /// uses a ScaffoldMessengerState to show a snackbar
+  /// @param businessClass the business class to add
+  /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
+  /// @param notify if true the listeners are notified
+  /// @return Future<void> with the result of the addition
+  Future<void> addBusinessClass(businessClass businessClassToAdd,
+      ScaffoldMessengerState scaffoldMessengerState,
+      {bool notify = true}) async {
+    String message = "Added ${businessClassToAdd.getName()}";
+    try {
+      await businessClassToAdd
+          .add()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
+    }
+  }
+
+  ///update a business class in the database
+  /// uses a ScaffoldMessengerState to show a snackbar
+  /// @param businessClass the business class to update
+  /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
+  /// @param notify if true the listeners are notified
+  /// @return Future<void> with the result of the update
+  Future<void> updateBusinessClass(businessClass businessClassToUpdate,
+      ScaffoldMessengerState scaffoldMessengerState,
+      {bool notify = true}) async {
+    String message = "Updated ${businessClassToUpdate.getName()}";
+    try {
+      await businessClassToUpdate
+          .update()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
+    }
+  }
+
+  ///delete a business class from the database
+  /// uses a ScaffoldMessengerState to show a snackbar
+  /// @param businessClass the business class to delete
+  /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
+  /// @param notify if true the listeners are notified
+  /// @return Future<void> with the result of the deletion
+  Future<void> deleteBusinessClass(businessClass businessClassToDelete,
+      ScaffoldMessengerState scaffoldMessengerState,
+      {bool notify = true}) async {
+    String message = "deleted ${businessClassToDelete.getName()}";
+    try {
+      await businessClassToDelete
+          .delete()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
     }
   }
 }

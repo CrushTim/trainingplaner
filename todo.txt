@@ -35,4 +35,6 @@ if not, create them, otherwise update them
 
 
 todo add function to sessionprovider for non selected or for  add stuff
+    make the mapping of exercises to list of ids in bus so it adds right 
+    
 use methods to update when doing actual and planned logic
