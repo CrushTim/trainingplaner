@@ -17,6 +17,7 @@ dependencies:
   build_runner: ^2.4.9
   multiple_stream_builder: ^3.0.2
   firebase_core: ^3.4.0
+  cloud_firestore: ^5.4.0
 
 dev_dependencies:
   flutter_test:
