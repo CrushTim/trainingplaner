@@ -190,4 +190,8 @@ class TrainingSessionBus
       plannedSessionId: this.trainingSessionId,
     );
   }
+
+  String toString() {
+    return "TrainingSessionBus(trainingSessionId: $trainingSessionId, trainingSessionName: $trainingSessionName, trainingSessionDescription: $trainingSessionDescription, trainingSessionStartDate: $trainingSessionStartDate, trainingSessionLength: $trainingSessionLength, trainingSessionExcercisesIds: $trainingSessionExcercisesIds, trainingSessionEmphasis: $trainingSessionEmphasis, isPlanned: $isPlanned, trainingCycleId: $trainingCycleId, plannedSessionId: $plannedSessionId)";
+  }
 }

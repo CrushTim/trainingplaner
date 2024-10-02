@@ -54,8 +54,9 @@ class _WorkoutViewState extends State<WorkoutView> {
                           child: Text("Update Diary Entry"),
                           onPressed: () {
                             print("Pressed upate");
-                            //TODO: implement provider update of selected workout
-                            //and make sure the workout is now planned = false
+                            sessionProvider.updateSessionInDatabase(
+                                sessionProvider.getSelectedBusinessClass,
+                                ScaffoldMessenger.of(context));
                           }),
                     ),
                     Expanded(

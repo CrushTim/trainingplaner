@@ -42,4 +42,23 @@ class TrainingSessionBusReport extends TrainingsplanerBusReportInterface {
       ]
     ]);
   }
+
+  ///gets all the training sessions for a user
+  Stream<List<TrainingSessionBus>> getAllForUser() {
+    return Stream.fromIterable([
+      [
+        TrainingSessionBus(
+          trainingSessionId: '1',
+          trainingSessionName: 'Strength Training',
+          trainingSessionDescription: 'Focus on building core strength',
+          trainingSessionEmphasis: 'Strength',
+          trainingSessionLength: 60,
+          trainingSessionStartDate: DateTime.now(),
+          trainingCycleId: 'TC001',
+          isPlanned: true,
+          trainingSessionExcercisesIds: [],
+        ),
+      ]
+    ]);
+  }
 }

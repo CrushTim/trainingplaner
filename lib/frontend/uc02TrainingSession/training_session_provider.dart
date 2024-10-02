@@ -1,3 +1,5 @@
+import 'dart:js_util';
+
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
@@ -49,9 +51,24 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
+  ///map the ids of the exercises to an TrainingSessionBus trainingSessionExercisesIDs list
+  ///is used to get the ids of the exercises so they can be saved in the database
+  void mapExerciseIdsToSession(
+      TrainingSessionBus session, List<TrainingExerciseBus> exercises) {
+    for (TrainingExerciseBus exercise in exercises) {
+      session.trainingSessionExcercisesIds.add(exercise.trainingExerciseID);
+    }
+  }
+
+  /// Builds the training session edit fields
+  ///
+  /// Returns a widget that allows the user to edit the training session fields
+  ///
+  /// If no training session is selected, returns a text saying so
+  ///
   Widget buildTrainingSessionEditFields() {
     if (getSelectedBusinessClass == null) {
-      return Text("No training session selected");
+      return const Text("No training session selected");
     }
 
     final session = getSelectedBusinessClass!;
@@ -127,7 +144,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   Widget getCurrentTrainingSessionStreamBuilder() {
     return StreamBuilder2(
       streams: StreamTuple2(
-          reportTaskVar.getAll(), trainingExerciseBusReport.getAll()),
+          reportTaskVar.getAllForUser(), trainingExerciseBusReport.getAll()),
       builder: (context, snapshots) {
         if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
             snapshots.snapshot2.connectionState == ConnectionState.waiting) {
@@ -179,33 +196,43 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
           // Assuming you want to display the first session
           if (allSessions.isNotEmpty) {
-            setSelectedBusinessClass(allSessions.first);
+            setSelectedBusinessClass(allSessions.first, notify: false);
             return buildTrainingSessionEditFields();
           } else {
-            return Text("No training sessions available");
+            return const Text("No training sessions available");
           }
         }
       },
     );
   }
 
-  void updateSession(
-      TrainingSessionBus session, ScaffoldMessengerState scaffoldMessenger) {
+  /// Updates the session and its exercises
+  ///
+  /// If the session is planned, it checks if there is an actual session for it.
+  /// If not, it creates one. Then it updates or creates the exercises in the session.
+  /// Finally, it updates the session in the database.
+  void updateSessionInDatabase(
+      TrainingSessionBus? session, ScaffoldMessengerState scaffoldMessenger) {
+    if (session == null) {
+      return;
+    }
     if (session.isPlanned) {
       TrainingSessionBus? actualSession = plannedToActualSessions[session];
+      //if there is no actual session for the planned session, create one
       if (actualSession == null) {
         actualSession = session.createActualSession();
         plannedToActualSessions[session] = actualSession;
-        // TODO: Add this actual session to the database
+        print(actualSession.toString());
+        addBusinessClass(actualSession, scaffoldMessenger);
       }
-
+      //go through all the planned exercises and update or create the actual exercises
       for (var plannedExercise in session.trainingSessionExercises) {
         var actualExercise = plannedToActualExercises[plannedExercise];
 
         if (actualExercise != null) {
           // Update existing actual exercise
-          actualExercise.exerciseReps = plannedExercise.exerciseReps;
-          actualExercise.exerciseWeights = plannedExercise.exerciseWeights;
+          ///actualExercise.exerciseReps = plannedExercise.exerciseReps;
+          //actualExercise.exerciseWeights = plannedExercise.exerciseWeights;
           // TODO: Update this actual exercise in the database
         } else {
           // Create new actual exercise
@@ -217,9 +244,11 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         }
       }
 
-      // TODO: Update the actual session in the database
+      updateBusinessClass(actualSession, scaffoldMessenger, notify: false);
     }
 
-    // TODO: Update the planned session in the database
+    updateBusinessClass(session, scaffoldMessenger, notify: false);
+    print(session.toString());
+    setSelectedBusinessClass(session);
   }
 }

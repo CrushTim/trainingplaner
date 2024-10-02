@@ -1,6 +1,6 @@
 
 backend:
-    make trainingsessionexercise have parent id and map by that -> should be more efficient
+    make trainingsessionexercise have user id and parent idand map by that -> should be more efficient
 
 
 frontend:
@@ -34,7 +34,4 @@ if not, create them, otherwise update them
 
 
 
-todo add function to sessionprovider for non selected or for  add stuff
-    make the mapping of exercises to list of ids in bus so it adds right 
-    
-use methods to update when doing actual and planned logic
+    - add and update exercises
