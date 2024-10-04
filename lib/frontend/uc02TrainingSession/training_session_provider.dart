@@ -43,7 +43,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             },
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
@@ -142,7 +142,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   Widget getCurrentTrainingSessionStreamBuilder() {
     return StreamBuilder2(
       streams: StreamTuple2(
-          reportTaskVar.getAllForUser(), trainingExerciseBusReport.getAll()),
+          reportTaskVar.getAll(), trainingExerciseBusReport.getAll()),
       builder: (context, snapshots) {
         if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
             snapshots.snapshot2.connectionState == ConnectionState.waiting) {
@@ -246,7 +246,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
 
     updateBusinessClass(session, scaffoldMessenger, notify: false);
-    print(session.toString());
     setSelectedBusinessClass(session);
   }
 }

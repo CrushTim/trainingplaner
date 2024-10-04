@@ -1,3 +1,4 @@
+import 'package:trainingplaner/backend/dataClasses/training_session_data.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
@@ -58,16 +59,36 @@ class TrainingSessionBus
   });
 
   ///factory method to create a training cycle from a data base object
-  //TODO: implement the factory method
-  factory TrainingSessionBus.fromData() {
-    throw UnimplementedError();
+  factory TrainingSessionBus.fromData(TrainingSessionData data) {
+    return TrainingSessionBus(
+      trainingSessionId: data.trainingSessionId,
+      trainingSessionName: data.trainingSessionName,
+      trainingSessionDescription: data.trainingSessionDescription,
+      trainingSessionStartDate: data.trainingSessionStartDate,
+      trainingSessionLength: data.trainingSessionLength,
+      trainingSessionExcercisesIds: data.trainingSessionExcercisesIds,
+      trainingSessionEmphasis: data.trainingSessionEmphasis,
+      isPlanned: data.isPlanned,
+      trainingCycleId: data.trainingCycleId,
+      plannedSessionId: data.plannedSessionId,
+    );
   }
 
   ///method to convert the training cycle to a data base object
-  //TODO: implement the toData method
   @override
-  toData() {
-    throw UnimplementedError();
+  TrainingSessionData toData() {
+    return TrainingSessionData(
+      trainingSessionId: trainingSessionId,
+      trainingSessionName: trainingSessionName,
+      trainingSessionDescription: trainingSessionDescription,
+      trainingSessionStartDate: trainingSessionStartDate,
+      trainingSessionLength: trainingSessionLength,
+      trainingSessionExcercisesIds: trainingSessionExcercisesIds,
+      trainingSessionEmphasis: trainingSessionEmphasis,
+      isPlanned: isPlanned,
+      trainingCycleId: trainingCycleId,
+      plannedSessionId: plannedSessionId,
+    );
   }
 
   ///resets every field of the training cycle to the default value

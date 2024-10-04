@@ -1,3 +1,4 @@
+import 'package:trainingplaner/backend/dataClasses/training_exercise_data.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
 class TrainingExerciseBus
@@ -47,16 +48,36 @@ class TrainingExerciseBus
   });
 
   ///factory method to create a training exercise from a database object
-  //TODO: implement the factory method
-  factory TrainingExerciseBus.fromData() {
-    throw UnimplementedError();
+  factory TrainingExerciseBus.fromData(TrainingExerciseData data) {
+    return TrainingExerciseBus(
+      trainingExerciseID: data.trainingExerciseID,
+      exerciseName: data.exerciseName,
+      exerciseDescription: data.exerciseDescription,
+      date: data.date,
+      exerciseFoundationID: data.exerciseFoundationID,
+      exerciseReps: data.exerciseReps,
+      exerciseWeights: data.exerciseWeights,
+      isPlanned: data.isPlanned,
+      targetPercentageOf1RM: data.targetPercentageOf1RM,
+      plannedExerciseId: data.plannedExerciseId,
+    );
   }
 
   ///method to convert the training exercise to a database object
-  //TODO: implement the toData method
   @override
-  toData() {
-    throw UnimplementedError();
+  TrainingExerciseData toData() {
+    return TrainingExerciseData(
+      trainingExerciseID: trainingExerciseID,
+      exerciseName: exerciseName,
+      exerciseDescription: exerciseDescription,
+      date: date,
+      exerciseFoundationID: exerciseFoundationID,
+      exerciseReps: exerciseReps,
+      exerciseWeights: exerciseWeights,
+      isPlanned: isPlanned,
+      targetPercentageOf1RM: targetPercentageOf1RM,
+      plannedExerciseId: plannedExerciseId,
+    );
   }
 
   //maps all attributes of another instance into this object called mapFormOtherInstance

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:trainingplaner/backend/training_cycle_data.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_report_interface.dart';
+import 'package:trainingplaner/backend/dataClasses/training_cycle_data.dart';
 
 class TrainingCycleDataReport
     implements TrainingsplanerDataReportInterface<TrainingCycleData> {

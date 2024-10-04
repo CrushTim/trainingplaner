@@ -1,3 +1,4 @@
+import 'package:trainingplaner/backend/dataClasses/exercise_foundation_data.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
 class ExerciseFoundationBus
@@ -34,18 +35,31 @@ class ExerciseFoundationBus
     required this.exerciseFoundationAmountOfPeople,
   });
 
-  ///factory method to create a training cycle from a data base object
-  //TODO: implement the factory method
-  factory ExerciseFoundationBus.fromData() {
-    throw UnimplementedError();
+  /// Creates an ExerciseFoundationBus instance from a data object
+  factory ExerciseFoundationBus.fromData(ExerciseFoundationData data) {
+    return ExerciseFoundationBus(
+      exerciseFoundationId: data.exerciseFoundationId,
+      exerciseFoundationName: data.exerciseFoundationName,
+      exerciseFoundationDescription: data.exerciseFoundationDescription,
+      exerciseFoundationPicturePath: data.exerciseFoundationPicturePath,
+      exerciseFoundationCategories: data.exerciseFoundationCategories,
+      exerciseFoundationMuscleGroups: data.exerciseFoundationMuscleGroups,
+      exerciseFoundationAmountOfPeople: data.exerciseFoundationAmountOfPeople,
+    );
   }
 
-  ///method to convert the training cycle to a data base object
-  //TODO: implement the toData method
+  /// Converts the ExerciseFoundationBus instance to a data object
   @override
-  toData() {
-    // TODO: implement toData
-    throw UnimplementedError();
+  ExerciseFoundationData toData() {
+    return ExerciseFoundationData(
+      exerciseFoundationId: exerciseFoundationId,
+      exerciseFoundationName: exerciseFoundationName,
+      exerciseFoundationDescription: exerciseFoundationDescription,
+      exerciseFoundationPicturePath: exerciseFoundationPicturePath,
+      exerciseFoundationCategories: exerciseFoundationCategories,
+      exerciseFoundationMuscleGroups: exerciseFoundationMuscleGroups,
+      exerciseFoundationAmountOfPeople: exerciseFoundationAmountOfPeople,
+    );
   }
 
   ///resets every field of the exercise foundation to the default value

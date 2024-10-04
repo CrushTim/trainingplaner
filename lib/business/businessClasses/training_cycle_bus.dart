@@ -1,4 +1,5 @@
-import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
+import 'package:trainingplaner/backend/dataClasses/training_cycle_data.dart';
+import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart'; // Add this import
 
 class TrainingCycleBus
     implements TrainingsplanerBusInterface<TrainingCycleBus> {
@@ -38,17 +39,32 @@ class TrainingCycleBus
   });
 
   ///factory method to create a training cycle from a data base object
-  //TODO: implement the factory method
-  factory TrainingCycleBus.fromData() {
-    throw UnimplementedError();
+  factory TrainingCycleBus.fromData(TrainingCycleData data) {
+    return TrainingCycleBus(
+      trainingCycleID: data.trainingCycleID,
+      cycleName: data.cycleName,
+      description: data.description,
+      emphasis: data.emphasis,
+      userID: data.userID,
+      beginDate: data.beginDate,
+      endDate: data.endDate,
+      parent: data.parent,
+    );
   }
 
   ///method to convert the training cycle to a data base object
-  //TODO: implement the toData method
   @override
-  toData() {
-    // TODO: implement toData
-    throw UnimplementedError();
+  TrainingCycleData toData() {
+    return TrainingCycleData(
+      trainingCycleID: trainingCycleID,
+      cycleName: cycleName,
+      description: description,
+      emphasis: emphasis,
+      userID: userID,
+      beginDate: beginDate,
+      endDate: endDate,
+      parent: parent,
+    );
   }
 
   //maps all attributes of another instance into this object called mapFormOtherInstance

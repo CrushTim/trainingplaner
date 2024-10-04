@@ -1,7 +1,5 @@
 current:
-    - make login view 
     - make first sample data
-    - make business reports use data reports
     - test the workout view stuff
 
 

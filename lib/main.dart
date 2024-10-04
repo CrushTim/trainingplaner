@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:trainingplaner/firebase_options.dart';
 import 'package:trainingplaner/frontend/home_page.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fireabase_ui_auth;
 
 void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -18,6 +20,10 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final providers = [
+      fireabase_ui_auth.EmailAuthProvider(),
+    ];
+
     return MaterialApp(
       theme: ThemeData(
           inputDecorationTheme: const InputDecorationTheme(
@@ -40,10 +46,25 @@ class Main extends StatelessWidget {
           borderSide: BorderSide(color: Colors.green),
         ),
       )),
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider(create: (context) => TrainingSessionProvider()),
-        ChangeNotifierProvider(create: (context) => TrainingCycleProvider()),
-      ], child: const HomePage()),
+      initialRoute:
+          FirebaseAuth.instance.currentUser != null ? '/home' : '/login',
+      routes: {
+        '/login': (context) => fireabase_ui_auth.SignInScreen(
+              providers: providers,
+              actions: [
+                fireabase_ui_auth.AuthStateChangeAction<
+                    fireabase_ui_auth.SignedIn>((context, state) {
+                  Navigator.of(context).pushReplacementNamed('/home');
+                })
+              ],
+            ),
+        '/home': (context) => MultiProvider(providers: [
+              ChangeNotifierProvider(
+                  create: (context) => TrainingSessionProvider()),
+              ChangeNotifierProvider(
+                  create: (context) => TrainingCycleProvider()),
+            ], child: const HomePage()),
+      },
     );
   }
 }
