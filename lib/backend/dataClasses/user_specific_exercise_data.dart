@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_interface.dart';
 
 class UserSpecificExerciseData implements TrainingsplanerDataInterface {
@@ -14,6 +15,17 @@ class UserSpecificExerciseData implements TrainingsplanerDataInterface {
     required this.notes,
     required this.oneRepMax,
   });
+
+  factory UserSpecificExerciseData.fromSnapshot(
+      QueryDocumentSnapshot snapshot) {
+    return UserSpecificExerciseData(
+      exerciseLinkID: snapshot.id,
+      userID: snapshot['userID'],
+      foundationId: snapshot['foundationId'],
+      notes: snapshot['notes'],
+      oneRepMax: snapshot['oneRepMax'],
+    );
+  }
 
   factory UserSpecificExerciseData.fromJson(Map<String, dynamic> json) {
     return UserSpecificExerciseData(

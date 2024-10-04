@@ -1,6 +1,10 @@
+current:
+    - make login view 
+    - make first sample data
+    - make business reports use data reports
+    - test the workout view stuff
 
-backend:
-    make trainingsessionexercise have user id and parent idand map by that -> should be more efficient
+
 
 
 frontend:
@@ -13,10 +17,28 @@ workout
 
 
 
-- make first usage of reports and make provider view methods
-    -trainingsession
-    -trainingcycle selection
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -32,6 +54,3 @@ Maybe make a map after resolving the stream in which a planned workout gets mapp
 now when the session gets updated in the button in the workout view, we need to check if a planned exercise and session exist and
 if not, create them, otherwise update them
 
-
-
-    - add and update exercises

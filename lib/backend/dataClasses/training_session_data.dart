@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_interface.dart';
 
 class TrainingSessionData implements TrainingsplanerDataInterface {
@@ -26,6 +27,22 @@ class TrainingSessionData implements TrainingsplanerDataInterface {
     this.plannedSessionId,
     this.actualExercisesIds = const [],
   });
+
+  factory TrainingSessionData.fromSnapshot(QueryDocumentSnapshot snapshot) {
+    return TrainingSessionData(
+      trainingSessionId: snapshot.id,
+      trainingSessionName: snapshot['name'],
+      trainingSessionDescription: snapshot['description'],
+      trainingSessionStartDate:
+          DateTime.parse(snapshot['trainingSessionStartDate']),
+      trainingSessionLength: snapshot['trainingSessionLength'],
+      trainingSessionExcercisesIds:
+          List<String>.from(snapshot['trainingSessionExcercisesIds']),
+      trainingSessionEmphasis: snapshot['trainingSessionEmphasis'],
+      isPlanned: snapshot['isPlanned'],
+      trainingCycleId: snapshot['trainingCycleId'],
+    );
+  }
 
   // /////////////////////////////////////////////
   // JSON

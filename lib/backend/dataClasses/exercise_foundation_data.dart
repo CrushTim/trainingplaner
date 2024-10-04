@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_interface.dart';
 
 class ExerciseFoundationData implements TrainingsplanerDataInterface {
@@ -19,6 +20,18 @@ class ExerciseFoundationData implements TrainingsplanerDataInterface {
     required this.exerciseFoundationAmountOfPeople,
   });
 
+  factory ExerciseFoundationData.fromSnapshot(QueryDocumentSnapshot snapshot) {
+    return ExerciseFoundationData(
+      exerciseFoundationId: snapshot.id,
+      exerciseFoundationName: snapshot['name'],
+      exerciseFoundationDescription: snapshot['description'],
+      exerciseFoundationPicturePath: snapshot['picturePath'],
+      exerciseFoundationCategories: List<String>.from(snapshot['categories']),
+      exerciseFoundationMuscleGroups:
+          List<String>.from(snapshot['muscleGroups']),
+      exerciseFoundationAmountOfPeople: snapshot['amountOfPeople'],
+    );
+  }
   factory ExerciseFoundationData.fromJson(Map<String, dynamic> json) {
     return ExerciseFoundationData(
       exerciseFoundationId: json['exerciseFoundationId'],
