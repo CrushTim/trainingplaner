@@ -23,31 +23,12 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
                 isPlanned: true,
                 trainingSessionName: "",
                 trainingSessionDescription: "",
-                trainingSessionEmphasis: "",
+                trainingSessionEmphasis: [],
                 trainingSessionExcercisesIds: [],
                 trainingSessionLength: 1,
                 trainingSessionStartDate: DateTime.now(),
                 trainingCycleId: ""),
             reportTaskVar: TrainingSessionBusReport());
-
-  StreamBuilder<List<TrainingSessionBus>>
-      getAllTrainingSessionsStreamBuilder() {
-    return StreamBuilder<List<TrainingSessionBus>>(
-      stream: reportTaskVar.getAll(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return Text(snapshot.data![index].trainingSessionName);
-            },
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
-    );
-  }
 
   ///map the ids of the exercises to an TrainingSessionBus trainingSessionExercisesIDs list
   ///is used to get the ids of the exercises so they can be saved in the database
@@ -77,7 +58,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     final TextEditingController sessionDescriptionController =
         TextEditingController(text: session.trainingSessionDescription);
     final TextEditingController sessionEmphasisController =
-        TextEditingController(text: session.trainingSessionEmphasis);
+        TextEditingController(text: session.trainingSessionEmphasis.toString());
     DateTime startDate = session.trainingSessionStartDate;
 
     void updateSession() {
@@ -86,7 +67,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           int.tryParse(workoutLengthController.text) ??
               session.trainingSessionLength;
       session.trainingSessionDescription = sessionDescriptionController.text;
-      session.trainingSessionEmphasis = sessionEmphasisController.text;
+      session.trainingSessionEmphasis = [sessionEmphasisController.text];
       session.trainingSessionStartDate = startDate;
     }
 
@@ -149,10 +130,16 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           return const CircularProgressIndicator();
         } else if (snapshots.snapshot1.hasError ||
             snapshots.snapshot2.hasError) {
-          return const Text("Error");
+          if (snapshots.snapshot1.hasError) {
+            print("1");
+            return Text(snapshots.snapshot1.error.toString());
+          } else {
+            return Text(snapshots.snapshot2.error.toString());
+          }
         } else {
           List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
           List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
+          print(allSessions.length);
 
           // Clear and rebuild the maps
           plannedToActualSessions.clear();
@@ -220,7 +207,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       if (actualSession == null) {
         actualSession = session.createActualSession();
         plannedToActualSessions[session] = actualSession;
-        print(actualSession.toString());
         addBusinessClass(actualSession, scaffoldMessenger);
       }
       //go through all the planned exercises and update or create the actual exercises

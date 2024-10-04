@@ -30,7 +30,7 @@ class TrainingSessionBus
   List<TrainingExerciseBus> trainingSessionExercises = [];
 
   ///represents the emphasis of the training session
-  String trainingSessionEmphasis;
+  List<String> trainingSessionEmphasis;
 
   ///wether the training session is a planned one or one that is a diary entry
   bool isPlanned;
@@ -100,7 +100,7 @@ class TrainingSessionBus
     trainingSessionStartDate = DateTime.now();
     trainingSessionLength = 1;
     trainingSessionExcercisesIds = [];
-    trainingSessionEmphasis = "";
+    trainingSessionEmphasis = [];
     isPlanned = true;
     trainingCycleId = "";
   }

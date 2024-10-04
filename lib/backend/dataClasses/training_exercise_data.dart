@@ -27,16 +27,17 @@ class TrainingExerciseData implements TrainingsplanerDataInterface {
   });
 
   factory TrainingExerciseData.fromSnapshot(QueryDocumentSnapshot snapshot) {
+    print(snapshot.data());
     return TrainingExerciseData(
       trainingExerciseID: snapshot.id,
       exerciseName: snapshot['name'],
       exerciseDescription: snapshot['description'],
-      exerciseFoundationID: snapshot['exerciseFoundationID'],
-      exerciseWeights: List<double>.from(snapshot['exerciseWeights']),
-      exerciseReps: List<int>.from(snapshot['exerciseReps']),
-      targetPercentageOf1RM: snapshot['targetPercentageOf1RM'],
+      exerciseFoundationID: snapshot['ExerciseFoundationId'],
+      exerciseWeights: List<double>.from(snapshot['weights']),
+      exerciseReps: List<int>.from(snapshot['reps']),
+      targetPercentageOf1RM: snapshot['targetPercentage'],
       isPlanned: snapshot['isPlanned'],
-      date: DateTime.parse(snapshot['date']),
+      date: snapshot['date'].toDate() ?? DateTime.now(),
       plannedExerciseId: snapshot['plannedExerciseId'],
     );
   }

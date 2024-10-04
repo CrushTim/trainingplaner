@@ -12,8 +12,8 @@ class TrainingSessionDataReport
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('trainingSessions');
     Stream<QuerySnapshot> stream = collectionReference.snapshots();
-    return stream.map((querySnapshot) => querySnapshot.docs
-        .map((doc) => TrainingSessionData.fromSnapshot(doc))
-        .toList());
+    return stream.map((querySnapshot) => querySnapshot.docs.map((doc) {
+          return TrainingSessionData.fromSnapshot(doc);
+        }).toList());
   }
 }

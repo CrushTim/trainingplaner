@@ -8,7 +8,7 @@ class TrainingSessionData implements TrainingsplanerDataInterface {
   DateTime trainingSessionStartDate;
   int trainingSessionLength;
   List<String> trainingSessionExcercisesIds;
-  String trainingSessionEmphasis;
+  List<String> trainingSessionEmphasis;
   bool isPlanned;
   String trainingCycleId;
   String? plannedSessionId;
@@ -29,18 +29,17 @@ class TrainingSessionData implements TrainingsplanerDataInterface {
   });
 
   factory TrainingSessionData.fromSnapshot(QueryDocumentSnapshot snapshot) {
+    print(snapshot.data());
     return TrainingSessionData(
       trainingSessionId: snapshot.id,
       trainingSessionName: snapshot['name'],
       trainingSessionDescription: snapshot['description'],
-      trainingSessionStartDate:
-          DateTime.parse(snapshot['trainingSessionStartDate']),
-      trainingSessionLength: snapshot['trainingSessionLength'],
-      trainingSessionExcercisesIds:
-          List<String>.from(snapshot['trainingSessionExcercisesIds']),
-      trainingSessionEmphasis: snapshot['trainingSessionEmphasis'],
+      trainingSessionStartDate: snapshot['date'].toDate() ?? DateTime.now(),
+      trainingSessionLength: snapshot['sessionLength'],
+      trainingSessionExcercisesIds: List<String>.from(snapshot['exerciseIds']),
+      trainingSessionEmphasis: List<String>.from(snapshot['emphasis']),
       isPlanned: snapshot['isPlanned'],
-      trainingCycleId: snapshot['trainingCycleId'],
+      trainingCycleId: snapshot['cycleId'],
     );
   }
 
