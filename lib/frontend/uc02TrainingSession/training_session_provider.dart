@@ -13,8 +13,14 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   TrainingExerciseBusReport trainingExerciseBusReport =
       TrainingExerciseBusReport();
 
+  TrainingSessionBus? selectedActualSession;
+
   Map<TrainingSessionBus, TrainingSessionBus?> plannedToActualSessions = {};
+  List<TrainingSessionBus> unplannedSessions = [];
   Map<TrainingExerciseBus, TrainingExerciseBus?> plannedToActualExercises = {};
+  List<TrainingExerciseBus> unplannedExercises = [];
+
+  bool isNewActualSession = false;
 
   TrainingSessionProvider()
       : super(
@@ -39,18 +45,102 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
+  Widget getCurrentTrainingSessionStreamBuilder() {
+    return StreamBuilder2(
+      streams: StreamTuple2(
+          reportTaskVar.getAll(), trainingExerciseBusReport.getAll()),
+      builder: (context, snapshots) {
+        if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
+            snapshots.snapshot2.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshots.snapshot1.hasError ||
+            snapshots.snapshot2.hasError) {
+          if (snapshots.snapshot1.hasError) {
+            return Text(snapshots.snapshot1.error.toString());
+          } else {
+            return Text(snapshots.snapshot2.error.toString());
+          }
+        } else {
+          List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
+          List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
+
+          // Clear and rebuild the maps
+          plannedToActualSessions.clear();
+          plannedToActualExercises.clear();
+          unplannedSessions.clear();
+          unplannedExercises.clear();
+
+          // Map all sessions (planned and actual)
+          for (var session in allSessions) {
+            if (session.isPlanned) {
+              plannedToActualSessions[session] = null;
+            } else {
+              var plannedSession = allSessions.firstWhere(
+                (s) => s.trainingSessionId == session.plannedSessionId,
+                orElse: () => session,
+              );
+              if (plannedSession == session) {
+                unplannedSessions.add(session);
+              } else {
+                plannedToActualSessions[plannedSession] = session;
+              }
+            }
+          }
+
+          // Map all exercises (planned and actual)
+          for (var exercise in allExercises) {
+            if (exercise.isPlanned) {
+              plannedToActualExercises[exercise] = null;
+            } else {
+              var plannedExercise = allExercises.firstWhere(
+                (e) => e.trainingExerciseID == exercise.plannedExerciseId,
+                orElse: () => exercise,
+              );
+              if (plannedExercise == exercise) {
+                unplannedExercises.add(exercise);
+              } else {
+                plannedToActualExercises[plannedExercise] = exercise;
+              }
+            }
+          }
+
+          // Assign exercises to sessions
+          for (var session in allSessions) {
+            session.trainingSessionExercises = allExercises
+                .where((exercise) => session.trainingSessionExcercisesIds
+                    .contains(exercise.trainingExerciseID))
+                .toList();
+          }
+
+          /// set all selected planned and actual sessions and exercises
+          if (allSessions.isNotEmpty) {
+            if (plannedToActualSessions.keys.isNotEmpty) {
+              setSelectedBusinessClass(plannedToActualSessions.keys.first,
+                  notify: false);
+              selectedActualSession =
+                  plannedToActualSessions[getSelectedBusinessClass!];
+              isNewActualSession = selectedActualSession == null;
+              selectedActualSession ??=
+                  getSelectedBusinessClass!.createActualSession();
+            }
+            return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
+          } else {
+            return const Text("No training sessions available");
+          }
+        }
+      },
+    );
+  }
+
   /// Builds the training session edit fields
   ///
   /// Returns a widget that allows the user to edit the training session fields
   ///
   /// If no training session is selected, returns a text saying so
   ///
-  Widget buildTrainingSessionEditFields() {
-    if (getSelectedBusinessClass == null) {
-      return const Text("No training session selected");
-    }
-
-    final session = getSelectedBusinessClass!;
+  Widget buildTrainingSessionEditFelds(
+      ScaffoldMessengerState scaffoldMessenger) {
+    final session = selectedActualSession!;
     final TextEditingController workoutNameController =
         TextEditingController(text: session.trainingSessionName);
     final TextEditingController workoutLengthController =
@@ -105,89 +195,34 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           },
           dateController: TextEditingController(text: startDate.toString()),
         ),
-        ...getSelectedBusinessClass!.trainingSessionExercises
-            .map((plannedExercise) {
-          return TrainingExerciseRow(
-            plannedExercise: plannedExercise,
-            actualExercise: plannedToActualExercises[plannedExercise],
-            onUpdate: (updatedExercise) {
-              plannedToActualExercises[plannedExercise] = updatedExercise;
-              // You might want to call a method here to persist changes or update state
+        // show all the exercises in the session by showing
+        for (TrainingExerciseBus exercise in plannedToActualExercises.keys)
+          TrainingExcerciseRow(
+            actualTrainingExercise: plannedToActualExercises[exercise],
+            plannedTrainingExercise: exercise,
+            onUpdate: (isNew) {
+              if (isNew) {
+                addExercise(exercise, scaffoldMessenger);
+              } else {
+                updateExercises([exercise], scaffoldMessenger);
+              }
             },
-          );
-        })
+          ),
+
+        //add all the unplanned exercises
+        for (TrainingExerciseBus exercise in unplannedExercises)
+          TrainingExcerciseRow(
+            actualTrainingExercise: exercise,
+            plannedTrainingExercise: null,
+            onUpdate: (isNew) {
+              if (isNew) {
+                addExercise(exercise, scaffoldMessenger, notify: false);
+              } else {
+                updateExercises([exercise], scaffoldMessenger, notify: false);
+              }
+            },
+          )
       ],
-    );
-  }
-
-  Widget getCurrentTrainingSessionStreamBuilder() {
-    return StreamBuilder2(
-      streams: StreamTuple2(
-          reportTaskVar.getAll(), trainingExerciseBusReport.getAll()),
-      builder: (context, snapshots) {
-        if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
-            snapshots.snapshot2.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshots.snapshot1.hasError ||
-            snapshots.snapshot2.hasError) {
-          if (snapshots.snapshot1.hasError) {
-            print("1");
-            return Text(snapshots.snapshot1.error.toString());
-          } else {
-            return Text(snapshots.snapshot2.error.toString());
-          }
-        } else {
-          List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
-          List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
-          print(allSessions.length);
-
-          // Clear and rebuild the maps
-          plannedToActualSessions.clear();
-          plannedToActualExercises.clear();
-
-          // Map all sessions (planned and actual)
-          for (var session in allSessions) {
-            if (session.isPlanned) {
-              plannedToActualSessions[session] = null;
-            } else {
-              var plannedSession = allSessions.firstWhere(
-                (s) => s.trainingSessionId == session.plannedSessionId,
-                orElse: () => session,
-              );
-              plannedToActualSessions[plannedSession] = session;
-            }
-          }
-
-          // Map all exercises (planned and actual)
-          for (var exercise in allExercises) {
-            if (exercise.isPlanned) {
-              plannedToActualExercises[exercise] = null;
-            } else {
-              var plannedExercise = allExercises.firstWhere(
-                (e) => e.trainingExerciseID == exercise.plannedExerciseId,
-                orElse: () => exercise,
-              );
-              plannedToActualExercises[plannedExercise] = exercise;
-            }
-          }
-
-          // Assign exercises to sessions
-          for (var session in allSessions) {
-            session.trainingSessionExercises = allExercises
-                .where((exercise) => session.trainingSessionExcercisesIds
-                    .contains(exercise.trainingExerciseID))
-                .toList();
-          }
-
-          // Assuming you want to display the first session
-          if (allSessions.isNotEmpty) {
-            setSelectedBusinessClass(allSessions.first, notify: false);
-            return buildTrainingSessionEditFields();
-          } else {
-            return const Text("No training sessions available");
-          }
-        }
-      },
     );
   }
 
@@ -196,42 +231,105 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   /// If the session is planned, it checks if there is an actual session for it.
   /// If not, it creates one. Then it updates or creates the exercises in the session.
   /// Finally, it updates the session in the database.
-  void updateSessionInDatabase(
-      TrainingSessionBus? session, ScaffoldMessengerState scaffoldMessenger) {
-    if (session == null) {
+
+  void updateSessionInDatabase(ScaffoldMessengerState scaffoldMessenger) {
+    if (selectedActualSession == null || getSelectedBusinessClass == null) {
+      scaffoldMessenger
+          .showSnackBar(SnackBar(content: Text('No session selected')));
       return;
     }
-    if (session.isPlanned) {
-      TrainingSessionBus? actualSession = plannedToActualSessions[session];
-      //if there is no actual session for the planned session, create one
-      if (actualSession == null) {
-        actualSession = session.createActualSession();
-        plannedToActualSessions[session] = actualSession;
-        addBusinessClass(actualSession, scaffoldMessenger);
-      }
-      //go through all the planned exercises and update or create the actual exercises
-      for (var plannedExercise in session.trainingSessionExercises) {
-        var actualExercise = plannedToActualExercises[plannedExercise];
 
-        if (actualExercise != null) {
-          // Update existing actual exercise
-          ///actualExercise.exerciseReps = plannedExercise.exerciseReps;
-          //actualExercise.exerciseWeights = plannedExercise.exerciseWeights;
-          // TODO: Update this actual exercise in the database
-        } else {
-          // Create new actual exercise
-          actualExercise = plannedExercise.createActualExercise();
-          plannedToActualExercises[plannedExercise] = actualExercise;
-          actualSession.trainingSessionExcercisesIds
-              .add(actualExercise.trainingExerciseID);
-          // TODO: Add this actual exercise to the database
-        }
-      }
+    // Update exercises for both planned and actual sessions
+    List<TrainingExerciseBus> exercisesToUpdate = [
+      ...getSelectedBusinessClass!.trainingSessionExercises,
+      ...selectedActualSession!.trainingSessionExercises,
+    ];
 
-      updateBusinessClass(actualSession, scaffoldMessenger, notify: false);
+    updateExercises(exercisesToUpdate, scaffoldMessenger, notify: false);
+
+    // Update the actual session
+    isNewActualSession
+        ? addBusinessClass(selectedActualSession!, scaffoldMessenger)
+        : updateBusinessClass(selectedActualSession!, scaffoldMessenger,
+            notify: false);
+
+    // Update the planned session
+    updateBusinessClass(getSelectedBusinessClass!, scaffoldMessenger,
+        notify: true);
+
+    scaffoldMessenger
+        .showSnackBar(SnackBar(content: Text('Session and exercises updated')));
+  }
+
+  Future<void> updateExercises(
+    List<TrainingExerciseBus> exercises,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Exercises updated";
+    try {
+      for (var exercise in exercises) {
+        await exercise.update().onError((error, stackTrace) {
+          message =
+              "Error updating ${exercise.exerciseName}: ${error.toString()}";
+          throw error!;
+        });
+      }
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
     }
+  }
 
-    updateBusinessClass(session, scaffoldMessenger, notify: false);
-    setSelectedBusinessClass(session);
+  Future<void> addExercise(
+    TrainingExerciseBus exercise,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Added ${exercise.getName()}";
+    try {
+      await exercise.add().onError((error, stackTrace) {
+        message = "Error adding ${exercise.getName()}: ${error.toString()}";
+        throw error!;
+      });
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  //add a new Exercise to the database
+  void addExerciseToSession(BuildContext context) {
+    TrainingExerciseBus newExercise = TrainingExerciseBus(
+      trainingExerciseID: "", // Add a unique ID or generate one
+      exerciseName: "mock",
+      exerciseDescription: "mock",
+      exerciseFoundationID: "mock",
+      targetPercentageOf1RM: 100,
+      exerciseReps: [], // Add an empty list or initial reps
+      exerciseWeights: [], // Add an empty list or initial weights
+      isPlanned: false, // Set to false for a new exercise
+      plannedExerciseId: "",
+      date: DateTime.now(),
+    );
+
+    //TODO: make add dialog
+    addExercise(newExercise, ScaffoldMessenger.of(context));
+
+    selectedActualSession!.trainingSessionExcercisesIds
+        .add(newExercise.trainingExerciseID);
+    selectedActualSession!.trainingSessionExercises.add(newExercise);
   }
 }

@@ -128,29 +128,24 @@ class TrainingExerciseBus
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> add() async {
-    //TODO: implement the addTrainingExercise method
+    validateForAdd();
+    toData().add();
   }
 
   //update a training exercise in the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> update() async {
-    try {
-      //TODO: implement the updateTrainingExercise method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+    validateForUpdate();
+    toData().update();
   }
 
   //delete a training exercise from the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> delete() async {
-    try {
-      //TODO: implement the deleteTrainingExercise method
-    } on Exception catch (e) {
-      return Future.error(Exception(e));
-    }
+    validateForDelete();
+    toData().delete();
   }
 
   // //////////////////////////////////////////////////////////////

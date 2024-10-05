@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_interface.dart';
 
 class TrainingSessionData implements TrainingsplanerDataInterface {
+  CollectionReference collection = FirebaseFirestore.instance
+      .collection("user")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("trainingSessions");
   String trainingSessionId;
   String trainingSessionName;
   String trainingSessionDescription;
@@ -29,7 +34,6 @@ class TrainingSessionData implements TrainingsplanerDataInterface {
   });
 
   factory TrainingSessionData.fromSnapshot(QueryDocumentSnapshot snapshot) {
-    print(snapshot.data());
     return TrainingSessionData(
       trainingSessionId: snapshot.id,
       trainingSessionName: snapshot['name'],
@@ -47,38 +51,18 @@ class TrainingSessionData implements TrainingsplanerDataInterface {
   // JSON
   // /////////////////////////////////////////////
 
-  factory TrainingSessionData.fromJson(Map<String, dynamic> json) {
-    return TrainingSessionData(
-      trainingSessionId: json['trainingSessionId'],
-      trainingSessionName: json['trainingSessionName'],
-      trainingSessionDescription: json['trainingSessionDescription'],
-      trainingSessionStartDate:
-          DateTime.parse(json['trainingSessionStartDate']),
-      trainingSessionLength: json['trainingSessionLength'],
-      trainingSessionExcercisesIds:
-          List<String>.from(json['trainingSessionExcercisesIds']),
-      trainingSessionEmphasis: json['trainingSessionEmphasis'],
-      isPlanned: json['isPlanned'],
-      trainingCycleId: json['trainingCycleId'],
-      plannedSessionId: json['plannedSessionId'],
-      actualExercisesIds: List<String>.from(json['actualExercisesIds'] ?? []),
-    );
-  }
-
   @override
   Map<String, dynamic> toJson() {
     return {
-      'trainingSessionId': trainingSessionId,
-      'trainingSessionName': trainingSessionName,
-      'trainingSessionDescription': trainingSessionDescription,
-      'trainingSessionStartDate': trainingSessionStartDate.toIso8601String(),
-      'trainingSessionLength': trainingSessionLength,
-      'trainingSessionExcercisesIds': trainingSessionExcercisesIds,
-      'trainingSessionEmphasis': trainingSessionEmphasis,
+      'name': trainingSessionName,
+      'description': trainingSessionDescription,
+      'date': Timestamp.fromDate(trainingSessionStartDate),
+      'sessionLength': trainingSessionLength,
+      'exerciseIds': trainingSessionExcercisesIds,
+      'emphasis': trainingSessionEmphasis,
       'isPlanned': isPlanned,
-      'trainingCycleId': trainingCycleId,
+      'cycleId': trainingCycleId,
       'plannedSessionId': plannedSessionId,
-      'actualExercisesIds': actualExercisesIds,
     };
   }
 
@@ -87,20 +71,17 @@ class TrainingSessionData implements TrainingsplanerDataInterface {
   // /////////////////////////////////////////////
 
   @override
-  Future<void> add() {
-    // TODO: implement add
-    throw UnimplementedError();
+  Future<void> add() async {
+    await collection.add(toJson());
   }
 
   @override
-  Future<void> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete() async {
+    await collection.doc(trainingSessionId).delete();
   }
 
   @override
-  Future<void> update() {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update() async {
+    await collection.doc(trainingSessionId).update(toJson());
   }
 }

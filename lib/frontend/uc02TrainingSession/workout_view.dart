@@ -37,39 +37,36 @@ class _WorkoutViewState extends State<WorkoutView> {
     TrainingSessionProvider sessionProvider =
         Provider.of<TrainingSessionProvider>(context);
     return ListView(
-      children:
-          <Widget>[sessionProvider.getCurrentTrainingSessionStreamBuilder()] +
-              <Widget>[
-                IconButton(
+      children: [
+        sessionProvider.getCurrentTrainingSessionStreamBuilder(),
+        IconButton(
+          onPressed: () {
+            print("Pressed add");
+            sessionProvider.addExerciseToSession(context);
+          },
+          icon: const Icon(Icons.add),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                  child: const Text("Update Diary Entry"),
                   onPressed: () {
-                    //TODO Add new excercise to the workout
-                    print("Pressed add");
-                  },
-                  icon: Icon(Icons.add),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                          child: Text("Update Diary Entry"),
-                          onPressed: () {
-                            print("Pressed upate");
-                            sessionProvider.updateSessionInDatabase(
-                                sessionProvider.getSelectedBusinessClass,
-                                ScaffoldMessenger.of(context));
-                          }),
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                          child: Text("Finish Workout"),
-                          onPressed: () {
-                            print("Pressed finish");
-                            //TODO: implement provider finish of selected workout (save diary entry and move selected workout to the next workout);
-                          }),
-                    ),
-                  ],
-                )
-              ],
+                    sessionProvider
+                        .updateSessionInDatabase(ScaffoldMessenger.of(context));
+                  }),
+            ),
+            Expanded(
+              child: ElevatedButton(
+                  child: const Text("Finish Workout"),
+                  onPressed: () {
+                    print("Pressed finish");
+                    //TODO: implement provider finish of selected workout (save diary entry and move selected workout to the next workout);
+                  }),
+            ),
+          ],
+        )
+      ],
     );
   }
 }

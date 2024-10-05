@@ -140,19 +140,19 @@ class TrainingSessionBus
   @override
   Future<void> add() async {
     validateForAdd();
-    //TODO: implement the addTrainingCycle method
+    toData().add();
   }
 
   @override
   Future<void> update() async {
     validateForUpdate();
-    //TODO: implement the updateTrainingCycle method
+    toData().update();
   }
 
   @override
   Future<void> delete() async {
     validateForDelete();
-    //TODO: implement the deleteTrainingCycle method
+    toData().delete();
   }
 
   // //////////////////////////////////////////////////////////////
@@ -167,9 +167,6 @@ class TrainingSessionBus
     if (trainingSessionLength < 1) {
       throw Exception("The training session length is less than 1");
     }
-    if (trainingSessionExcercisesIds.isEmpty) {
-      throw Exception("The training session excercises are empty");
-    }
     //TODO: implement validation of is in training cycle(maybe in provider)
   }
 
@@ -183,9 +180,6 @@ class TrainingSessionBus
     }
     if (trainingSessionLength < 1) {
       throw Exception("The training session length is less than 1");
-    }
-    if (trainingSessionExcercisesIds.isEmpty) {
-      throw Exception("The training session excercises are empty");
     }
   }
 

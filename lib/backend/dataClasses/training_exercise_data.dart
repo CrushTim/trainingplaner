@@ -1,7 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_interface.dart';
 
 class TrainingExerciseData implements TrainingsplanerDataInterface {
+  CollectionReference collection = FirebaseFirestore.instance
+      .collection("user")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("trainingExercises");
+
   String trainingExerciseID;
   String exerciseName;
   String exerciseDescription;
@@ -27,7 +33,6 @@ class TrainingExerciseData implements TrainingsplanerDataInterface {
   });
 
   factory TrainingExerciseData.fromSnapshot(QueryDocumentSnapshot snapshot) {
-    print(snapshot.data());
     return TrainingExerciseData(
       trainingExerciseID: snapshot.id,
       exerciseName: snapshot['name'],
@@ -42,52 +47,33 @@ class TrainingExerciseData implements TrainingsplanerDataInterface {
     );
   }
 
-  factory TrainingExerciseData.fromJson(Map<String, dynamic> json) {
-    return TrainingExerciseData(
-      trainingExerciseID: json['trainingExerciseID'],
-      exerciseName: json['exerciseName'],
-      exerciseDescription: json['exerciseDescription'],
-      exerciseFoundationID: json['exerciseFoundationID'],
-      exerciseWeights: List<double>.from(json['exerciseWeights']),
-      exerciseReps: List<int>.from(json['exerciseReps']),
-      targetPercentageOf1RM: json['targetPercentageOf1RM'],
-      isPlanned: json['isPlanned'],
-      date: DateTime.parse(json['date']),
-      plannedExerciseId: json['plannedExerciseId'],
-    );
-  }
-
   @override
   Map<String, dynamic> toJson() {
     return {
-      'trainingExerciseID': trainingExerciseID,
-      'exerciseName': exerciseName,
-      'exerciseDescription': exerciseDescription,
-      'exerciseFoundationID': exerciseFoundationID,
-      'exerciseWeights': exerciseWeights,
-      'exerciseReps': exerciseReps,
-      'targetPercentageOf1RM': targetPercentageOf1RM,
+      'name': exerciseName,
+      'description': exerciseDescription,
+      'ExerciseFoundationId': exerciseFoundationID,
+      'weights': exerciseWeights,
+      'reps': exerciseReps,
+      'targetPercentage': targetPercentageOf1RM,
       'isPlanned': isPlanned,
-      'date': date.toIso8601String(),
+      'date': Timestamp.fromDate(date),
       'plannedExerciseId': plannedExerciseId,
     };
   }
 
   @override
-  Future<void> add() {
-    // TODO: implement add
-    throw UnimplementedError();
+  Future<void> add() async {
+    await collection.add(toJson());
   }
 
   @override
-  Future<void> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete() async {
+    await collection.doc(trainingExerciseID).delete();
   }
 
   @override
-  Future<void> update() {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update() async {
+    await collection.doc(trainingExerciseID).update(toJson());
   }
 }

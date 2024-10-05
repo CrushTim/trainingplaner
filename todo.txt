@@ -1,7 +1,12 @@
 current:
-    - make first sample data
-    - test the workout view stuff
-
+    test only actual exercise with no planned 
+    test add actual exercise per button
+          -> with an actual session
+          -> with no actual session
+    
+ TODO:
+ update diary doubles even if actual exists
+ change onupdate stuff
 
 
 
