@@ -127,9 +127,9 @@ class TrainingExerciseBus
   //add a training exercise to the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
-  Future<void> add() async {
+  Future<String> add() async {
     validateForAdd();
-    toData().add();
+    return toData().add();
   }
 
   //update a training exercise in the database

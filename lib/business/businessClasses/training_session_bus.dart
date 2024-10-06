@@ -41,9 +41,6 @@ class TrainingSessionBus
   /// ID of the planned session this actual session is based on (null for planned sessions)
   String? plannedSessionId;
 
-  /// List of actual exercises (only for actual sessions)
-  List<TrainingExerciseBus> actualExercises = [];
-
   ///constructor of the training cycle
   TrainingSessionBus({
     required this.trainingSessionId,

@@ -19,8 +19,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   List<TrainingSessionBus> unplannedSessions = [];
   Map<TrainingExerciseBus, TrainingExerciseBus?> plannedToActualExercises = {};
   List<TrainingExerciseBus> unplannedExercises = [];
-
-  bool isNewActualSession = false;
+  List<TrainingExerciseBus> unplannedExercisesForSession = [];
 
   TrainingSessionProvider()
       : super(
@@ -61,6 +60,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             return Text(snapshots.snapshot2.error.toString());
           }
         } else {
+          //get all the sessions of the user
           List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
           List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
 
@@ -69,64 +69,75 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           plannedToActualExercises.clear();
           unplannedSessions.clear();
           unplannedExercises.clear();
+          unplannedExercisesForSession.clear();
 
           // Map all sessions (planned and actual)
           for (var session in allSessions) {
             if (session.isPlanned) {
               plannedToActualSessions[session] = null;
             } else {
-              var plannedSession = allSessions.firstWhere(
-                (s) => s.trainingSessionId == session.plannedSessionId,
-                orElse: () => session,
-              );
-              if (plannedSession == session) {
-                unplannedSessions.add(session);
-              } else {
-                plannedToActualSessions[plannedSession] = session;
-              }
+              unplannedSessions.add(session);
             }
           }
 
-          // Map all exercises (planned and actual)
+          //go through all the unplanned sessions and either map them to their planned session or leave them to the unplanned list
+          for (var session in unplannedSessions) {
+            TrainingSessionBus? plannedSession =
+                plannedToActualSessions.keys.firstWhere(
+              (s) => s.trainingSessionId == session.plannedSessionId,
+              orElse: () => session,
+            );
+            if (plannedSession != session) {
+              plannedToActualSessions[plannedSession] = session;
+              unplannedSessions.remove(session);
+            }
+          }
+          //now set the unplanned and planned exercise for the view
+          if (plannedToActualSessions.keys.isNotEmpty) {
+            setSelectedBusinessClass(plannedToActualSessions.keys.first,
+                notify: false);
+            selectedActualSession =
+                plannedToActualSessions[getSelectedBusinessClass!];
+            selectedActualSession ??=
+                getSelectedBusinessClass!.createActualSession();
+          }
+
+          //now fill the exercises map with the planned and actual exercises
           for (var exercise in allExercises) {
             if (exercise.isPlanned) {
               plannedToActualExercises[exercise] = null;
             } else {
-              var plannedExercise = allExercises.firstWhere(
-                (e) => e.trainingExerciseID == exercise.plannedExerciseId,
-                orElse: () => exercise,
-              );
-              if (plannedExercise == exercise) {
-                unplannedExercises.add(exercise);
-              } else {
-                plannedToActualExercises[plannedExercise] = exercise;
-              }
+              unplannedExercises.add(exercise);
+            }
+          }
+
+          //go through all the unplanned exercises and either map them to their planned exercise or leave them to the unplanned list
+          for (var exercise in unplannedExercises) {
+            TrainingExerciseBus? plannedExercise = allExercises.firstWhere(
+              (e) => e.trainingExerciseID == exercise.plannedExerciseId,
+              orElse: () => exercise,
+            );
+            if (plannedExercise != exercise) {
+              plannedToActualExercises[plannedExercise] = exercise;
+              unplannedExercises.remove(exercise);
             }
           }
 
           // Assign exercises to sessions
-          for (var session in allSessions) {
-            session.trainingSessionExercises = allExercises
-                .where((exercise) => session.trainingSessionExcercisesIds
-                    .contains(exercise.trainingExerciseID))
-                .toList();
-          }
-
-          /// set all selected planned and actual sessions and exercises
-          if (allSessions.isNotEmpty) {
-            if (plannedToActualSessions.keys.isNotEmpty) {
-              setSelectedBusinessClass(plannedToActualSessions.keys.first,
-                  notify: false);
-              selectedActualSession =
-                  plannedToActualSessions[getSelectedBusinessClass!];
-              isNewActualSession = selectedActualSession == null;
-              selectedActualSession ??=
-                  getSelectedBusinessClass!.createActualSession();
+          for (var exercise in allExercises) {
+            if (selectedActualSession!.trainingSessionExcercisesIds
+                .contains(exercise.trainingExerciseID)) {
+              selectedActualSession!.trainingSessionExercises.add(exercise);
+              print("si");
             }
-            return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
-          } else {
-            return const Text("No training sessions available");
+            if (getSelectedBusinessClass!.trainingSessionExcercisesIds
+                .contains(exercise.trainingExerciseID)) {
+              getSelectedBusinessClass!.trainingSessionExercises.add(exercise);
+            }
           }
+          print(selectedActualSession?.trainingSessionExercises);
+
+          return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
         }
       },
     );
@@ -196,7 +207,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           dateController: TextEditingController(text: startDate.toString()),
         ),
         // show all the exercises in the session by showing
-        for (TrainingExerciseBus exercise in plannedToActualExercises.keys)
+        for (TrainingExerciseBus exercise
+            in getSelectedBusinessClass!.trainingSessionExercises)
           TrainingExcerciseRow(
             actualTrainingExercise: plannedToActualExercises[exercise],
             plannedTrainingExercise: exercise,
@@ -210,7 +222,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           ),
 
         //add all the unplanned exercises
-        for (TrainingExerciseBus exercise in unplannedExercises)
+        for (TrainingExerciseBus exercise
+            in selectedActualSession!.trainingSessionExercises)
           TrainingExcerciseRow(
             actualTrainingExercise: exercise,
             plannedTrainingExercise: null,
@@ -248,7 +261,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     updateExercises(exercisesToUpdate, scaffoldMessenger, notify: false);
 
     // Update the actual session
-    isNewActualSession
+    print(plannedToActualSessions[getSelectedBusinessClass!] == null);
+    plannedToActualSessions[getSelectedBusinessClass!] == null
         ? addBusinessClass(selectedActualSession!, scaffoldMessenger)
         : updateBusinessClass(selectedActualSession!, scaffoldMessenger,
             notify: false);
@@ -287,31 +301,35 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  Future<void> addExercise(
+  Future<String> addExercise(
     TrainingExerciseBus exercise,
     ScaffoldMessengerState scaffoldMessengerState, {
     bool notify = true,
   }) async {
+    String exerciseID = "";
     String message = "Added ${exercise.getName()}";
     try {
-      await exercise.add().onError((error, stackTrace) {
+      exerciseID = await exercise.add().onError((error, stackTrace) {
         message = "Error adding ${exercise.getName()}: ${error.toString()}";
         throw error!;
       });
+      return exerciseID;
     } catch (e) {
       message = e.toString();
     } finally {
       if (notify) {
         notifyListeners();
       }
+
       scaffoldMessengerState.showSnackBar(
         SnackBar(content: Text(message)),
       );
     }
+    return exerciseID;
   }
 
   //add a new Exercise to the database
-  void addExerciseToSession(BuildContext context) {
+  Future<void> addExerciseToSession(BuildContext context) async {
     TrainingExerciseBus newExercise = TrainingExerciseBus(
       trainingExerciseID: "", // Add a unique ID or generate one
       exerciseName: "mock",
@@ -326,10 +344,12 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
 
     //TODO: make add dialog
-    addExercise(newExercise, ScaffoldMessenger.of(context));
-
-    selectedActualSession!.trainingSessionExcercisesIds
-        .add(newExercise.trainingExerciseID);
+    String exerciseID =
+        await addExercise(newExercise, ScaffoldMessenger.of(context));
+    print(exerciseID);
+    selectedActualSession!.trainingSessionExcercisesIds.add(exerciseID);
+    newExercise.trainingExerciseID = exerciseID;
     selectedActualSession!.trainingSessionExercises.add(newExercise);
+    updateBusinessClass(selectedActualSession!, ScaffoldMessenger.of(context));
   }
 }

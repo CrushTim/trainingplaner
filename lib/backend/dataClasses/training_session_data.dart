@@ -44,6 +44,7 @@ class TrainingSessionData implements TrainingsplanerDataInterface {
       trainingSessionEmphasis: List<String>.from(snapshot['emphasis']),
       isPlanned: snapshot['isPlanned'],
       trainingCycleId: snapshot['cycleId'],
+      plannedSessionId: snapshot['plannedSessionId'],
     );
   }
 

@@ -7,6 +7,7 @@ current:
  TODO:
  update diary doubles even if actual exists
  change onupdate stuff
+ change onDelete stuff
 
 
 
@@ -20,6 +21,79 @@ workout
 
 
 
+          List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
+          List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
+
+          // Clear and rebuild the maps
+          plannedToActualSessions.clear();
+          plannedToActualExercises.clear();
+          unplannedSessions.clear();
+          unplannedExercises.clear();
+
+          // Map all sessions (planned and actual)
+          for (var session in allSessions) {
+            if (session.isPlanned) {
+              plannedToActualSessions[session] = null;
+            } else {
+              unplannedSessions.add(session);
+            }
+          }
+
+          for (TrainingSessionBus session in unplannedSessions) {
+            TrainingSessionBus plannedSession = allSessions.firstWhere(
+              (s) => s.trainingSessionId == session.plannedSessionId,
+              orElse: () => session,
+            );
+            if (plannedSession != session) {
+              plannedToActualSessions[plannedSession] = session;
+              unplannedSessions.remove(session);
+            }
+          }
+
+          
+          // Map all exercises (planned and actual)
+          for (var exercise in allExercises) {
+            if (exercise.isPlanned) {
+              plannedToActualExercises[exercise] = null;
+            } else {
+              unplannedExercises.add(exercise);
+            }
+          }
+
+          for (TrainingExerciseBus exercise in unplannedExercises) {
+            TrainingExerciseBus plannedExercise = allExercises.firstWhere(
+              (e) => e.trainingExerciseID == exercise.plannedExerciseId,
+              orElse: () => exercise,
+            );
+            if (plannedExercise != exercise) {
+              plannedToActualExercises[plannedExercise] = exercise;
+              unplannedExercises.remove(exercise);
+            }
+          }
+
+          // Assign exercises to sessions
+          for (var session in allSessions) {
+            session.trainingSessionExercises = allExercises
+                .where((exercise) => session.trainingSessionExcercisesIds
+                    .contains(exercise.trainingExerciseID))
+                .toList();
+          }
+
+          /// set all selected planned and actual sessions and exercises
+          if (allSessions.isNotEmpty) {
+            if (plannedToActualSessions.keys.isNotEmpty) {
+              setSelectedBusinessClass(plannedToActualSessions.keys.first,
+                  notify: false);
+              selectedActualSession =
+                  plannedToActualSessions[getSelectedBusinessClass!];
+              isNewActualSession = selectedActualSession == null;
+              selectedActualSession ??=
+                  getSelectedBusinessClass!.createActualSession();
+            }
+            return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
+          } else {
+            return const Text("No training sessions available");
+          }
 
 
 

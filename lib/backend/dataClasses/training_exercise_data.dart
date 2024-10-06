@@ -63,8 +63,9 @@ class TrainingExerciseData implements TrainingsplanerDataInterface {
   }
 
   @override
-  Future<void> add() async {
-    await collection.add(toJson());
+  Future<String> add() async {
+    var docRef = await collection.add(toJson());
+    return docRef.id;
   }
 
   @override
