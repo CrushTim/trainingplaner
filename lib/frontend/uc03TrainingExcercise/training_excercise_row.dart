@@ -5,12 +5,14 @@ import 'package:trainingplaner/frontend/uc03TrainingExcercise/reps_weights_row.d
 class TrainingExcerciseRow extends StatefulWidget {
   final TrainingExerciseBus? actualTrainingExercise;
   final TrainingExerciseBus? plannedTrainingExercise;
-  final Function(bool) onUpdate;
+  final Function(TrainingExerciseBus) onUpdate;
+  final Function(TrainingExerciseBus) onDelete;
   const TrainingExcerciseRow({
     super.key,
     required this.actualTrainingExercise,
     required this.plannedTrainingExercise,
     required this.onUpdate,
+    required this.onDelete,
   });
 
   @override
@@ -22,9 +24,9 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.actualTrainingExercise == null) {
-      return Container();
-    }
+    TrainingExerciseBus? actualExercise = widget.actualTrainingExercise;
+    actualExercise ??= widget.plannedTrainingExercise!.createActualExercise();
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -38,31 +40,25 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
             ? Column(
                 children: [
                   //Add rows for each set and rep that are in the actualTrainingExercise
-                  for (int i = 0;
-                      i < widget.actualTrainingExercise!.exerciseReps.length;
-                      i++)
+                  for (int i = 0; i < actualExercise.exerciseReps.length; i++)
                     RepsWeightsRow(
-                      reps: widget.actualTrainingExercise!.exerciseReps[i],
-                      weight: i >=
-                              widget.actualTrainingExercise!.exerciseReps.length
+                      reps: actualExercise.exerciseReps[i],
+                      weight: i >= actualExercise.exerciseReps.length
                           ? 0
-                          : widget.actualTrainingExercise!.exerciseWeights[i],
+                          : actualExercise.exerciseWeights[i],
                       onUpdate: (reps, weight) {
-                        TrainingExerciseBus? exercise =
-                            widget.actualTrainingExercise;
-                        bool isNew = exercise == null;
-                        exercise ??= widget.plannedTrainingExercise!
-                            .createActualExercise();
-
-                        exercise.exerciseReps.add(reps);
-                        exercise.exerciseWeights.add(weight);
-                        widget.onUpdate(isNew);
+                        actualExercise!.exerciseReps[i] = reps;
+                        actualExercise.exerciseWeights[i] = weight;
                         setState(
                           () {},
                         );
                       },
                       onDelete: () {
-                        //TODO: implement delete
+                        actualExercise!.exerciseReps.removeAt(i);
+                        actualExercise.exerciseWeights.removeAt(i);
+                        setState(
+                          () {},
+                        );
                       },
                     ),
                   Row(
@@ -70,10 +66,8 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                       Expanded(
                         child: IconButton(
                             onPressed: () {
-                              widget.actualTrainingExercise!.exerciseReps
-                                  .add(0);
-                              widget.actualTrainingExercise!.exerciseWeights
-                                  .add(0);
+                              actualExercise!.exerciseReps.add(0);
+                              actualExercise.exerciseWeights.add(0);
                               setState(
                                 () {},
                               );
@@ -84,16 +78,7 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                         child: IconButton(
                           icon: const Icon(Icons.arrow_drop_up),
                           onPressed: () {
-                            print("Pressed up");
-
-                            bool isNew = widget.actualTrainingExercise == null;
-
-                            TrainingExerciseBus? exercise =
-                                widget.actualTrainingExercise;
-                            exercise ??= widget.plannedTrainingExercise!
-                                .createActualExercise();
-
-                            widget.onUpdate(isNew);
+                            widget.onUpdate(actualExercise!);
                             setState(() {
                               isExpanded = false;
                             });
@@ -169,8 +154,7 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                             child: IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
-                                print("Pressed delete");
-                                //TODO: make delit button work/
+                                widget.onDelete(actualExercise!);
                               },
                             ),
                           ),
@@ -178,7 +162,6 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                             child: IconButton(
                               icon: const Icon(Icons.arrow_drop_down),
                               onPressed: () {
-                                print("Pressed");
                                 setState(() {
                                   isExpanded = !isExpanded;
                                 });

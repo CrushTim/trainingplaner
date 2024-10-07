@@ -70,6 +70,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           unplannedSessions.clear();
           unplannedExercises.clear();
           unplannedExercisesForSession.clear();
+          selectedActualSession?.trainingSessionExercises.clear();
+          getSelectedBusinessClass?.trainingSessionExercises.clear();
 
           // Map all sessions (planned and actual)
           for (var session in allSessions) {
@@ -128,14 +130,12 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             if (selectedActualSession!.trainingSessionExcercisesIds
                 .contains(exercise.trainingExerciseID)) {
               selectedActualSession!.trainingSessionExercises.add(exercise);
-              print("si");
             }
             if (getSelectedBusinessClass!.trainingSessionExcercisesIds
                 .contains(exercise.trainingExerciseID)) {
               getSelectedBusinessClass!.trainingSessionExercises.add(exercise);
             }
           }
-          print(selectedActualSession?.trainingSessionExercises);
 
           return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
         }
@@ -162,7 +162,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         TextEditingController(text: session.trainingSessionEmphasis.toString());
     DateTime startDate = session.trainingSessionStartDate;
 
-    void updateSession() {
+    void updateSessionFromFields() {
       session.trainingSessionName = workoutNameController.text;
       session.trainingSessionLength =
           int.tryParse(workoutLengthController.text) ??
@@ -172,6 +172,9 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       session.trainingSessionStartDate = startDate;
     }
 
+    print(getSelectedBusinessClass!.trainingSessionExercises);
+    print(selectedActualSession!.trainingSessionExercises);
+
     return Column(
       children: <Widget>[
         TextField(
@@ -179,30 +182,30 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           decoration: const InputDecoration(labelText: "Workout Name"),
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
-          onChanged: (_) => updateSession(),
+          onChanged: (_) => updateSessionFromFields(),
         ),
         TextField(
           controller: sessionDescriptionController,
           decoration: const InputDecoration(labelText: "Session Description"),
-          onChanged: (_) => updateSession(),
+          onChanged: (_) => updateSessionFromFields(),
         ),
         TextField(
           controller: sessionEmphasisController,
           decoration: const InputDecoration(labelText: "Session Emphasis"),
-          onChanged: (_) => updateSession(),
+          onChanged: (_) => updateSessionFromFields(),
         ),
         TextField(
           controller: workoutLengthController,
           decoration:
               const InputDecoration(labelText: "Workout Length in minutes"),
           keyboardType: TextInputType.number,
-          onChanged: (_) => updateSession(),
+          onChanged: (_) => updateSessionFromFields(),
         ),
         DatePickerSheer(
           initialDateTime: startDate,
           onDateTimeChanged: (DateTime newDateTime) {
             startDate = newDateTime;
-            updateSession();
+            updateSessionFromFields();
           },
           dateController: TextEditingController(text: startDate.toString()),
         ),
@@ -212,11 +215,30 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           TrainingExcerciseRow(
             actualTrainingExercise: plannedToActualExercises[exercise],
             plannedTrainingExercise: exercise,
-            onUpdate: (isNew) {
-              if (isNew) {
-                addExercise(exercise, scaffoldMessenger);
+            onUpdate: (actualExercise) async {
+              if (plannedToActualExercises[exercise] == null) {
+                String addId =
+                    await addExercise(actualExercise, scaffoldMessenger);
+                selectedActualSession!.trainingSessionExcercisesIds.add(addId);
+                actualExercise.trainingExerciseID = addId;
+                updateBusinessClass(selectedActualSession!, scaffoldMessenger,
+                    notify: false);
               } else {
-                updateExercises([exercise], scaffoldMessenger);
+                updateExercises([actualExercise], scaffoldMessenger,
+                    notify: false);
+              }
+            },
+            onDelete: (actualExercise) {
+              if (plannedToActualExercises[exercise] != null ||
+                  unplannedExercises.contains(exercise)) {
+                deleteExercise(actualExercise, scaffoldMessenger,
+                    notify: false);
+                selectedActualSession!.trainingSessionExcercisesIds
+                    .remove(actualExercise.trainingExerciseID);
+                selectedActualSession!.trainingSessionExercises
+                    .remove(actualExercise);
+                updateBusinessClass(selectedActualSession!, scaffoldMessenger,
+                    notify: false);
               }
             },
           ),
@@ -227,11 +249,20 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           TrainingExcerciseRow(
             actualTrainingExercise: exercise,
             plannedTrainingExercise: null,
-            onUpdate: (isNew) {
-              if (isNew) {
-                addExercise(exercise, scaffoldMessenger, notify: false);
-              } else {
-                updateExercises([exercise], scaffoldMessenger, notify: false);
+            onUpdate: (actualExercise) {
+              updateExercises([exercise], scaffoldMessenger, notify: false);
+            },
+            onDelete: (actualExercise) {
+              if (plannedToActualExercises[exercise] != null ||
+                  unplannedExercises.contains(exercise)) {
+                deleteExercise(actualExercise, scaffoldMessenger,
+                    notify: false);
+                selectedActualSession!.trainingSessionExcercisesIds
+                    .remove(actualExercise.trainingExerciseID);
+                selectedActualSession!.trainingSessionExercises
+                    .remove(actualExercise);
+                updateBusinessClass(selectedActualSession!, scaffoldMessenger,
+                    notify: false);
               }
             },
           )
@@ -328,6 +359,27 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     return exerciseID;
   }
 
+  Future<void> deleteExercise(TrainingExerciseBus exercise,
+      ScaffoldMessengerState scaffoldMessengerState,
+      {bool notify = true}) async {
+    String message = "Deleted ${exercise.getName()}";
+    try {
+      await exercise.delete().onError((error, stackTrace) {
+        message = "Error deleting ${exercise.getName()}: ${error.toString()}";
+        throw error!;
+      });
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
   //add a new Exercise to the database
   Future<void> addExerciseToSession(BuildContext context) async {
     TrainingExerciseBus newExercise = TrainingExerciseBus(
@@ -344,12 +396,14 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
 
     //TODO: make add dialog
-    String exerciseID =
-        await addExercise(newExercise, ScaffoldMessenger.of(context));
+    String exerciseID = await addExercise(
+        newExercise, ScaffoldMessenger.of(context),
+        notify: false);
     print(exerciseID);
     selectedActualSession!.trainingSessionExcercisesIds.add(exerciseID);
     newExercise.trainingExerciseID = exerciseID;
     selectedActualSession!.trainingSessionExercises.add(newExercise);
-    updateBusinessClass(selectedActualSession!, ScaffoldMessenger.of(context));
+    updateBusinessClass(selectedActualSession!, ScaffoldMessenger.of(context),
+        notify: false);
   }
 }
