@@ -18,9 +18,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   Map<TrainingSessionBus, TrainingSessionBus?> plannedToActualSessions = {};
   List<TrainingSessionBus> unplannedSessions = [];
   Map<TrainingExerciseBus, TrainingExerciseBus?> plannedToActualExercises = {};
-  List<TrainingExerciseBus> unplannedExercises = [];
   List<TrainingExerciseBus> unplannedExercisesForSession = [];
-
+  List<TrainingExerciseBus> unplannedExercises = [];
   TrainingSessionProvider()
       : super(
             businessClassForAdd: TrainingSessionBus(
@@ -96,12 +95,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           }
           //now set the unplanned and planned exercise for the view
           if (plannedToActualSessions.keys.isNotEmpty) {
-            setSelectedBusinessClass(plannedToActualSessions.keys.first,
-                notify: false);
-            selectedActualSession =
-                plannedToActualSessions[getSelectedBusinessClass!];
-            selectedActualSession ??=
-                getSelectedBusinessClass!.createActualSession();
+            setActualAndPlannedSession(plannedToActualSessions.keys.first,
+                plannedToActualSessions[plannedToActualSessions.keys.first]);
           }
 
           //now fill the exercises map with the planned and actual exercises
@@ -137,10 +132,24 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             }
           }
 
+          print(plannedToActualExercises);
+
+          unplannedExercisesForSession = selectedActualSession!
+              .trainingSessionExercises
+              .where((exercise) =>
+                  !plannedToActualExercises.containsValue(exercise))
+              .toList();
           return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
         }
       },
     );
+  }
+
+  void setActualAndPlannedSession(
+      TrainingSessionBus? plannedSession, TrainingSessionBus? actualSession) {
+    setSelectedBusinessClass(plannedSession, notify: false);
+    selectedActualSession = actualSession;
+    selectedActualSession ??= getSelectedBusinessClass!.createActualSession();
   }
 
   /// Builds the training session edit fields
@@ -171,9 +180,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       session.trainingSessionEmphasis = [sessionEmphasisController.text];
       session.trainingSessionStartDate = startDate;
     }
-
-    print(getSelectedBusinessClass!.trainingSessionExercises);
-    print(selectedActualSession!.trainingSessionExercises);
 
     return Column(
       children: <Widget>[
@@ -216,9 +222,12 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             actualTrainingExercise: plannedToActualExercises[exercise],
             plannedTrainingExercise: exercise,
             onUpdate: (actualExercise) async {
+              print("YYYYYYYYYYY");
               if (plannedToActualExercises[exercise] == null) {
-                String addId =
-                    await addExercise(actualExercise, scaffoldMessenger);
+                print("NOOOOOOOOOOOOOOOOOOOOOO");
+                String addId = await addExercise(
+                    actualExercise, scaffoldMessenger,
+                    notify: false);
                 selectedActualSession!.trainingSessionExcercisesIds.add(addId);
                 actualExercise.trainingExerciseID = addId;
                 updateBusinessClass(selectedActualSession!, scaffoldMessenger,
@@ -244,8 +253,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           ),
 
         //add all the unplanned exercises
-        for (TrainingExerciseBus exercise
-            in selectedActualSession!.trainingSessionExercises)
+        for (TrainingExerciseBus exercise in unplannedExercisesForSession)
           TrainingExcerciseRow(
             actualTrainingExercise: exercise,
             plannedTrainingExercise: null,
@@ -294,7 +302,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     // Update the actual session
     print(plannedToActualSessions[getSelectedBusinessClass!] == null);
     plannedToActualSessions[getSelectedBusinessClass!] == null
-        ? addBusinessClass(selectedActualSession!, scaffoldMessenger)
+        ? addBusinessClass(selectedActualSession!, scaffoldMessenger,
+            notify: false)
         : updateBusinessClass(selectedActualSession!, scaffoldMessenger,
             notify: false);
 
