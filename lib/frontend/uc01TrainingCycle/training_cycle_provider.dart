@@ -16,3 +16,5 @@ class TrainingCycleProvider
                 endDate: DateTime.now()),
             reportTaskVar: TrainingCycleBusReport());
 }
+
+

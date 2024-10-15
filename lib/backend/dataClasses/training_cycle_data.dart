@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_interface.dart';
 
 class TrainingCycleData implements TrainingsplanerDataInterface {
+  CollectionReference collection = FirebaseFirestore.instance.collection('user').doc(FirebaseAuth.instance.currentUser!.uid).collection('trainingCycles');
   String trainingCycleID;
   String cycleName;
   String description;
@@ -62,20 +64,18 @@ class TrainingCycleData implements TrainingsplanerDataInterface {
   }
 
   @override
-  Future<void> add() {
-    // TODO: implement add
-    throw UnimplementedError();
+  Future<String> add() async {
+    DocumentReference docRef = await collection.add(toJson());
+    return docRef.id;
   }
 
   @override
-  Future<void> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete() async {
+    await collection.doc(trainingCycleID).delete();
   }
 
   @override
-  Future<void> update() {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update() async {
+    await collection.doc(trainingCycleID).update(toJson());
   }
 }
