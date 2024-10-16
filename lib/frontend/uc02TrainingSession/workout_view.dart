@@ -52,6 +52,7 @@ class _WorkoutViewState extends State<WorkoutView> {
               child: ElevatedButton(
                   child: const Text("Update Diary Entry"),
                   onPressed: () {
+                    print("Pressed update");
                     sessionProvider
                         .updateSessionInDatabase(ScaffoldMessenger.of(context));
                   }),

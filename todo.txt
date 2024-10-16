@@ -1,9 +1,11 @@
  TODO:
-    test on a 
-    actual exercise with no planned
-              -> everything
 
 make workout selection view for own testing
+    -> get all sessions
+    -> map them to the map and businessClasses variable
+    -> make the mapping methods a separate method to use in the overview and edit view
+    -> show sessions ordered by date and with mapping
+    -> make them selectable for the workout view
 
 
 make cycle crud stuff
