@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/workout_selection_view.dart';
 
 ///
 /// This class represents the view of a workout.
@@ -36,38 +37,57 @@ class _WorkoutViewState extends State<WorkoutView> {
   Widget build(BuildContext context) {
     TrainingSessionProvider sessionProvider =
         Provider.of<TrainingSessionProvider>(context);
-    return ListView(
-      children: [
-        sessionProvider.getCurrentTrainingSessionStreamBuilder(),
-        IconButton(
-          onPressed: () {
-            print("Pressed add");
-            sessionProvider.addExerciseToSession(context);
-          },
-          icon: const Icon(Icons.add),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                  child: const Text("Update Diary Entry"),
-                  onPressed: () {
-                    print("Pressed update");
-                    sessionProvider
-                        .updateSessionInDatabase(ScaffoldMessenger.of(context));
-                  }),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Workout"), 
+      ),
+      body: ListView(
+        children: [
+          sessionProvider.getCurrentTrainingSessionStreamBuilder(),
+          IconButton(
+            onPressed: () {
+              print("Pressed add");
+              sessionProvider.addExerciseToSession(context);
+            },
+            icon: const Icon(Icons.add),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                    child: const Text("Update Diary Entry"),
+                    onPressed: () {
+                      print("Pressed update");
+                      sessionProvider
+                          .updateSessionInDatabase(ScaffoldMessenger.of(context));
+                    }),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    child: const Text("Finish Workout"),
+                    onPressed: () {
+                      print("Pressed finish");
+                      //TODO: implement provider finish of selected workout (save diary entry and move selected workout to the next workout);
+                    }),
+              ),
+            ],
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider.value(
+                value: sessionProvider,
+                child: WorkoutSelectionView(),
+              ),
             ),
-            Expanded(
-              child: ElevatedButton(
-                  child: const Text("Finish Workout"),
-                  onPressed: () {
-                    print("Pressed finish");
-                    //TODO: implement provider finish of selected workout (save diary entry and move selected workout to the next workout);
-                  }),
-            ),
-          ],
-        )
-      ],
+          );
+        },
+        child: Icon(Icons.list),
+      ),
     );
   }
 }

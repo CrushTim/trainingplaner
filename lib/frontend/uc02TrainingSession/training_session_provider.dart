@@ -61,103 +61,117 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             return Text(snapshots.snapshot2.error.toString());
           }
         } else {
-          //get all the sessions of the user
           List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
           List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
 
-          // Clear and rebuild the maps
-          plannedToActualSessions.clear();
-          plannedToActualExercises.clear();
-          unplannedSessions.clear();
-          unplannedExercises.clear();
-          unplannedExercisesForSession.clear();
-          selectedActualSession?.trainingSessionExercises.clear();
-          getSelectedBusinessClass?.trainingSessionExercises.clear();
-          
+          mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
 
-          // Map all sessions (planned and actual)
-          for (var session in allSessions) {
-            if (session.isPlanned) {
-              plannedToActualSessions[session] = null;
-            } else {
-              unplannedSessions.add(session);
-            }
+          setSelectedSessions();
+
+          unplannedExercisesForSession = getUnplannedExercisesForSession();
+
+          if(selectedActualSession != null || getSelectedBusinessClass != null){
+            return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
+          } else {
+            return const Text("No session to select");
           }
-
-          //go through all the unplanned sessions and either map them to their planned session or leave them to the unplanned list
-          for (var session in unplannedSessions) {
-            TrainingSessionBus? plannedSession =
-                plannedToActualSessions.keys.firstWhere(
-              (s) => s.trainingSessionId == session.plannedSessionId,
-              orElse: () => session,
-            );
-            if (plannedSession != session) {
-              plannedToActualSessions[plannedSession] = session;
-              unplannedSessions.remove(session);
-            }
-          }
-          //now set the unplanned and planned exercise for the view
-          if (plannedToActualSessions.keys.isNotEmpty) {
-            setActualAndPlannedSession(plannedToActualSessions.keys.first,
-                plannedToActualSessions[plannedToActualSessions.keys.first]);
-          } else if (unplannedSessions.isNotEmpty){
-              selectedActualSession = unplannedSessions.first;
-              hasNoPlannedSession = true;
-            }
-          
-
-
-          //now fill the exercises map with the planned and actual exercises
-          for (var exercise in allExercises) {
-            if (exercise.isPlanned) {
-              plannedToActualExercises[exercise] = null;
-            } else {
-              unplannedExercises.add(exercise);
-            }
-          }
-
-          //go through all the unplanned exercises and either map them to their planned exercise or leave them to the unplanned list
-          for (var exercise in unplannedExercises) {
-            TrainingExerciseBus? plannedExercise = allExercises.firstWhere(
-              (e) => e.trainingExerciseID == exercise.plannedExerciseId,
-              orElse: () => exercise,
-            );
-            if (plannedExercise != exercise) {
-              plannedToActualExercises[plannedExercise] = exercise;
-              unplannedExercises.remove(exercise);
-            }
-          }
-
-          // Assign exercises to sessions
-          for (TrainingExerciseBus exercise in allExercises) {
-            if (selectedActualSession != null &&
-                selectedActualSession!.trainingSessionExcercisesIds
-                    .contains(exercise.trainingExerciseID)) {
-              selectedActualSession!.trainingSessionExercises.add(exercise);
-            }
-              if (getSelectedBusinessClass != null &&
-                getSelectedBusinessClass!.trainingSessionExcercisesIds
-                    .contains(exercise.trainingExerciseID)) {
-              getSelectedBusinessClass!.trainingSessionExercises.add(exercise);
-            }
-          }
-
-          
-          
-  unplannedExercisesForSession = selectedActualSession!
-      .trainingSessionExercises
-      .where((exercise) =>
-          !plannedToActualExercises.containsValue(exercise))
-      .toList();
-      if(selectedActualSession != null || getSelectedBusinessClass != null){
-        return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
-      }else{
-        return const Text("No session to select");
-      }
-
         }
       },
     );
+  }
+
+  void mapSessionsAndExercisesInCurrentBuilder(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
+    clearAllMapsAndLists();
+    
+    mapPlannedAndUnplannedSessions(allSessions);
+    mapUnplannedSessionsToPlanned();
+    mapPlannedAndUnplannedExercises(allExercises);
+    mapUnplannedExercisesToPlanned(allExercises);
+    assignExercisesToSessions(allExercises);
+  }
+
+  /// Maps all sessions to either planned or unplanned lists
+  void mapPlannedAndUnplannedSessions(List<TrainingSessionBus> allSessions) {
+    for (var session in allSessions) {
+      if (session.isPlanned) {
+        plannedToActualSessions[session] = null;
+      } else {
+        unplannedSessions.add(session);
+      }
+    }
+  }
+
+  /// Maps unplanned sessions to their corresponding planned sessions
+  void mapUnplannedSessionsToPlanned() {
+    for (var session in List.from(unplannedSessions)) {
+      TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
+        (s) => s.trainingSessionId == session.plannedSessionId,
+        orElse: () => session,
+      );
+      if (plannedSession != session) {
+        plannedToActualSessions[plannedSession] = session;
+        unplannedSessions.remove(session);
+      }
+    }
+  }
+
+  /// Sets the selected actual and planned sessions
+  void setSelectedSessions() {
+    if (plannedToActualSessions.keys.isNotEmpty) {
+      setActualAndPlannedSession(plannedToActualSessions.keys.first,
+          plannedToActualSessions[plannedToActualSessions.keys.first]);
+    } else if (unplannedSessions.isNotEmpty) {
+      selectedActualSession = unplannedSessions.first;
+      hasNoPlannedSession = true;
+    }
+  }
+
+  /// Maps all exercises to either planned or unplanned lists
+  void mapPlannedAndUnplannedExercises(List<TrainingExerciseBus> allExercises) {
+    for (var exercise in allExercises) {
+      if (exercise.isPlanned) {
+        plannedToActualExercises[exercise] = null;
+      } else {
+        unplannedExercises.add(exercise);
+      }
+    }
+  }
+
+  /// Maps unplanned exercises to their corresponding planned exercises
+  void mapUnplannedExercisesToPlanned(List<TrainingExerciseBus> allExercises) {
+    for (var exercise in List.from(unplannedExercises)) {
+      TrainingExerciseBus? plannedExercise = allExercises.firstWhere(
+        (e) => e.trainingExerciseID == exercise.plannedExerciseId,
+        orElse: () => exercise,
+      );
+      if (plannedExercise != exercise) {
+        plannedToActualExercises[plannedExercise] = exercise;
+        unplannedExercises.remove(exercise);
+      }
+    }
+  }
+
+  /// Assigns exercises to their corresponding sessions
+  void assignExercisesToSessions(List<TrainingExerciseBus> allExercises) {
+    for (TrainingExerciseBus exercise in allExercises) {
+      if (selectedActualSession != null &&
+          selectedActualSession!.trainingSessionExcercisesIds
+              .contains(exercise.trainingExerciseID)) {
+        selectedActualSession!.trainingSessionExercises.add(exercise);
+      }
+      if (getSelectedBusinessClass != null &&
+          getSelectedBusinessClass!.trainingSessionExcercisesIds
+              .contains(exercise.trainingExerciseID)) {
+        getSelectedBusinessClass!.trainingSessionExercises.add(exercise);
+      }
+    }
+  }
+
+  /// Returns a list of unplanned exercises for the selected session
+  List<TrainingExerciseBus> getUnplannedExercisesForSession() {
+    return selectedActualSession!.trainingSessionExercises
+        .where((exercise) => !plannedToActualExercises.containsValue(exercise))
+        .toList();
   }
 
   void setActualAndPlannedSession(
@@ -434,5 +448,72 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     selectedActualSession!.trainingSessionExercises.add(newExercise);
     updateBusinessClass(selectedActualSession!, ScaffoldMessenger.of(context),
         notify: false);
+  }
+  ///method to clear all the maps and lists
+  ///is used to clear the maps and lists after a new selection of a session or exercise
+  void clearAllMapsAndLists(){
+          plannedToActualSessions.clear();
+          plannedToActualExercises.clear();
+          unplannedSessions.clear();
+          unplannedExercises.clear();
+          unplannedExercisesForSession.clear();
+          selectedActualSession?.trainingSessionExercises.clear();
+          getSelectedBusinessClass?.trainingSessionExercises.clear();
+  }
+
+
+  ///method to get all the existing sessions from the database ordered by date to make them selectable for the workout view
+  ///returns a Strembuilder with a list of all session 
+  StreamBuilder2 getAllSessionsForWorkoutView(){
+    return StreamBuilder2(
+      streams: StreamTuple2(reportTaskVar.getAll(), trainingExerciseBusReport.getAll()),
+      builder: (context, snapshots) {
+        if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
+            snapshots.snapshot2.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshots.snapshot1.hasError ||
+            snapshots.snapshot2.hasError) {
+          if (snapshots.snapshot1.hasError) {
+            return Text(snapshots.snapshot1.error.toString());
+          } else {
+            return Text(snapshots.snapshot2.error.toString());
+          }
+        } else {
+          List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
+          List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
+
+          mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
+
+          unplannedExercisesForSession = getUnplannedExercisesForSession();
+          allSessions.sort((a, b) => b.trainingSessionStartDate.compareTo(a.trainingSessionStartDate));
+
+          return ListView.builder(
+            itemCount: allSessions.length,
+            itemBuilder: (context, index) {
+              TrainingSessionBus session = allSessions[index];
+              return ListTile(
+                title: Text(session.trainingSessionName),
+                onTap: () {
+                  if(session.isPlanned){
+                    setActualAndPlannedSession(session, plannedToActualSessions[session]);
+                  } else {
+                    if(unplannedSessions.contains(session)){
+                      selectedActualSession = session;
+                    } else {
+                      TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
+                        (s) => s.trainingSessionId == session.plannedSessionId,
+                        
+                      );
+                      setActualAndPlannedSession(plannedSession, session);
+                    }
+                  }
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
+        }
+      },
+    );
   }
 }
