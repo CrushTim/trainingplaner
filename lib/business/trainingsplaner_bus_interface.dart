@@ -22,7 +22,7 @@ abstract class TrainingsplanerBusInterface<
   //                CRUD-Operations                           //
   // //////////////////////////////////////////////////////////////
 
-  Future<void> add();
+  Future<String> add();
 
   Future<void> update();
 

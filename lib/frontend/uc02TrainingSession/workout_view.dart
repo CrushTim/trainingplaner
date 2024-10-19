@@ -68,6 +68,9 @@ class _WorkoutViewState extends State<WorkoutView> {
                     onPressed: () {
                       print("Pressed finish");
                       //TODO: implement provider finish of selected workout (save diary entry and move selected workout to the next workout);
+                      sessionProvider.businessClassForAdd.trainingSessionName = "sf";
+                      sessionProvider.businessClassForAdd.trainingSessionDescription = "sf";
+                      sessionProvider.addBusinessClass(sessionProvider.getBusinessClassForAdd, ScaffoldMessenger.of(context));
                     }),
               ),
             ],

@@ -4,6 +4,7 @@ import 'package:trainingplaner/business/businessClasses/training_exercise_bus.da
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
+import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
@@ -65,10 +66,11 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
 
           mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
-
-          setSelectedSessions();
+          getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSessions() : null;
+          
 
           unplannedExercisesForSession = getUnplannedExercisesForSession();
+
 
           if(selectedActualSession != null || getSelectedBusinessClass != null){
             return buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
@@ -117,7 +119,9 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   /// Sets the selected actual and planned sessions
   void setSelectedSessions() {
+    print("x");
     if (plannedToActualSessions.keys.isNotEmpty) {
+      print("asdfasd ${plannedToActualSessions[plannedToActualSessions.keys.first]}");
       setActualAndPlannedSession(plannedToActualSessions.keys.first,
           plannedToActualSessions[plannedToActualSessions.keys.first]);
     } else if (unplannedSessions.isNotEmpty) {
@@ -178,6 +182,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       TrainingSessionBus? plannedSession, TrainingSessionBus? actualSession) {
     setSelectedBusinessClass(plannedSession, notify: false);
     selectedActualSession = actualSession;
+    print(selectedActualSession == null);
     selectedActualSession ??= getSelectedBusinessClass!.createActualSession();
   }
 
@@ -191,7 +196,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       ScaffoldMessengerState scaffoldMessenger) {
 
     final session = selectedActualSession!;
-    print("id ${session}");
     final TextEditingController workoutNameController =
         TextEditingController(text: session.trainingSessionName);
     final TextEditingController workoutLengthController =
@@ -319,7 +323,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           .showSnackBar(SnackBar(content: Text('No session selected')));
       return;
     }
-    print("selected actual session ${selectedActualSession}");
     // Update exercises for both planned and actual sessions
     List<TrainingExerciseBus> exercisesToUpdate = [
       ...(getSelectedBusinessClass?.trainingSessionExercises ?? []),
@@ -327,13 +330,21 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     ];
 
     await updateExercises(exercisesToUpdate, scaffoldMessenger, notify: false);
+    print("hasNoPlannedSession: $hasNoPlannedSession");
+    print("selectedActualSession: ${selectedActualSession.hashCode}");
+    print("mapkey: ${plannedToActualSessions.keys.first.hashCode}");
 
+    print("getSelectedBusinessClass: ${getSelectedBusinessClass.hashCode}");
+    print("id: ${selectedActualSession!.trainingSessionId}");
     // Update the actual session
     if(hasNoPlannedSession){
       await updateBusinessClass(selectedActualSession!, scaffoldMessenger,
             notify: false);
     } else {
-       plannedToActualSessions[getSelectedBusinessClass!] == null
+      bool isNew = plannedToActualSessions.values.contains(selectedActualSession);
+      print("isNew: $isNew");
+      print("plannedToActualSessions: ${plannedToActualSessions[getSelectedBusinessClass]}");
+      isNew 
         ? await addBusinessClass(selectedActualSession!, scaffoldMessenger,
             notify: false)
         : await updateBusinessClass(selectedActualSession!, scaffoldMessenger,
@@ -442,7 +453,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     String exerciseID = await addExercise(
         newExercise, ScaffoldMessenger.of(context),
         notify: false);
-    print(exerciseID);
     selectedActualSession!.trainingSessionExcercisesIds.add(exerciseID);
     newExercise.trainingExerciseID = exerciseID;
     selectedActualSession!.trainingSessionExercises.add(newExercise);
@@ -491,24 +501,34 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             itemCount: allSessions.length,
             itemBuilder: (context, index) {
               TrainingSessionBus session = allSessions[index];
-              return ListTile(
-                title: Text(session.trainingSessionName),
-                onTap: () {
-                  if(session.isPlanned){
-                    setActualAndPlannedSession(session, plannedToActualSessions[session]);
-                  } else {
-                    if(unplannedSessions.contains(session)){
-                      selectedActualSession = session;
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  color: session.isPlanned ? Colors.orange : Colors.green,
+                ),
+                child: ListTile(
+                  
+                  title: Row(children: [Text(session.trainingSessionName), Text(getDateStringForDisplay(session.trainingSessionStartDate)), Text(getTimeStringForDisplay(session.trainingSessionStartDate))],),
+                  subtitle: Row(children: [for(TrainingExerciseBus exercise in session.trainingSessionExercises) Text(exercise.exerciseName)],),
+                  onTap: () {
+                    if(session.isPlanned){
+                      setActualAndPlannedSession(session, plannedToActualSessions[session]);
                     } else {
-                      TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
-                        (s) => s.trainingSessionId == session.plannedSessionId,
-                        
-                      );
-                      setActualAndPlannedSession(plannedSession, session);
+                      if(unplannedSessions.contains(session)){
+                        setActualAndPlannedSession(null, session);
+                        hasNoPlannedSession = true;
+                      } else {
+                        TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
+                          (s) => s.trainingSessionId == session.plannedSessionId,
+                          
+                        );
+                        setActualAndPlannedSession(plannedSession, session);
+                      }
                     }
-                  }
-                  Navigator.pop(context);
-                },
+                    Navigator.pop(context);
+                    notifyListeners();
+                  },
+                ),
               );
             },
           );

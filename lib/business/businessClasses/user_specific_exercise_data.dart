@@ -76,9 +76,10 @@ class UserSpecificExerciseData
   //                CRUD-Operations                           //
   // //////////////////////////////////////////////////////////////
   @override
-  Future<void> add() async {
+  Future<String> add() async {
     validateForAdd();
     //TODO: implement the add method
+    return "";
   }
 
   @override

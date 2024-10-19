@@ -105,9 +105,10 @@ class ExerciseFoundationBus
   // //////////////////////////////////////////////////////////////
 
   @override
-  Future<void> add() async {
+  Future<String> add() async {
     validateForAdd();
     //TODO: implement the addExerciseFoundation method
+    return "";
   }
 
   @override

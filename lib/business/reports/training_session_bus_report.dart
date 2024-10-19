@@ -8,8 +8,6 @@ class TrainingSessionBusReport extends TrainingsplanerBusReportInterface {
   @override
   Stream<List<TrainingSessionBus>> getAll() {
     return trainingSessionDataReport.getAll().map((list) => list.map((e) {
-          print(e.trainingSessionName);
-          print(e);
           return TrainingSessionBus.fromData(e);
         }).toList());
   }

@@ -211,14 +211,15 @@ class TrainingsplanerProvider<
   /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
   /// @param notify if true the listeners are notified
   /// @return Future<void> with the result of the addition
-  Future<void> addBusinessClass(businessClass businessClassToAdd,
+  Future<String> addBusinessClass(businessClass businessClassToAdd,
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
     String message = "Added ${businessClassToAdd.getName()}";
     try {
-      await businessClassToAdd
+      String addedId = await businessClassToAdd
           .add()
           .onError((error, stackTrace) => message = error.toString());
+      return addedId;
     } catch (e) {
       message = e.toString();
     } finally {
@@ -230,6 +231,7 @@ class TrainingsplanerProvider<
           content: Text(message),
         ),
       );
+      return "";
     }
   }
 

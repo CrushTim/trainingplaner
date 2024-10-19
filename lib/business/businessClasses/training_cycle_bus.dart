@@ -113,8 +113,9 @@ class TrainingCycleBus
   //add a training cycle to the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
-  Future<void> add() async {
+  Future<String> add() async {
     //TODO: implement the addTrainingCycle method
+    return "";
   }
 
   //update a training cycle in the database

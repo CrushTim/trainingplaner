@@ -135,9 +135,9 @@ class TrainingSessionBus
   // //////////////////////////////////////////////////////////////
 
   @override
-  Future<void> add() async {
+  Future<String> add() async {
     validateForAdd();
-    toData().add();
+    return toData().add();
   }
 
   @override
