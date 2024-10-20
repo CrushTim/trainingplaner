@@ -92,14 +92,27 @@ class MockTrainingsplanerBusInterface<
       );
 
   @override
-  _i4.Future<void> add() => (super.noSuchMethod(
+  _i4.Future<String> add() => (super.noSuchMethod(
         Invocation.method(
           #add,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i4.Future<String>.value(_i3.dummyValue<String>(
+          this,
+          Invocation.method(
+            #add,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<String>.value(_i3.dummyValue<String>(
+          this,
+          Invocation.method(
+            #add,
+            [],
+          ),
+        )),
+      ) as _i4.Future<String>);
 
   @override
   _i4.Future<void> update() => (super.noSuchMethod(

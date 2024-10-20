@@ -3,12 +3,14 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i3;
-import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart'
+import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:trainingplaner/backend/dataClasses/training_cycle_data.dart'
     as _i2;
+import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart'
+    as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -33,18 +35,29 @@ class _FakeDateTime_0 extends _i1.SmartFake implements DateTime {
         );
 }
 
+class _FakeTrainingCycleData_1 extends _i1.SmartFake
+    implements _i2.TrainingCycleData {
+  _FakeTrainingCycleData_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [TrainingCycleBus].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
+class MockTrainingCycleBus extends _i1.Mock implements _i3.TrainingCycleBus {
   @override
   String get trainingCycleID => (super.noSuchMethod(
         Invocation.getter(#trainingCycleID),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#trainingCycleID),
         ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.getter(#trainingCycleID),
         ),
@@ -62,11 +75,11 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
   @override
   String get cycleName => (super.noSuchMethod(
         Invocation.getter(#cycleName),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#cycleName),
         ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.getter(#cycleName),
         ),
@@ -84,11 +97,11 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
   @override
   String get description => (super.noSuchMethod(
         Invocation.getter(#description),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#description),
         ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.getter(#description),
         ),
@@ -106,11 +119,11 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
   @override
   String get emphasis => (super.noSuchMethod(
         Invocation.getter(#emphasis),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#emphasis),
         ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.getter(#emphasis),
         ),
@@ -128,11 +141,11 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
   @override
   String get userID => (super.noSuchMethod(
         Invocation.getter(#userID),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#userID),
         ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.getter(#userID),
         ),
@@ -201,7 +214,29 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
       );
 
   @override
-  void mapFromOtherInstance(_i2.TrainingCycleBus? otherInstance) =>
+  _i2.TrainingCycleData toData() => (super.noSuchMethod(
+        Invocation.method(
+          #toData,
+          [],
+        ),
+        returnValue: _FakeTrainingCycleData_1(
+          this,
+          Invocation.method(
+            #toData,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeTrainingCycleData_1(
+          this,
+          Invocation.method(
+            #toData,
+            [],
+          ),
+        ),
+      ) as _i2.TrainingCycleData);
+
+  @override
+  void mapFromOtherInstance(_i3.TrainingCycleBus? otherInstance) =>
       super.noSuchMethod(
         Invocation.method(
           #mapFromOtherInstance,
@@ -225,14 +260,14 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
           #getId,
           [],
         ),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.method(
             #getId,
             [],
           ),
         ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.method(
             #getId,
@@ -247,14 +282,14 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
           #getName,
           [],
         ),
-        returnValue: _i3.dummyValue<String>(
+        returnValue: _i4.dummyValue<String>(
           this,
           Invocation.method(
             #getName,
             [],
           ),
         ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.method(
             #getName,
@@ -264,34 +299,47 @@ class MockTrainingCycleBus extends _i1.Mock implements _i2.TrainingCycleBus {
       ) as String);
 
   @override
-  _i4.Future<void> add() => (super.noSuchMethod(
+  _i5.Future<String> add() => (super.noSuchMethod(
         Invocation.method(
           #add,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<String>.value(_i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #add,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i5.Future<String>.value(_i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #add,
+            [],
+          ),
+        )),
+      ) as _i5.Future<String>);
 
   @override
-  _i4.Future<void> update() => (super.noSuchMethod(
+  _i5.Future<void> update() => (super.noSuchMethod(
         Invocation.method(
           #update,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> delete() => (super.noSuchMethod(
+  _i5.Future<void> delete() => (super.noSuchMethod(
         Invocation.method(
           #delete,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   void validateForAdd() => super.noSuchMethod(

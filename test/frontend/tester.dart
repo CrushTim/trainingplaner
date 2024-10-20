@@ -3,9 +3,9 @@ import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
 class Tester implements TrainingsplanerBusInterface<Tester> {
   @override
-  Future<void> add() {
+  Future<String> add() {
     // TODO: implement add
-    return Future.value();
+    return Future.value("");
   }
 
   @override
