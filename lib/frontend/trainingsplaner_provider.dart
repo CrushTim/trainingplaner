@@ -215,11 +215,12 @@ class TrainingsplanerProvider<
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
     String message = "Added ${businessClassToAdd.getName()}";
+    String addedId = "";
     try {
-      String addedId = await businessClassToAdd
+      
+      addedId = await businessClassToAdd
           .add()
           .onError((error, stackTrace) => message = error.toString());
-      return addedId;
     } catch (e) {
       message = e.toString();
     } finally {
@@ -231,8 +232,8 @@ class TrainingsplanerProvider<
           content: Text(message),
         ),
       );
-      return "";
     }
+    return addedId;
   }
 
   ///update a business class in the database

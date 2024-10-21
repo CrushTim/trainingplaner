@@ -47,7 +47,7 @@ class _WorkoutViewState extends State<WorkoutView> {
           IconButton(
             onPressed: () {
               print("Pressed add");
-              sessionProvider.addExerciseToSession(context);
+              sessionProvider.addExerciseToSession(ScaffoldMessenger.of(context));
             },
             icon: const Icon(Icons.add),
           ),

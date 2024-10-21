@@ -1,21 +1,13 @@
  TODO:
 
 selection:
-    update of selected non planned session doesnt work
-    update test mit return of id / remove id stuff
+    update test mit return of id 
 
 
 BUG: 
     -> isNew in session: will eigentlich über map prüfen, kann ich aber nicht, da die objektreferenz sich irgendwo ändert
         -> prompt look through the whole provider class and explain to me how the hashcode is different. following my logic i get all the sessions from the stream, map the planned ones to the keys in the map, add the unplanned ones into unplanned sessions and then map every unplanned session which has a plannedsession id to the according key value. where do i change the pointer so the hash code changes 
 
-
-make workout selection view for own testing
-    -> get all sessions
-    -> map them to the map and businessClasses variable
-    -> make the mapping methods a separate method to use in the overview and edit view
-    -> show sessions ordered by date and with mapping
-    -> make them selectable for the workout view
 
 
 make cycle crud stuff
