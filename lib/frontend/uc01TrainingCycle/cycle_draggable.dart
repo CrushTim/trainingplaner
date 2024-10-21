@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 
 class CycleDraggable extends StatelessWidget {
-  final int index;
+  final TrainingCycleBus trainingCycleBus;
   const CycleDraggable({
     super.key,
-    required this.index,
+    required this.trainingCycleBus,
   });
 
   @override
@@ -28,7 +29,16 @@ class CycleDraggable extends StatelessWidget {
                 shape: BoxShape.rectangle,
                 color: Colors.blue,
               ),
-              child: Text("Cycle $index"),
+              child: Column(
+                children: [
+                  Text(trainingCycleBus.cycleName),
+                  Text(trainingCycleBus.description),
+                  Text(trainingCycleBus.emphasis),
+                  Text(trainingCycleBus.beginDate.toString()),
+                  Text(trainingCycleBus.endDate.toString()),
+                  Text(trainingCycleBus.parent ?? ""),
+                ],
+              ),
             ),
           ),
           Flexible(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/frontend/costum_widgets/day_field_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/edit_cycles_view.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({super.key});
@@ -14,6 +17,8 @@ class _OverviewViewState extends State<OverviewView> {
   int cycles = 2;
   @override
   Widget build(BuildContext context) {
+  TrainingSessionProvider sessionProvider = Provider.of<TrainingSessionProvider>(context);
+  TrainingCycleProvider trainingCycleProvider = Provider.of<TrainingCycleProvider>(context);
     return Scaffold(
       body: ListView(
         children: List.generate(52, (index) {
@@ -49,7 +54,10 @@ class _OverviewViewState extends State<OverviewView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EditCyclesView()));
+              MaterialPageRoute(builder: (context) => ChangeNotifierProvider.value(
+                value: trainingCycleProvider,
+                child: const EditCyclesView(),
+              ),),);
         },
         child: const Icon(Icons.add),
       ),

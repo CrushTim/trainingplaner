@@ -8,7 +8,7 @@ class TrainingCycleDataReport
   @override
   Stream<List<TrainingCycleData>> getAll() {
     CollectionReference collectionReference = FirebaseFirestore.instance
-        .collection('trainingCycles')
+        .collection('user')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('trainingCycles');
     Stream<QuerySnapshot> stream = collectionReference.snapshots();

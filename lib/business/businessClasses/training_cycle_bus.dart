@@ -15,8 +15,6 @@ class TrainingCycleBus
   /// Focus or main goal of the training cycle
   String emphasis;
 
-  /// Identifier of the user associated with this training cycle
-  String userID;
 
   /// Start date of the training cycle
   DateTime beginDate;
@@ -32,7 +30,6 @@ class TrainingCycleBus
     required this.cycleName,
     required this.description,
     required this.emphasis,
-    required this.userID,
     required this.beginDate,
     required this.endDate,
     this.parent,
@@ -45,7 +42,6 @@ class TrainingCycleBus
       cycleName: data.cycleName,
       description: data.description,
       emphasis: data.emphasis,
-      userID: data.userID,
       beginDate: data.beginDate,
       endDate: data.endDate,
       parent: data.parent,
@@ -60,7 +56,6 @@ class TrainingCycleBus
       cycleName: cycleName,
       description: description,
       emphasis: emphasis,
-      userID: userID,
       beginDate: beginDate,
       endDate: endDate,
       parent: parent,
@@ -74,7 +69,6 @@ class TrainingCycleBus
     cycleName = otherInstance.cycleName;
     description = otherInstance.description;
     emphasis = otherInstance.emphasis;
-    userID = otherInstance.userID;
     beginDate = otherInstance.beginDate;
     endDate = otherInstance.endDate;
     parent = otherInstance.parent;
@@ -87,7 +81,6 @@ class TrainingCycleBus
     cycleName = "";
     description = "";
     emphasis = "";
-    userID = "";
     beginDate = DateTime.now();
     endDate = DateTime.now();
   }
