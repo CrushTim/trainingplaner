@@ -137,7 +137,8 @@ class TrainingSessionBus
   @override
   Future<String> add() async {
     validateForAdd();
-    return toData().add();
+    trainingSessionId = await toData().add();
+    return trainingSessionId;
   }
 
   @override
@@ -191,15 +192,15 @@ class TrainingSessionBus
   TrainingSessionBus createActualSession() {
     return TrainingSessionBus(
       trainingSessionId: "",
-      trainingSessionName: this.trainingSessionName,
-      trainingSessionDescription: this.trainingSessionDescription,
+      trainingSessionName: trainingSessionName,
+      trainingSessionDescription: trainingSessionDescription,
       trainingSessionStartDate: DateTime.now(),
-      trainingSessionLength: this.trainingSessionLength,
+      trainingSessionLength: trainingSessionLength,
       trainingSessionExcercisesIds: [],
-      trainingSessionEmphasis: this.trainingSessionEmphasis,
+      trainingSessionEmphasis: trainingSessionEmphasis,
       isPlanned: false,
-      trainingCycleId: this.trainingCycleId,
-      plannedSessionId: this.trainingSessionId,
+      trainingCycleId: trainingCycleId,
+      plannedSessionId: trainingSessionId,
     );
   }
 

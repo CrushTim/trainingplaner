@@ -1,7 +1,8 @@
+import 'package:trainingplaner/backend/dataClasses/user_specific_exercise_data.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
-class UserSpecificExerciseData
-    implements TrainingsplanerBusInterface<UserSpecificExerciseData> {
+class UserSpecificExerciseBus
+    implements TrainingsplanerBusInterface<UserSpecificExerciseBus> {
   ///the id of the user specific excercise data link
   String exerciseLinkID;
 
@@ -17,7 +18,7 @@ class UserSpecificExerciseData
   ///the current one Rep Max
   double oneRepMax;
 
-  UserSpecificExerciseData({
+  UserSpecificExerciseBus({
     required this.exerciseLinkID,
     required this.userID,
     required this.foundationId,
@@ -26,16 +27,26 @@ class UserSpecificExerciseData
   });
 
   ///factory method to create a training cycle from a data base object
-  //TODO: implement the factory method
-  factory UserSpecificExerciseData.fromData() {
-    throw UnimplementedError();
+  factory UserSpecificExerciseBus.fromData(UserSpecificExerciseData data) {
+    return UserSpecificExerciseBus(
+      exerciseLinkID: data.exerciseLinkID,
+      userID: data.userID,
+      foundationId: data.foundationId,
+      notes: data.notes,
+      oneRepMax: data.oneRepMax,
+    );
   }
 
   ///method to convert the training cycle to a data base object
-  //TODO: implement the toData method
   @override
   toData() {
-    throw UnimplementedError();
+    return UserSpecificExerciseData(
+      exerciseLinkID: exerciseLinkID,
+      userID: userID,
+      foundationId: foundationId,
+      notes: notes,
+      oneRepMax: oneRepMax,
+    );
   }
 
   ///resets every field of the training cycle to the default value
@@ -50,7 +61,7 @@ class UserSpecificExerciseData
 
   ///maps all attributes of another instance into this object
   @override
-  void mapFromOtherInstance(UserSpecificExerciseData other) {
+  void mapFromOtherInstance(UserSpecificExerciseBus other) {
     exerciseLinkID = other.exerciseLinkID;
     userID = other.userID;
     foundationId = other.foundationId;
@@ -78,20 +89,20 @@ class UserSpecificExerciseData
   @override
   Future<String> add() async {
     validateForAdd();
-    //TODO: implement the add method
-    return "";
+    exerciseLinkID = await toData().add();
+    return exerciseLinkID;
   }
 
   @override
   Future<void> update() async {
     validateForUpdate();
-    //TODO: implement the update method
+    await toData().update();
   }
 
   @override
   Future<void> delete() async {
     validateForDelete();
-    //TODO: implement the delete method
+    await toData().delete();
   }
 
 // //////////////////////////////////////////////////////////////

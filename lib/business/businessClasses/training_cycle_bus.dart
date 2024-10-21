@@ -114,22 +114,25 @@ class TrainingCycleBus
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<String> add() async {
-    //TODO: implement the addTrainingCycle method
-    return "";
+    validateForAdd();
+    trainingCycleID = await toData().add();
+    return trainingCycleID;
   }
 
   //update a training cycle in the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> update() async {
-    //TODO: implement the updateTrainingCycle method
+    validateForUpdate();
+    await toData().update();
   }
 
   //delete a training cycle from the database
   //Future.error(Exception(e)) is used to return an error to the caller
   @override
   Future<void> delete() async {
-    //TODO: implement the deleteTrainingCycle method
+    validateForDelete();
+    await toData().delete();
   }
 
   // //////////////////////////////////////////////////////////////

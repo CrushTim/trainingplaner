@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trainingplaner/backend/trainingsplaner_data_interface.dart';
 
 class ExerciseFoundationData implements TrainingsplanerDataInterface {
+  CollectionReference collection = FirebaseFirestore.instance
+      .collection("exerciseFoundations");
   String exerciseFoundationId;
   String exerciseFoundationName;
   String exerciseFoundationDescription;
@@ -61,20 +63,18 @@ class ExerciseFoundationData implements TrainingsplanerDataInterface {
   }
 
   @override
-  Future<void> add() {
-    // TODO: implement add
-    throw UnimplementedError();
+  Future<String> add() async {
+    DocumentReference docRef = await collection.add(toJson());
+    return docRef.id;
   }
 
   @override
-  Future<void> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete() async {
+    await collection.doc(exerciseFoundationId).delete();
   }
 
   @override
-  Future<void> update() {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update() async {
+    await collection.doc(exerciseFoundationId).update(toJson());
   }
 }

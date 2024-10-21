@@ -107,19 +107,21 @@ class ExerciseFoundationBus
   @override
   Future<String> add() async {
     validateForAdd();
-    //TODO: implement the addExerciseFoundation method
-    return "";
+    String id = await toData().add();
+    exerciseFoundationId = id;
+    return id;
   }
 
   @override
   Future<void> update() async {
     validateForUpdate();
-    //TODO: implement the updateExerciseFoundation method
+    await toData().update();
   }
 
   @override
   Future<void> delete() async {
-    //TODO: implement the deleteExerciseFoundation method
+    validateForDelete();
+    await toData().delete();
   }
 
   // //////////////////////////////////////////////////////////////

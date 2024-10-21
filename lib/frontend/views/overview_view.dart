@@ -34,7 +34,7 @@ class _OverviewViewState extends State<OverviewView> {
                         child: DayFieldCalendar(
                           date: DateTime(2024, 1, 1)
                               .add(Duration(days: ((index + 1) * 7 + indexx))),
-                          workouts: ["upper body", "flexibility"],
+                          workouts: const ["upper body", "flexibility"],
                         ),
                       );
                     }),

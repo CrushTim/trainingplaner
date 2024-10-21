@@ -6,12 +6,14 @@ import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_pro
 ///is used to select a workout from a list of all workouts
 ///is called from the workout view
 class WorkoutSelectionView extends StatelessWidget {
+  const WorkoutSelectionView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final sessionProvider = Provider.of<TrainingSessionProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Workout Selection"),
+        title: const Text("Workout Selection"),
       ),
       body: sessionProvider.getAllSessionsForWorkoutView(),
     );

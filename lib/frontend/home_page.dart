@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
         body: TabBarView(
           controller: _tabController,
-          children: [const OverviewView(), WorkoutView()],
+          children: const [OverviewView(), WorkoutView()],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _tabController!.index,

@@ -129,6 +129,7 @@ class TrainingExerciseBus
   @override
   Future<String> add() async {
     validateForAdd();
+    trainingExerciseID = await toData().add();
     return toData().add();
   }
 
@@ -230,15 +231,15 @@ class TrainingExerciseBus
   TrainingExerciseBus createActualExercise() {
     return TrainingExerciseBus(
       trainingExerciseID: "",
-      exerciseName: this.exerciseName,
-      exerciseDescription: this.exerciseDescription,
-      date: this.date,
-      exerciseFoundationID: this.exerciseFoundationID,
+      exerciseName: exerciseName,
+      exerciseDescription: exerciseDescription,
+      date: date,
+      exerciseFoundationID: exerciseFoundationID,
       exerciseReps: [],
       exerciseWeights: [],
       isPlanned: false,
-      targetPercentageOf1RM: this.targetPercentageOf1RM,
-      plannedExerciseId: this.trainingExerciseID,
+      targetPercentageOf1RM: targetPercentageOf1RM,
+      plannedExerciseId: trainingExerciseID,
     );
   }
 }

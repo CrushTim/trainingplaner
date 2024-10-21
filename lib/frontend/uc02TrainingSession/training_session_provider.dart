@@ -311,7 +311,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     } else {
 
       if(plannedToActualSessions.values.contains(selectedActualSession) || isPlannedSessionWithoutActual){
-        selectedActualSession!.trainingSessionId = await addBusinessClass(selectedActualSession!, scaffoldMessenger,
+        await addBusinessClass(selectedActualSession!, scaffoldMessenger,
             notify: false);
       } else {
         await updateBusinessClass(selectedActualSession!, scaffoldMessenger,

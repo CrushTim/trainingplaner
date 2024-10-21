@@ -86,23 +86,19 @@ class _TrainingCycleEditFieldsState extends State<TrainingCycleEditFields> {
           width: MediaQuery.of(context).size.width,
           label: const Text("parent"),
           onSelected: (selected) {
-            return null;
           },
-          dropdownMenuEntries: [
+          dropdownMenuEntries: const [
             DropdownMenuEntry(value: "1", label: "alksd"),
             DropdownMenuEntry(value: "2", label: "parent")
           ],
         ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child: ElevatedButton(
-            onPressed: () {
-              //TODO: implement saving the training cycle
-              //and navigate back to the previous view
-              Navigator.pop(context);
-            },
-            child: const Text("Save"),
-          ),
+        ElevatedButton(
+          onPressed: () {
+            //TODO: implement saving the training cycle
+            //and navigate back to the previous view
+            Navigator.pop(context);
+          },
+          child: const Text("Save"),
         ),
       ],
     );

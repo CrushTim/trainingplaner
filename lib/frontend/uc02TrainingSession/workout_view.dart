@@ -39,14 +39,13 @@ class _WorkoutViewState extends State<WorkoutView> {
         Provider.of<TrainingSessionProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Workout"), 
+        title: const Text("Workout"), 
       ),
       body: ListView(
         children: [
           sessionProvider.getCurrentTrainingSessionStreamBuilder(),
           IconButton(
             onPressed: () {
-              print("Pressed add");
               sessionProvider.addExerciseToSession(ScaffoldMessenger.of(context));
             },
             icon: const Icon(Icons.add),
@@ -57,7 +56,6 @@ class _WorkoutViewState extends State<WorkoutView> {
                 child: ElevatedButton(
                     child: const Text("Update Diary Entry"),
                     onPressed: () {
-                      print("Pressed update");
                       sessionProvider
                           .updateSessionInDatabase(ScaffoldMessenger.of(context));
                     }),
@@ -66,7 +64,6 @@ class _WorkoutViewState extends State<WorkoutView> {
                 child: ElevatedButton(
                     child: const Text("Finish Workout"),
                     onPressed: () {
-                      print("Pressed finish");
                       //TODO: implement provider finish of selected workout (save diary entry and move selected workout to the next workout);
                       sessionProvider.businessClassForAdd.trainingSessionName = "sf";
                       sessionProvider.businessClassForAdd.trainingSessionDescription = "sf";
@@ -84,12 +81,12 @@ class _WorkoutViewState extends State<WorkoutView> {
             MaterialPageRoute(
               builder: (context) => ChangeNotifierProvider.value(
                 value: sessionProvider,
-                child: WorkoutSelectionView(),
+                child: const WorkoutSelectionView(),
               ),
             ),
           );
         },
-        child: Icon(Icons.list),
+        child: const Icon(Icons.list),
       ),
     );
   }

@@ -10,6 +10,11 @@ class CycleDraggable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Draggable(
+      feedback: const Text("Drag me!"),
+      childWhenDragging: const Text("I'm being dragged!"),
+      onDragEnd: (details) {
+        //TODO update the list
+      },
       child: Row(
         children: [
           Expanded(
@@ -28,13 +33,13 @@ class CycleDraggable extends StatelessWidget {
           ),
           Flexible(
             child: IconButton(
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () {},
             ),
           ),
           Flexible(
             child: IconButton(
-              icon: Icon(Icons.delete),
+              icon: const Icon(Icons.delete),
               onPressed: () {
                 //TODO delete the cycle
               },
@@ -42,12 +47,6 @@ class CycleDraggable extends StatelessWidget {
           ),
         ],
       ),
-      feedback: Text("Drag me!"),
-      childWhenDragging: Text("I'm being dragged!"),
-      onDragEnd: (details) {
-        print(details.offset);
-        //TODO update the list
-      },
     );
   }
 }

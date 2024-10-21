@@ -2,63 +2,75 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
 class Tester implements TrainingsplanerBusInterface<Tester> {
+  String id;
+  String name;
+  Map<String, dynamic> data;
+
+  Tester({this.id = '', this.name = 'Tester', this.data = const {}});
+
   @override
-  Future<String> add() {
-    // TODO: implement add
-    return Future.value("");
+  Future<String> add() async {
+    // Simulate adding to a database by generating a new ID
+    id = DateTime.now().millisecondsSinceEpoch.toString();
+    return id;
+  } 
+  
+   @override
+  Future<void> update() async {
+    // Simulate update by doing nothing (assuming data is already updated)
+  }
+
+
+
+  @override
+  Future<void> delete() async {
+    // Simulate deletion by clearing data
+    id = '';
+    data.clear();
   }
 
   @override
-  Future<void> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
+  String getId() => id;
 
   @override
-  String getId() {
-    // TODO: implement getId
-    throw UnimplementedError();
-  }
-
-  @override
-  String getName() {
-    return "Tester";
-  }
+  String getName() => name;
 
   @override
   void mapFromOtherInstance(Tester other) {
-    // TODO: implement mapFromOtherInstance
+    id = other.id;
+    name = other.name;
+    data = Map.from(other.data);
   }
 
   @override
   void reset() {
-    // TODO: implement reset
+    id = '';
+    name = 'Tester';
+    data.clear();
   }
 
   @override
-  toData() {
-    // TODO: implement toData
-    throw UnimplementedError();
-  }
+  Map<String, dynamic> toData() => {'id': id, 'name': name, ...data};
 
-  @override
-  Future<void> update() {
-    // TODO: implement update
-    throw UnimplementedError();
-  }
 
   @override
   void validateForAdd() {
-    // TODO: implement validateForAdd
+    if (name.isEmpty) {
+      throw Exception('Name cannot be empty for add operation');
+    }
   }
 
   @override
   void validateForDelete() {
-    // TODO: implement validateForDelete
+    if (id.isEmpty) {
+      throw Exception('ID cannot be empty for delete operation');
+    }
   }
 
   @override
   void validateForUpdate() {
-    // TODO: implement validateForUpdate
+    if (id.isEmpty || name.isEmpty) {
+      throw Exception('ID and name cannot be empty for update operation');
+    }
   }
 }
