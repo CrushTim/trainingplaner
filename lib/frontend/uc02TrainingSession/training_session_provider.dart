@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
+import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
@@ -7,6 +8,7 @@ import 'package:trainingplaner/business/reports/training_session_bus_report.dart
 import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<
@@ -367,134 +369,12 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
 
           if(selectedActualSession != null || getSelectedBusinessClass != null){
-            return _buildTrainingSessionEditFelds(ScaffoldMessenger.of(context));
+            return const TrainingSessionEditFields();
           } else {
             return const Text("No session to select");
           }
         }
       },
-    );
-  }
-
-  /// Builds the training session edit fields
-  /// Returns a widget that allows the user to edit the training session fields
-  /// If no training session is selected, returns a text saying so
-  Column _buildTrainingSessionEditFelds(
-      ScaffoldMessengerState scaffoldMessenger) {
-
-    final session = selectedActualSession!;
-    final TextEditingController workoutNameController =
-        TextEditingController(text: session.trainingSessionName);
-    final TextEditingController workoutLengthController =
-        TextEditingController(text: session.trainingSessionLength.toString());
-    final TextEditingController sessionDescriptionController =
-        TextEditingController(text: session.trainingSessionDescription);
-    final TextEditingController sessionEmphasisController =
-        TextEditingController(text: session.trainingSessionEmphasis.join(','));
-    DateTime startDate = session.trainingSessionStartDate;
-
-    void updateSessionFromFields() {
-      session.trainingSessionName = workoutNameController.text;
-      session.trainingSessionLength =
-          int.tryParse(workoutLengthController.text) ??
-              session.trainingSessionLength;
-      session.trainingSessionDescription = sessionDescriptionController.text;
-      session.trainingSessionEmphasis = sessionEmphasisController.text.split(',');
-      session.trainingSessionStartDate = startDate;
-    }
-
-    return Column(
-      children: <Widget>[
-        TextField(
-          controller: workoutNameController,
-          decoration: const InputDecoration(labelText: "Workout Name"),
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-          onChanged: (_) => updateSessionFromFields(),
-        ),
-        TextField(
-          controller: sessionDescriptionController,
-          decoration: const InputDecoration(labelText: "Session Description"),
-          onChanged: (_) => updateSessionFromFields(),
-        ),
-        TextField(
-          controller: sessionEmphasisController,
-          decoration: const InputDecoration(labelText: "Session Emphasis"),
-          onChanged: (_) => updateSessionFromFields(),
-        ),
-        TextField(
-          controller: workoutLengthController,
-          decoration:
-              const InputDecoration(labelText: "Workout Length in minutes"),
-          keyboardType: TextInputType.number,
-          onChanged: (_) => updateSessionFromFields(),
-        ),
-        DatePickerSheer(
-          initialDateTime: startDate,
-          onDateTimeChanged: (DateTime newDateTime) {
-            startDate = newDateTime;
-            updateSessionFromFields();
-          },
-          dateController: TextEditingController(text: startDate.toString()),
-        ),
-        // show all the exercises in the session by showing
-        for (TrainingExerciseBus exercise
-            in getSelectedBusinessClass?.trainingSessionExercises ?? [])
-          TrainingExcerciseRow(
-            actualTrainingExercise: plannedToActualExercises[exercise],
-            plannedTrainingExercise: exercise,
-            onUpdate: (actualExercise) async {
-              if (plannedToActualExercises[exercise] == null) {
-                String addId = await addExercise(
-                    actualExercise, scaffoldMessenger,
-                    notify: false);
-                selectedActualSession!.trainingSessionExcercisesIds.add(addId);
-                actualExercise.trainingExerciseID = addId;
-                updateBusinessClass(selectedActualSession!, scaffoldMessenger,
-                    notify: false);
-              } else {
-                updateExercises([actualExercise], scaffoldMessenger,
-                    notify: false);
-              }
-            },
-            onDelete: (actualExercise) {
-              if (plannedToActualExercises[exercise] != null ||
-                  unplannedExercises.contains(exercise)) {
-                deleteExercise(actualExercise, scaffoldMessenger,
-                    notify: false);
-                selectedActualSession!.trainingSessionExcercisesIds
-                    .remove(actualExercise.trainingExerciseID);
-                selectedActualSession!.trainingSessionExercises
-                    .remove(actualExercise);
-                updateBusinessClass(selectedActualSession!, scaffoldMessenger,
-                    notify: false);
-              }
-            },
-          ),
-
-        //add all the unplanned exercises
-        for (TrainingExerciseBus exercise in unplannedExercisesForSession)
-          TrainingExcerciseRow(
-            actualTrainingExercise: exercise,
-            plannedTrainingExercise: null,
-            onUpdate: (actualExercise) {
-              updateExercises([exercise], scaffoldMessenger, notify: false);
-            },
-            onDelete: (actualExercise) {
-              if (plannedToActualExercises[exercise] != null ||
-                  unplannedExercises.contains(exercise)) {
-                deleteExercise(actualExercise, scaffoldMessenger,
-                    notify: false);
-                selectedActualSession!.trainingSessionExcercisesIds
-                    .remove(actualExercise.trainingExerciseID);
-                selectedActualSession!.trainingSessionExercises
-                    .remove(actualExercise);
-                updateBusinessClass(selectedActualSession!, scaffoldMessenger,
-                    notify: false);
-              }
-            },
-          )
-      ],
     );
   }
  

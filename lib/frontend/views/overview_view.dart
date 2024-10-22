@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/frontend/costum_widgets/day_field_calendar.dart';
-import 'package:trainingplaner/frontend/uc01TrainingCycle/edit_cycles_view.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_overview_view.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 
@@ -56,7 +56,7 @@ class _OverviewViewState extends State<OverviewView> {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => ChangeNotifierProvider.value(
                 value: trainingCycleProvider,
-                child: const EditCyclesView(),
+                child: const TrainingCycleOverviewView(),
               ),),);
         },
         child: const Icon(Icons.add),

@@ -1,106 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
-import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 
 class TrainingCycleEditFields extends StatefulWidget {
-  final TextEditingController nameController;
-  final TextEditingController descriptionController;
-  final TextEditingController emphasisController;
-
-  const TrainingCycleEditFields(
-      {super.key,
-      required this.nameController,
-      required this.descriptionController,
-      required this.emphasisController});
+  const TrainingCycleEditFields({super.key});
 
   @override
-  State<TrainingCycleEditFields> createState() =>
-      _TrainingCycleEditFieldsState();
+  State<TrainingCycleEditFields> createState() => _TrainingCycleEditFieldsState();
 }
 
 class _TrainingCycleEditFieldsState extends State<TrainingCycleEditFields> {
-  late final TextEditingController _nameController;
-  late final TextEditingController _descriptionController;
-  late final TextEditingController _emphasisController;
-  late DateTime _startDate;
-  late DateTime _endDate;
-  late final TextEditingController _startDateController;
-  late final TextEditingController _endDateController;
 
   @override
   void initState() {
     super.initState();
-
-    _nameController = widget.nameController;
-    _descriptionController = widget.descriptionController;
-    _emphasisController = widget.emphasisController;
-    //TODO: start and end date from parent later
-    _startDate = DateTime.now();
-    _endDate = DateTime.now();
-    _startDateController = TextEditingController();
-    _endDateController = TextEditingController();
-    _startDateController.text = getDateStringForDisplay(_startDate);
-    _endDateController.text = getDateStringForDisplay(_endDate);
+    Provider.of<TrainingCycleProvider>(context, listen: false).initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Center(
-          child: TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Name'),
+    final provider = Provider.of<TrainingCycleProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Edit Cycle"),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: provider.nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+                onChanged: (value) => provider.handleTextFieldChange('name', value),
+              ),
+              TextField(
+                controller: provider.descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
+                onChanged: (value) => provider.handleTextFieldChange('description', value),
+              ),
+              TextField(
+                controller: provider.emphasisController,
+                decoration: const InputDecoration(labelText: 'Emphasis'),
+                onChanged: (value) => provider.handleTextFieldChange('emphasis', value),
+              ),
+              const SizedBox(height: 16),
+              DatePickerSheer(
+                initialDateTime: provider.startDate,
+                onDateTimeChanged: provider.updateStartDate,
+                dateController: provider.startDateController,
+              ),
+              const SizedBox(height: 16),
+              DatePickerSheer(
+                initialDateTime: provider.endDate,
+                onDateTimeChanged: provider.updateEndDate,
+                dateController: provider.endDateController,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: provider.selectedParentId,
+                decoration: const InputDecoration(labelText: 'Parent Cycle'),
+                items: [
+                  const DropdownMenuItem<String>(
+                    value: null,
+                    child: Text('No Parent'),
+                  ),
+                  ...provider.parentCycles.map((cycle) => DropdownMenuItem<String>(
+                    value: cycle.getId(),
+                    child: Text(cycle.cycleName),
+                  )),
+                ],
+                onChanged: (value) => provider.updateParent(value),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  provider.saveTrainingCycle(ScaffoldMessenger.of(context));
+                  Navigator.pop(context);
+                },
+                child: const Text("Save"),
+              ),
+            ],
           ),
         ),
-        TextField(
-          controller: _descriptionController,
-          decoration: const InputDecoration(labelText: 'Description'),
-        ),
-        TextField(
-          controller: _emphasisController,
-          decoration: const InputDecoration(labelText: 'Emphasis'),
-        ),
-        DatePickerSheer(
-          initialDateTime: _startDate,
-          onDateTimeChanged: (DateTime newDateTime) {
-            setState(() {
-              _startDate = newDateTime;
-            });
-          },
-          dateController: _startDateController,
-        ),
-        DatePickerSheer(
-          initialDateTime: _endDate,
-          onDateTimeChanged: (DateTime newDateTime) {
-            setState(() {
-              _endDate = newDateTime;
-            });
-          },
-          dateController: _endDateController,
-        ),
-        //TODO: make dropdown select the existing training cycles
-        //and make them selectable
-        //when selected, the field should be filled with the name and the parent value of the selected cycle should be set to this cycleID
-        DropdownMenu(
-          width: MediaQuery.of(context).size.width,
-          label: const Text("parent"),
-          onSelected: (selected) {
-          },
-          dropdownMenuEntries: const [
-            DropdownMenuEntry(value: "1", label: "alksd"),
-            DropdownMenuEntry(value: "2", label: "parent")
-          ],
-        ),
-        ElevatedButton(
-          onPressed: () {
-            //TODO: implement saving the training cycle
-            //and navigate back to the previous view
-            Navigator.pop(context);
-          },
-          child: const Text("Save"),
-        ),
-      ],
+      ),
     );
   }
 }

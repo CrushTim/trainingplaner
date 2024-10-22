@@ -117,45 +117,17 @@ class MockTrainingCycleBus extends _i1.Mock implements _i3.TrainingCycleBus {
       );
 
   @override
-  String get emphasis => (super.noSuchMethod(
+  List<String> get emphasis => (super.noSuchMethod(
         Invocation.getter(#emphasis),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#emphasis),
-        ),
-        returnValueForMissingStub: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#emphasis),
-        ),
-      ) as String);
+        returnValue: <String>[],
+        returnValueForMissingStub: <String>[],
+      ) as List<String>);
 
   @override
-  set emphasis(String? _emphasis) => super.noSuchMethod(
+  set emphasis(List<String>? _emphasis) => super.noSuchMethod(
         Invocation.setter(
           #emphasis,
           _emphasis,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  String get userID => (super.noSuchMethod(
-        Invocation.getter(#userID),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#userID),
-        ),
-        returnValueForMissingStub: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#userID),
-        ),
-      ) as String);
-
-  @override
-  set userID(String? _userID) => super.noSuchMethod(
-        Invocation.setter(
-          #userID,
-          _userID,
         ),
         returnValueForMissingStub: null,
       );

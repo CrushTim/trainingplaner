@@ -13,7 +13,7 @@ class TrainingCycleBus
   String description;
 
   /// Focus or main goal of the training cycle
-  String emphasis;
+  List<String> emphasis;
 
 
   /// Start date of the training cycle
@@ -80,7 +80,7 @@ class TrainingCycleBus
     trainingCycleID = "";
     cycleName = "";
     description = "";
-    emphasis = "";
+    emphasis = [];
     beginDate = DateTime.now();
     endDate = DateTime.now();
   }

@@ -9,9 +9,6 @@ class AddTrainingCycleView extends StatefulWidget {
 }
 
 class _AddTrainingCycleViewState extends State<AddTrainingCycleView> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _emphasisController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +16,7 @@ class _AddTrainingCycleViewState extends State<AddTrainingCycleView> {
       appBar: AppBar(
         title: const Text("Add Training Cycle"),
       ),
-      body: TrainingCycleEditFields(
-          nameController: _nameController,
-          descriptionController: _descriptionController,
-          emphasisController: _emphasisController),
+      body: TrainingCycleEditFields(),
     );
   }
 }

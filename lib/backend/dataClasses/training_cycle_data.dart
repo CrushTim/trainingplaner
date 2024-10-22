@@ -7,7 +7,7 @@ class TrainingCycleData implements TrainingsplanerDataInterface {
   String trainingCycleID;
   String cycleName;
   String description;
-  String emphasis;
+  List<String> emphasis;
   DateTime beginDate;
   DateTime endDate;
   String? parent;
@@ -27,7 +27,7 @@ class TrainingCycleData implements TrainingsplanerDataInterface {
       trainingCycleID: snapshot.id,
       cycleName: snapshot['cycleName'],
       description: snapshot['description'],
-      emphasis: snapshot['emphasis'],
+      emphasis: List<String>.from(snapshot['emphasis']),
       beginDate: DateTime.parse(snapshot['beginDate']),
       endDate: DateTime.parse(snapshot['endDate']),
       parent: snapshot['parent'],
@@ -38,7 +38,7 @@ class TrainingCycleData implements TrainingsplanerDataInterface {
       trainingCycleID: json['trainingCycleID'],
       cycleName: json['cycleName'],
       description: json['description'],
-      emphasis: json['emphasis'],
+      emphasis: List<String>.from(json['emphasis']),
       beginDate: DateTime.parse(json['beginDate']),
       endDate: DateTime.parse(json['endDate']),
       parent: json['parent'],
