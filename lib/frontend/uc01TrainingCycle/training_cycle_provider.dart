@@ -33,6 +33,7 @@ class TrainingCycleProvider
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No training cycles available'));
         }
+        businessClasses = snapshot.data!;
         return Column(
           children: snapshot.data!.map((cycle) => 
             TrainingCycleListTile(trainingCycleBus: cycle)
@@ -93,7 +94,6 @@ class TrainingCycleProvider
         } else {
           businessClassForAdd.cycleName = value;
         }
-        print(nameController.text);
         break;
       case 'description':
         if (getSelectedBusinessClass != null) {
@@ -159,7 +159,9 @@ class TrainingCycleProvider
   }
 
   void fetchParentCycles() {
-    
+    //show a selectable drop down menu with the parent cycles 
+
+
   }
   
   void resetControllers() {

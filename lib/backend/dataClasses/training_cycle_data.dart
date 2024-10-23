@@ -48,7 +48,6 @@ class TrainingCycleData implements TrainingsplanerDataInterface {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'trainingCycleID': trainingCycleID,
       'cycleName': cycleName,
       'description': description,
       'emphasis': emphasis,

@@ -61,14 +61,14 @@ class _TrainingCycleEditFieldsState extends State<TrainingCycleEditFields> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: provider.selectedParentId,
+                value: provider.getSelectedBusinessClass == null ? provider.businessClassForAdd.parent : provider.getSelectedBusinessClass?.parent,
                 decoration: const InputDecoration(labelText: 'Parent Cycle'),
                 items: [
                   const DropdownMenuItem<String>(
                     value: null,
                     child: Text('No Parent'),
                   ),
-                  ...provider.parentCycles.map((cycle) => DropdownMenuItem<String>(
+                  ...provider.businessClasses.map((cycle) => DropdownMenuItem<String>(
                     value: cycle.getId(),
                     child: Text(cycle.cycleName),
                   )),

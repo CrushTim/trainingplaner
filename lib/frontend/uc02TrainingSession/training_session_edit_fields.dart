@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
@@ -63,6 +62,26 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
               const InputDecoration(labelText: "Workout Length in minutes"),
           keyboardType: TextInputType.number,
           onChanged: (_) => updateSessionFromFields(),
+        ),
+        DropdownButtonFormField<String>(
+          value: session.trainingCycleId.isEmpty ? null : session.trainingCycleId,
+          decoration: const InputDecoration(labelText: 'Parent Cycle'),
+          items: [
+            const DropdownMenuItem<String>(
+              value: null,
+              child: Text('No Parent'),
+            ),
+            ...trainingSessionProvider.allCycles.map((cycle) => DropdownMenuItem<String>(
+              value: cycle.getId(),
+              child: Text(cycle.cycleName),
+            )),
+          ],
+          onChanged: (value) {
+            setState(() {
+              session.trainingCycleId = value ?? '';
+              updateSessionFromFields();
+            });
+          },
         ),
         DatePickerSheer(
           initialDateTime: startDate,

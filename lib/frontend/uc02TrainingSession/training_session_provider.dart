@@ -5,6 +5,7 @@ import 'package:trainingplaner/business/businessClasses/training_exercise_bus.da
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
+import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
 import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
@@ -27,6 +28,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   Map<TrainingExerciseBus, TrainingExerciseBus?> plannedToActualExercises = {};
   List<TrainingExerciseBus> unplannedExercisesForSession = [];
   List<TrainingExerciseBus> unplannedExercises = [];
+  List<TrainingCycleBus> allCycles = [];
   TrainingSessionProvider()
       : super(
             businessClassForAdd: TrainingSessionBus(
@@ -342,24 +344,29 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   ///if the view is initialized with no selected actual or planned session, the session and exercises are set by the first planned session in the plannedToActualSessions map
   ///if there is a selected actual or planned session, the session and exercises are set by the selected session
   ///the builder returns the training session edit fields or a text saying no session selected
-  StreamBuilder2 getCurrentTrainingSessionStreamBuilder() {
-    return StreamBuilder2(
-      streams: StreamTuple2(
-          reportTaskVar.getAll(), trainingExerciseBusReport.getAll()),
+  StreamBuilder3 getCurrentTrainingSessionStreamBuilder() {
+    return StreamBuilder3(
+      streams: StreamTuple3(
+          reportTaskVar.getAll(), trainingExerciseBusReport.getAll(), TrainingCycleBusReport().getAll()),
       builder: (context, snapshots) {
         if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
-            snapshots.snapshot2.connectionState == ConnectionState.waiting) {
+            snapshots.snapshot2.connectionState == ConnectionState.waiting ||
+            snapshots.snapshot3.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshots.snapshot1.hasError ||
-            snapshots.snapshot2.hasError) {
+            snapshots.snapshot2.hasError ||
+            snapshots.snapshot3.hasError) {
           if (snapshots.snapshot1.hasError) {
             return Text(snapshots.snapshot1.error.toString());
-          } else {
+          } else if (snapshots.snapshot2.hasError) {
             return Text(snapshots.snapshot2.error.toString());
+          } else {
+            return Text(snapshots.snapshot3.error.toString());
           }
         } else {
           List<TrainingSessionBus> allSessions = snapshots.snapshot1.data!;
           List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
+          allCycles = snapshots.snapshot3.data!;
 
           mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
           getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSessions() : null;
@@ -438,6 +445,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
+  //TODO: extract to costum widget
   Widget _buildSessionTile(TrainingSessionBus session, BuildContext context, {required bool isPlanned}) {
     return Container(
       padding: const EdgeInsets.all(8),

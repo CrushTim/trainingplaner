@@ -9,8 +9,6 @@ BUG:
 
 
 CRNT 
-    
-make cycle crud stuff
 
 
 make exercise foundation database and connection to training exercise workout
