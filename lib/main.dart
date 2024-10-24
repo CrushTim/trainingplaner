@@ -7,6 +7,7 @@ import 'package:trainingplaner/frontend/home_page.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fireabase_ui_auth;
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -63,6 +64,8 @@ class Main extends StatelessWidget {
                   create: (context) => TrainingSessionProvider()),
               ChangeNotifierProvider(
                   create: (context) => TrainingCycleProvider()),
+              ChangeNotifierProvider(
+                  create: (context) => ExerciseFoundationProvider()),
             ], child: const HomePage()),
       },
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_overview_view.dart';
 import 'package:trainingplaner/frontend/views/overview_view.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/workout_view.dart';
 
@@ -16,7 +17,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   // This widget is the root of your application.
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
         body: TabBarView(
           controller: _tabController,
-          children: const [OverviewView(), WorkoutView()],
+          children: const [OverviewView(), WorkoutView(), ExerciseFoundationOverviewView()],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _tabController!.index,
@@ -41,6 +42,10 @@ class _HomePageState extends State<HomePage>
                 icon: Icon(Icons.fitness_center),
                 label: "Workout",
                 activeIcon: Icon(Icons.fitness_center, color: Colors.blue)),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.fit_screen),
+                label: "Exercise Foundation",
+                activeIcon: Icon(Icons.fit_screen, color: Colors.blue)),
           ],
           onTap: (value) {
             switch (value) {
@@ -49,6 +54,9 @@ class _HomePageState extends State<HomePage>
                 break;
               case 1:
                 _tabController!.animateTo(1);
+                break;
+              case 2:
+                _tabController!.animateTo(2);
                 break;
             }
           },

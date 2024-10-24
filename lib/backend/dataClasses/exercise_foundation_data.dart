@@ -34,31 +34,16 @@ class ExerciseFoundationData implements TrainingsplanerDataInterface {
       exerciseFoundationAmountOfPeople: snapshot['amountOfPeople'],
     );
   }
-  factory ExerciseFoundationData.fromJson(Map<String, dynamic> json) {
-    return ExerciseFoundationData(
-      exerciseFoundationId: json['exerciseFoundationId'],
-      exerciseFoundationName: json['exerciseFoundationName'],
-      exerciseFoundationDescription: json['exerciseFoundationDescription'],
-      exerciseFoundationPicturePath: json['exerciseFoundationPicturePath'],
-      exerciseFoundationCategories:
-          List<String>.from(json['exerciseFoundationCategories']),
-      exerciseFoundationMuscleGroups:
-          List<String>.from(json['exerciseFoundationMuscleGroups']),
-      exerciseFoundationAmountOfPeople:
-          json['exerciseFoundationAmountOfPeople'],
-    );
-  }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      'exerciseFoundationId': exerciseFoundationId,
-      'exerciseFoundationName': exerciseFoundationName,
-      'exerciseFoundationDescription': exerciseFoundationDescription,
-      'exerciseFoundationPicturePath': exerciseFoundationPicturePath,
-      'exerciseFoundationCategories': exerciseFoundationCategories,
-      'exerciseFoundationMuscleGroups': exerciseFoundationMuscleGroups,
-      'exerciseFoundationAmountOfPeople': exerciseFoundationAmountOfPeople,
+      'name': exerciseFoundationName,
+      'description': exerciseFoundationDescription,
+      'picturePath': exerciseFoundationPicturePath,
+      'categories': exerciseFoundationCategories,
+      'muscleGroups': exerciseFoundationMuscleGroups,
+      'amountOfPeople': exerciseFoundationAmountOfPeople,
     };
   }
 
