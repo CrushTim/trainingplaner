@@ -3,6 +3,7 @@ import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_list_tile.dart';
 
 class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundationBus, ExerciseFoundationBusReport> {
   ExerciseFoundationProvider() : super(businessClassForAdd: ExerciseFoundationBus(exerciseFoundationId: "", exerciseFoundationName: "", exerciseFoundationDescription: "", exerciseFoundationPicturePath: "", exerciseFoundationCategories: [], exerciseFoundationMuscleGroups: [], exerciseFoundationAmountOfPeople: 1,), reportTaskVar: ExerciseFoundationBusReport(),);
@@ -23,18 +24,8 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
         } else {
           return Column(
             children: snapshots.snapshot1.data!.map((exerciseFoundation) {
-              return Column(
-                children: <Widget>[
-                  Text(exerciseFoundation.exerciseFoundationName),
-                  Text(exerciseFoundation.exerciseFoundationDescription),
-                  Text(exerciseFoundation.exerciseFoundationPicturePath),
-                  Text(exerciseFoundation.exerciseFoundationCategories.join(",")),
-                  Text(exerciseFoundation.exerciseFoundationMuscleGroups.join(",")),
-                  Text(exerciseFoundation.exerciseFoundationAmountOfPeople.toString()),
-                  const SizedBox(height: 16), // Add some spacing between each exercise foundation
-                ],
-              );
-            }).toList().cast<Widget>(), // Add .cast<Widget>() here
+              return ExerciseFoundationListTile();
+            }).toList().cast<Widget>(),
           );
         }
       },
