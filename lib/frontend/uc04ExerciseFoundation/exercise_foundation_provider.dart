@@ -6,8 +6,77 @@ import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_list_tile.dart';
 
 class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundationBus, ExerciseFoundationBusReport> {
-  ExerciseFoundationProvider() : super(businessClassForAdd: ExerciseFoundationBus(exerciseFoundationId: "", exerciseFoundationName: "", exerciseFoundationDescription: "", exerciseFoundationPicturePath: "", exerciseFoundationCategories: [], exerciseFoundationMuscleGroups: [], exerciseFoundationAmountOfPeople: 1,), reportTaskVar: ExerciseFoundationBusReport(),);
+  ExerciseFoundationProvider() : super(
+    businessClassForAdd: ExerciseFoundationBus(
+      exerciseFoundationId: "",
+      exerciseFoundationName: "",
+      exerciseFoundationDescription: "",
+      exerciseFoundationPicturePath: "",
+      exerciseFoundationCategories: [],
+      exerciseFoundationMuscleGroups: [],
+      exerciseFoundationAmountOfPeople: 1,
+    ),
+    reportTaskVar: ExerciseFoundationBusReport(),
+  );
 
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController picturePathController = TextEditingController();
+  final TextEditingController categoriesController = TextEditingController();
+  final TextEditingController muscleGroupsController = TextEditingController();
+  final TextEditingController amountOfPeopleController = TextEditingController();
+
+  @override
+  void initState() {
+    if (getSelectedBusinessClass != null) {
+      nameController.text = getSelectedBusinessClass!.exerciseFoundationName;
+      descriptionController.text = getSelectedBusinessClass!.exerciseFoundationDescription;
+      picturePathController.text = getSelectedBusinessClass!.exerciseFoundationPicturePath;
+      categoriesController.text = getSelectedBusinessClass!.exerciseFoundationCategories.join(', ');
+      muscleGroupsController.text = getSelectedBusinessClass!.exerciseFoundationMuscleGroups.join(', ');
+      amountOfPeopleController.text = getSelectedBusinessClass!.exerciseFoundationAmountOfPeople.toString();
+    } else {
+      nameController.text = businessClassForAdd.exerciseFoundationName;
+      descriptionController.text = businessClassForAdd.exerciseFoundationDescription;
+      picturePathController.text = businessClassForAdd.exerciseFoundationPicturePath;
+      categoriesController.text = businessClassForAdd.exerciseFoundationCategories.join(', ');
+      muscleGroupsController.text = businessClassForAdd.exerciseFoundationMuscleGroups.join(', ');
+      amountOfPeopleController.text = businessClassForAdd.exerciseFoundationAmountOfPeople.toString();
+    }
+  }
+
+  void handleTextFieldChange(String field, String value) {
+    ExerciseFoundationBus target = getSelectedBusinessClass ?? businessClassForAdd;
+    switch (field) {
+      case 'name':
+        target.exerciseFoundationName = value;
+        break;
+      case 'description':
+        target.exerciseFoundationDescription = value;
+        break;
+      case 'picturePath':
+        target.exerciseFoundationPicturePath = value;
+        break;
+      case 'categories':
+        target.exerciseFoundationCategories = value.split(',').map((e) => e.trim()).toList();
+        break;
+      case 'muscleGroups':
+        target.exerciseFoundationMuscleGroups = value.split(',').map((e) => e.trim()).toList();
+        break;
+      case 'amountOfPeople':
+        target.exerciseFoundationAmountOfPeople = int.tryParse(value) ?? 1;
+        break;
+    }
+    notifyListeners();
+  }
+
+  Future<void> saveExerciseFoundation(ScaffoldMessengerState scaffoldMessengerState) async {
+    if (getSelectedBusinessClass != null) {
+      await updateBusinessClass(getSelectedBusinessClass!, scaffoldMessengerState);
+    } else {
+      await addBusinessClass(businessClassForAdd, scaffoldMessengerState);
+    }
+  }
 
   // /////////////////////////////////////////////////////////////////////
   //                         View Methods
@@ -24,7 +93,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
         } else {
           return Column(
             children: snapshots.snapshot1.data!.map((exerciseFoundation) {
-              return ExerciseFoundationListTile();
+              return ExerciseFoundationListTile(exerciseFoundation: exerciseFoundation);
             }).toList().cast<Widget>(),
           );
         }

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
+import 'package:provider/provider.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 class ExerciseFoundationListTile extends StatefulWidget {
+  final ExerciseFoundationBus exerciseFoundation;
   const ExerciseFoundationListTile({
+    required this.exerciseFoundation,
     super.key,
   });
 
@@ -12,6 +18,7 @@ class ExerciseFoundationListTile extends StatefulWidget {
 class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile> {
   @override
   Widget build(BuildContext context) {
+    ExerciseFoundationBus exerciseFoundation = widget.exerciseFoundation;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -46,9 +53,22 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
             ),
           ],
         ),
-        trailing: IconButton(onPressed: () {
-          //TODO: open edit view
-        }, icon: const Icon(Icons.edit)),
+        trailing: IconButton(
+          onPressed: () {
+            final provider = Provider.of<ExerciseFoundationProvider>(context, listen: false);
+            provider.setSelectedBusinessClass(exerciseFoundation);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChangeNotifierProvider.value(
+                  value: provider,
+                  child: const ExerciseFoundationEditFields(),
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.edit),
+        ),
       ),
     );
   }
