@@ -1,21 +1,28 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
+import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_list_tile.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'training_cycle_provider_test.mocks.dart';
 
-@GenerateNiceMocks([MockSpec<TrainingCycleBus>()])
+//class MockTrainingCycleBusReport extends Mock implements TrainingCycleBusReport {}
+//class MockTrainingCycleBus extends Mock implements TrainingCycleBus {}
+@GenerateNiceMocks([MockSpec<TrainingCycleBus>(), MockSpec<TrainingCycleBusReport>()])
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late TrainingCycleProvider provider;
   late MockTrainingCycleBus mockTrainingCycleBus;
+  late MockTrainingCycleBusReport mockTrainingCycleBusReport;
 
   setUp(() {
     mockTrainingCycleBus = MockTrainingCycleBus();
+    mockTrainingCycleBusReport = MockTrainingCycleBusReport();
     provider = TrainingCycleProvider();
   });
 
@@ -214,6 +221,88 @@ void main() async {
       expect(provider.nameController.text, isEmpty);
       expect(provider.descriptionController.text, isEmpty);
       expect(provider.emphasisController.text, isEmpty);
+    });
+  });
+
+  group('getTrainingCycles', () {
+    testWidgets('should return a list of training cycles', (WidgetTester tester) async {
+      // Arrange
+      when(mockTrainingCycleBusReport.getAll()).thenAnswer((_) => Stream.value([mockTrainingCycleBus]));
+      provider.reportTaskVar = mockTrainingCycleBusReport;
+
+      // Act
+      await tester.pumpWidget(MaterialApp(
+        home: MultiProvider(providers: [
+          ChangeNotifierProvider(create: (context) => provider)
+        ], child: Scaffold(body: ListView(children: [provider.getTrainingCycles()]))),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.byType(TrainingCycleListTile), findsOneWidget);
+    });
+
+    testWidgets('should return a empty list of training cycles', (WidgetTester tester) async {
+      // Arrange
+      when(mockTrainingCycleBusReport.getAll()).thenAnswer((_) => Stream.value([]));
+      provider.reportTaskVar = mockTrainingCycleBusReport;
+
+      // Act
+      await tester.pumpWidget(MaterialApp(
+        home: MultiProvider(providers: [
+          ChangeNotifierProvider(create: (context) => provider)
+        ], child: Scaffold(body: ListView(children: [provider.getTrainingCycles()]))),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.text('No training cycles available'), findsOneWidget);
+    });
+
+    testWidgets("should return a list with multiple training cycles", (WidgetTester tester) async {
+      // Arrange
+      when(mockTrainingCycleBusReport.getAll()).thenAnswer((_) => Stream.value([mockTrainingCycleBus, mockTrainingCycleBus]));
+      provider.reportTaskVar = mockTrainingCycleBusReport;
+
+      // Act
+      await tester.pumpWidget(MaterialApp(
+        home: MultiProvider(providers: [
+          ChangeNotifierProvider(create: (context) => provider)
+        ], child: Scaffold(body: ListView(children: [provider.getTrainingCycles()]))),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.byType(TrainingCycleListTile), findsNWidgets(2));
+    });
+
+    testWidgets("should error and return a empty list", (WidgetTester tester) async {
+      // Arrange
+      when(mockTrainingCycleBusReport.getAll()).thenAnswer((_) => Stream.error('Test Error'));
+      provider.reportTaskVar = mockTrainingCycleBusReport;
+
+      // Act
+      await tester.pumpWidget(MaterialApp(
+        home: MultiProvider(providers: [
+          ChangeNotifierProvider(create: (context) => provider)
+        ], child: Scaffold(body: ListView(children: [provider.getTrainingCycles()]))),
+      ));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.text('Test Error'), findsOneWidget);
     });
   });
 }

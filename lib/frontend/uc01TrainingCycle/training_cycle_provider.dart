@@ -35,6 +35,7 @@ class TrainingCycleProvider
         }
         businessClasses = snapshot.data!;
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: snapshot.data!.map((cycle) => 
             TrainingCycleListTile(trainingCycleBus: cycle)
           ).toList(),
