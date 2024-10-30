@@ -33,10 +33,10 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
             // Add the image here
             Container(
               width: MediaQuery.of(context).size.width * 0.2, // 1/5th of screen width
-              child: Image.asset(
-                exerciseFoundation.exerciseFoundationPicturePath,
-                fit: BoxFit.contain,
-              ),
+              //child: Image.asset(
+              //  exerciseFoundation.exerciseFoundationPicturePath,
+              //  fit: BoxFit.contain,
+              //),
             ),
             SizedBox(width: 10), // Add some spacing between image and text
             Expanded(

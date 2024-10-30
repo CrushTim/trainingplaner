@@ -27,8 +27,8 @@ class ExerciseFoundationData implements TrainingsplanerDataInterface {
       exerciseFoundationId: snapshot.id,
       exerciseFoundationName: snapshot['name'],
       exerciseFoundationDescription: snapshot['description'],
-      exerciseFoundationPicturePath: snapshot['picturePath'],
-      exerciseFoundationCategories: List<String>.from(snapshot['categories']),
+      exerciseFoundationPicturePath: snapshot['images'].join(","),
+      exerciseFoundationCategories: [snapshot['categories']],
       exerciseFoundationMuscleGroups:
           List<String>.from(snapshot['muscleGroups']),
       exerciseFoundationAmountOfPeople: snapshot['amountOfPeople'],
