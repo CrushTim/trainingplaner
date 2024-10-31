@@ -8,7 +8,7 @@ class UserSpecificExerciseDataReport
     implements TrainingsplanerDataReportInterface<UserSpecificExerciseData> {
   @override
   Stream<List<UserSpecificExerciseData>> getAll() {
-    return FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).collection("exerciseLinks").snapshots().map((snapshot) => snapshot.docs.map((doc) => UserSpecificExerciseData.fromSnapshot(doc)).toList());
+    return FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).collection("userSpecificExercises").snapshots().map((snapshot) => snapshot.docs.map((doc) => UserSpecificExerciseData.fromSnapshot(doc)).toList());
   }
 }
 

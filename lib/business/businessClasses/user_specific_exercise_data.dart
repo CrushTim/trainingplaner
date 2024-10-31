@@ -6,34 +6,29 @@ class UserSpecificExerciseBus
   ///the id of the user specific excercise data link
   String exerciseLinkID;
 
-  ///the id of the user
-  String userID;
-
   ///the foundation id the user has specific data for
   String foundationId;
-
-  ///Notes the user has written for this excercise
-  String notes;
 
   ///the current one Rep Max
   double oneRepMax;
 
+  ///the date of the last update
+  DateTime date;
+
   UserSpecificExerciseBus({
     required this.exerciseLinkID,
-    required this.userID,
     required this.foundationId,
-    required this.notes,
     required this.oneRepMax,
+    required this.date,
   });
 
   ///factory method to create a training cycle from a data base object
   factory UserSpecificExerciseBus.fromData(UserSpecificExerciseData data) {
     return UserSpecificExerciseBus(
       exerciseLinkID: data.exerciseLinkID,
-      userID: data.userID,
       foundationId: data.foundationId,
-      notes: data.notes,
       oneRepMax: data.oneRepMax,
+      date: data.date,
     );
   }
 
@@ -42,10 +37,9 @@ class UserSpecificExerciseBus
   toData() {
     return UserSpecificExerciseData(
       exerciseLinkID: exerciseLinkID,
-      userID: userID,
       foundationId: foundationId,
-      notes: notes,
       oneRepMax: oneRepMax,
+      date: date,
     );
   }
 
@@ -53,19 +47,16 @@ class UserSpecificExerciseBus
   @override
   void reset() {
     exerciseLinkID = "";
-    userID = "";
     foundationId = "";
-    notes = "";
     oneRepMax = 0;
+    date = DateTime.now();
   }
 
   ///maps all attributes of another instance into this object
   @override
   void mapFromOtherInstance(UserSpecificExerciseBus other) {
     exerciseLinkID = other.exerciseLinkID;
-    userID = other.userID;
     foundationId = other.foundationId;
-    notes = other.notes;
     oneRepMax = other.oneRepMax;
   }
 
@@ -114,11 +105,6 @@ class UserSpecificExerciseBus
     if (foundationId.isEmpty) {
       throw Exception("The foundationId is empty");
     }
-
-    //check if userID is empty
-    if (userID.isEmpty) {
-      throw Exception("The userID is empty");
-    }
   }
 
   @override
@@ -126,11 +112,6 @@ class UserSpecificExerciseBus
     //check if excerciseLinkID is empty
     if (exerciseLinkID.isEmpty) {
       throw Exception("The excerciseLinkID is empty");
-    }
-
-    //check if userID is empty
-    if (userID.isEmpty) {
-      throw Exception("The userID is empty");
     }
 
     //check if foundationId is empty

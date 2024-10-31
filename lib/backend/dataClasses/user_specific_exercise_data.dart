@@ -10,37 +10,33 @@ class UserSpecificExerciseData implements TrainingsplanerDataInterface {
       .instance.currentUser!.uid)
       .collection("userSpecificExercises");
   String exerciseLinkID;
-  String userID;
   String foundationId;
-  String notes;
   double oneRepMax;
+  DateTime date;
 
   UserSpecificExerciseData({
     required this.exerciseLinkID,
-    required this.userID,
     required this.foundationId,
-    required this.notes,
     required this.oneRepMax,
+    required this.date,
   });
 
   factory UserSpecificExerciseData.fromSnapshot(
       QueryDocumentSnapshot snapshot) {
     return UserSpecificExerciseData(
       exerciseLinkID: snapshot.id,
-      userID: snapshot['userID'],
       foundationId: snapshot['foundationId'],
-      notes: snapshot['notes'],
       oneRepMax: snapshot['oneRepMax'],
+      date: snapshot['date'].toDate(),
     );
   }
 
   factory UserSpecificExerciseData.fromJson(Map<String, dynamic> json) {
     return UserSpecificExerciseData(
       exerciseLinkID: json['exerciseLinkID'],
-      userID: json['userID'],
       foundationId: json['foundationId'],
-      notes: json['notes'],
       oneRepMax: json['oneRepMax'],
+      date: json['date'].toDate(),
     );
   }
 
@@ -48,10 +44,9 @@ class UserSpecificExerciseData implements TrainingsplanerDataInterface {
   Map<String, dynamic> toJson() {
     return {
       'exerciseLinkID': exerciseLinkID,
-      'userID': userID,
       'foundationId': foundationId,
-      'notes': notes,
       'oneRepMax': oneRepMax,
+      'date': date,
     };
   }
 

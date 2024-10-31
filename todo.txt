@@ -1,15 +1,13 @@
 CRNT 
-
-    make exercise foundation database and connection to training exercise workout
-        -> get online data for exercises
-        
-        
+       
     -lock certain data from the exercise stuff
 
-    -make userLink to the exercises 
-        -> add crud methods
-        -> get streams
-        -> map them
+    - lazy loading for the exercise foundation list
+
+   userLink:
+        - make onerepmax editable
+    
+    -make seperate document for notes
 
     make overview clickable
         -> open day view with planned and actual sessions 

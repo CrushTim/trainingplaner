@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
+import 'package:trainingplaner/business/businessClasses/user_specific_exercise_data.dart';
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
+import 'package:trainingplaner/business/reports/user_specific_exercise_data_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_list_tile.dart';
 
@@ -19,6 +21,10 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     reportTaskVar: ExerciseFoundationBusReport(),
   );
 
+  UserSpecificExerciseDataBusReport userSpecificExerciseDataReport = UserSpecificExerciseDataBusReport();
+
+  List<UserSpecificExerciseBus> userSpecificExercise = [];
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController picturePathController = TextEditingController();
@@ -26,7 +32,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   final TextEditingController muscleGroupsController = TextEditingController();
   final TextEditingController amountOfPeopleController = TextEditingController();
 
-  @override
+
   void initState() {
     if (getSelectedBusinessClass != null) {
       nameController.text = getSelectedBusinessClass!.exerciseFoundationName;
@@ -84,16 +90,19 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
 
   StreamBuilder2 getAllExerciseFoundationsWithUserLinks() {
     return StreamBuilder2(
-      streams: StreamTuple2(reportTaskVar.getAll(), ExerciseFoundationBusReport().getAll()),
+      streams: StreamTuple2(reportTaskVar.getAll(), userSpecificExerciseDataReport.getAll()),
       builder: (context, snapshots) {
         if (snapshots.snapshot1.connectionState == ConnectionState.waiting || snapshots.snapshot2.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshots.snapshot1.hasError || snapshots.snapshot2.hasError) {
           return Text(snapshots.snapshot1.error.toString() + snapshots.snapshot2.error.toString());
         } else {
+          List<ExerciseFoundationBus> exerciseFoundations = snapshots.snapshot1.data!;
+          List<UserSpecificExerciseBus> userSpecificExercise = snapshots.snapshot2.data!;
           return Column(
-            children: snapshots.snapshot1.data!.map((exerciseFoundation) {
-              return ExerciseFoundationListTile(exerciseFoundation: exerciseFoundation);
+            children: exerciseFoundations.map((exerciseFoundation) {
+              List<UserSpecificExerciseBus> userSpecificExerciseForFoundation = userSpecificExercise.where((userSpecificExercise) => userSpecificExercise.foundationId == exerciseFoundation.exerciseFoundationId).toList();
+              return ExerciseFoundationListTile(exerciseFoundation: exerciseFoundation, userSpecificExercise: userSpecificExerciseForFoundation);
             }).toList().cast<Widget>(),
           );
         }
