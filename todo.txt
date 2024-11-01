@@ -6,8 +6,12 @@ CRNT
 
    userLink:
         - make onerepmax editable
+            -> make provider link
+            - add delete update and add 
     
     -make seperate document for notes
+        -> make the provider stuff
+            -> use bus in provider 
 
     make overview clickable
         -> open day view with planned and actual sessions 
@@ -20,6 +24,9 @@ CRNT
     TEST everything
 
 Code dept
+
+exercise foundation notes:
+    in provider the list tile edit and delete button suck ass (something else instead of size box)
 
 workout view:
     session

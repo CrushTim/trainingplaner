@@ -15,6 +15,7 @@ class _ExerciseFoundationOverviewViewState extends State<ExerciseFoundationOverv
   Widget build(BuildContext context) {
     ExerciseFoundationProvider exerciseFoundationProvider = Provider.of<ExerciseFoundationProvider>(context);
     return ListView(
+
       children: [
         exerciseFoundationProvider.getAllExerciseFoundationsWithUserLinks(),
         ElevatedButton(
