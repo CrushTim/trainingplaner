@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/business/businessClasses/user_specific_exercise_data.dart';
-import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
-
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/user_specific_one_rep_max_list_tile.dart';
 class ExerciseFoundationEditFields extends StatefulWidget {
   const ExerciseFoundationEditFields({super.key});
 
@@ -75,6 +73,9 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
                   return UserSpecificOneRepMaxListTile(userSpecificExercise: userSpecificExercise);
                 }).toList(),
               ),
+              ElevatedButton(onPressed: () {
+                //TODO:add add                
+              }, child: const Text("Add 1 Rep Max")),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
@@ -87,77 +88,6 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
           ),
         ),
       ),
-    );
-  }
-}
-
-class UserSpecificOneRepMaxListTile extends StatefulWidget {
-  final UserSpecificExerciseBus userSpecificExercise;
-  const UserSpecificOneRepMaxListTile({
-    super.key,
-    required this.userSpecificExercise,
-  });
-
-  @override
-  State<UserSpecificOneRepMaxListTile> createState() => _UserSpecificOneRepMaxListTileState();
-}
-
-class _UserSpecificOneRepMaxListTileState extends State<UserSpecificOneRepMaxListTile> {
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text("${widget.userSpecificExercise.oneRepMax.toString()} ${getDateStringForDisplay(widget.userSpecificExercise.date)} ${getTimeStringForDisplay(widget.userSpecificExercise.date)}"),
-      trailing: SizedBox(
-        width: 96, // Gives enough space for two icons
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    content: EditUserSpecificOneRepMaxEditFields(
-                      userSpecificExercise: widget.userSpecificExercise
-                    )
-                  )
-                );
-              },
-              icon: const Icon(Icons.edit)
-            ),
-            IconButton(
-              onPressed: () {
-                //TODO: add delete functionality
-              },
-              icon: const Icon(Icons.delete)
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class EditUserSpecificOneRepMaxEditFields extends StatefulWidget {
-  final UserSpecificExerciseBus userSpecificExercise;
-  const EditUserSpecificOneRepMaxEditFields({super.key, required this.userSpecificExercise});
-
-  @override
-  State<EditUserSpecificOneRepMaxEditFields> createState() => _EditUserSpecificOneRepMaxEditFieldsState();
-}
-
-class _EditUserSpecificOneRepMaxEditFieldsState extends State<EditUserSpecificOneRepMaxEditFields> {
-  final TextEditingController oneRepMaxController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(controller: oneRepMaxController, decoration: const InputDecoration(labelText: 'One Rep Max'), keyboardType: TextInputType.number, onChanged: (value) => widget.userSpecificExercise.oneRepMax = double.parse(value),),
-        //TODO: add date picker
-        ElevatedButton(onPressed: () {}, child: const Text("Save")),
-      ],
     );
   }
 }

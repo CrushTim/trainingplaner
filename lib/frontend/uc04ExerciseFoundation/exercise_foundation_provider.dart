@@ -21,6 +21,19 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     reportTaskVar: ExerciseFoundationBusReport(),
   );
 
+  ExerciseFoundationProvider mapToNewInstance() {
+    ExerciseFoundationProvider newInstance = ExerciseFoundationProvider();
+    newInstance.businessClassForAdd = businessClassForAdd;
+    newInstance.reportTaskVar = reportTaskVar;
+    newInstance.userSpecificExercise = userSpecificExercise;
+    newInstance.selectedUserSpecificExercise = selectedUserSpecificExercise;
+    newInstance.userSpecificExerciseBusForAdd = userSpecificExerciseBusForAdd;
+    newInstance.oneRepMaxController = oneRepMaxController;
+    newInstance.dateController = dateController;
+    newInstance.timeController = timeController;
+    return newInstance;
+  }
+
   UserSpecificExerciseDataBusReport userSpecificExerciseDataReport = UserSpecificExerciseDataBusReport();
 
   List<UserSpecificExerciseBus> userSpecificExercise = [];
@@ -108,5 +121,144 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
         }
       },
     );
+  }
+
+
+  // /////////////////////////////////////////////////////////////////////
+  //                 One Rep Max Methods        
+  // /////////////////////////////////////////////////////////////////////
+
+  UserSpecificExerciseBus? selectedUserSpecificExercise;
+
+  UserSpecificExerciseBus userSpecificExerciseBusForAdd = UserSpecificExerciseBus(
+    exerciseLinkID: "",
+    oneRepMax: 0,
+    foundationId: "",
+    date: DateTime.now(),
+  );
+
+  void setSelectedUserSpecificExercise(UserSpecificExerciseBus userSpecificExercise) {
+    selectedUserSpecificExercise = userSpecificExercise;
+  }
+
+  void resetSelectedUserSpecificExercise() {
+    selectedUserSpecificExercise = null;
+  }
+
+  void resetUserSpecificExerciseForAdd() {
+    userSpecificExerciseBusForAdd = UserSpecificExerciseBus(
+      exerciseLinkID: "",
+      oneRepMax: 0,
+      foundationId: "",
+      date: DateTime.now(),
+    );
+  }
+
+  TextEditingController oneRepMaxController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  DateTime initialDateTime = DateTime.now();
+
+
+  void initStateUserSpecificExercise() {
+    if (selectedUserSpecificExercise != null) {
+      oneRepMaxController.text = selectedUserSpecificExercise!.oneRepMax.toString();
+      initialDateTime = selectedUserSpecificExercise!.date;
+    }
+    else {
+      oneRepMaxController.text = "";
+    }
+  }
+
+  void handleTextFieldChangeUserSpecificExercise(String field, String value) {
+    UserSpecificExerciseBus target = selectedUserSpecificExercise ?? userSpecificExerciseBusForAdd;
+    switch (field) {
+      case 'oneRepMax':
+        target.oneRepMax = double.parse(value);
+        break;
+    }
+  }
+
+  void onDateTimeChangedUserSpecificExercise(DateTime dateTime) {
+    UserSpecificExerciseBus target = selectedUserSpecificExercise ?? userSpecificExerciseBusForAdd;
+    target.date = dateTime;
+  }
+
+  Future<void> saveUserSpecificExercise(ScaffoldMessengerState scaffoldMessengerState) async {
+    if (selectedUserSpecificExercise != null) {
+      await updateUserSpecificExercise(selectedUserSpecificExercise!, scaffoldMessengerState);
+    } else {
+      await addUserSpecificExercise(userSpecificExerciseBusForAdd, scaffoldMessengerState);
+    }
+  }
+
+
+  // /////////////////////////////////////////////////////////////////////
+  //                 User Specific Exercise CRUD-Methods
+  // /////////////////////////////////////////////////////////////////////
+
+  Future<void> addUserSpecificExercise(
+    UserSpecificExerciseBus exercise,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Added ${exercise.getName()}";
+    try {
+      await exercise.add()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      resetUserSpecificExerciseForAdd();
+      if (notify) {
+        notifyListeners();
+      }
+
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  Future<void> updateUserSpecificExercise(
+    UserSpecificExerciseBus exercise,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Updated ${exercise.getName()}";
+    try {
+      await exercise.update()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  Future<void> deleteUserSpecificExercise(
+    UserSpecificExerciseBus exercise,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Deleted ${exercise.getName()}";
+    try {
+      await exercise.delete()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
   }
 }

@@ -6,9 +6,13 @@ CRNT
 
    userLink:
         - make onerepmax editable
-            -> make provider link
-            - add delete update and add 
-    
+        - add delete function in tile
+        -add add function in the button in exercise foundation edit fields
+        - make datetime picker stuff update controller
+        - make textfield wider
+        - make column height only as big as the children
+
+
     -make seperate document for notes
         -> make the provider stuff
             -> use bus in provider 
