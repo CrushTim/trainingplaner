@@ -29,8 +29,6 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     newInstance.selectedUserSpecificExercise = selectedUserSpecificExercise;
     newInstance.userSpecificExerciseBusForAdd = userSpecificExerciseBusForAdd;
     newInstance.oneRepMaxController = oneRepMaxController;
-    newInstance.dateController = dateController;
-    newInstance.timeController = timeController;
     return newInstance;
   }
 
@@ -155,8 +153,6 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   }
 
   TextEditingController oneRepMaxController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController timeController = TextEditingController();
   DateTime initialDateTime = DateTime.now();
 
 

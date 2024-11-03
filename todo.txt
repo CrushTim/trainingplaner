@@ -1,21 +1,13 @@
 CRNT 
-       
-    -lock certain data from the exercise stuff
-
-    - lazy loading for the exercise foundation list
-
-   userLink:
-        - make onerepmax editable
-        - add delete function in tile
-        -add add function in the button in exercise foundation edit fields
-        - make datetime picker stuff update controller
-        - make textfield wider
-        - make column height only as big as the children
-
-
     -make seperate document for notes
         -> make the provider stuff
             -> use bus in provider 
+        !REPMAX.
+            ->  after 1rep max update update the list in the exercise foundation edit fields
+            ->  reset the datetimepicker 
+    make exercise foundation more perfomant
+
+    make link between session and exercise foundation
 
     make overview clickable
         -> open day view with planned and actual sessions 

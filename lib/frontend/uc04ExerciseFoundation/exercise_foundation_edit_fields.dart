@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/user_specific_one_rep_max_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/user_specific_one_rep_max_list_tile.dart';
 class ExerciseFoundationEditFields extends StatefulWidget {
   const ExerciseFoundationEditFields({super.key});
@@ -69,12 +70,23 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
               ),
               provider.userSpecificExercise.isEmpty ? const Text("No 1 Rep max data available") : Column(
                 children: provider.userSpecificExercise.map((userSpecificExercise) {
-                  //TODO: add edit button
                   return UserSpecificOneRepMaxListTile(userSpecificExercise: userSpecificExercise);
                 }).toList(),
               ),
               ElevatedButton(onPressed: () {
-                //TODO:add add                
+                provider.userSpecificExerciseBusForAdd.foundationId = provider.getSelectedBusinessClass!.getId();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext dialogContext) => ChangeNotifierProvider.value(
+                    value: provider,
+                    child: Dialog(
+                      child: Column(children: [UserSpecificOneRepMaxEditFields(userSpecificExercise: provider.userSpecificExerciseBusForAdd)],),
+                    ),
+                  ),
+                ).then((_) {
+                  provider.resetUserSpecificExerciseForAdd();
+                  provider.resetSelectedUserSpecificExercise();
+                });
               }, child: const Text("Add 1 Rep Max")),
               const SizedBox(height: 24),
               ElevatedButton(

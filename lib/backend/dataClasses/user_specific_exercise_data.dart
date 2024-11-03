@@ -43,7 +43,6 @@ class UserSpecificExerciseData implements TrainingsplanerDataInterface {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'exerciseLinkID': exerciseLinkID,
       'foundationId': foundationId,
       'oneRepMax': oneRepMax,
       'date': date,

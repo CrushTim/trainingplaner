@@ -35,16 +35,27 @@ class _UserSpecificOneRepMaxListTileState extends State<UserSpecificOneRepMaxLis
                   builder: (BuildContext dialogContext) => ChangeNotifierProvider.value(
                     value: provider,
                     child: Dialog(
-                      child:(Column(children: [UserSpecificOneRepMaxEditFields(userSpecificExercise: widget.userSpecificExercise)],)),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          UserSpecificOneRepMaxEditFields(
+                            userSpecificExercise: widget.userSpecificExercise
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                );
+                ).then((_) {
+                  // Cleanup when dialog is dismissed (either by save or cancel)
+                  provider.resetUserSpecificExerciseForAdd();
+                  provider.resetSelectedUserSpecificExercise();
+                });
               },
               icon: const Icon(Icons.edit)
             ),
             IconButton(
-              onPressed: () {
-                //TODO: add delete functionality
+                onPressed: () {
+                  provider.deleteUserSpecificExercise(widget.userSpecificExercise, ScaffoldMessenger.of(context));
               },
               icon: const Icon(Icons.delete)
             ),

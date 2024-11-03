@@ -21,6 +21,10 @@ class _UserSpecificOneRepMaxEditFieldsState extends State<UserSpecificOneRepMaxE
     provider.initStateUserSpecificExercise();
   }
 
+ 
+
+
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ExerciseFoundationProvider>(context);
@@ -28,9 +32,15 @@ class _UserSpecificOneRepMaxEditFieldsState extends State<UserSpecificOneRepMaxE
       mainAxisSize: MainAxisSize.min,
       children: [
         TextField(controller: provider.oneRepMaxController, decoration: const InputDecoration(labelText: 'One Rep Max'), keyboardType: TextInputType.number, onChanged: (value) => provider.handleTextFieldChangeUserSpecificExercise('oneRepMax', value),),
-        DateTimePickerSheer(onDateTimeChanged: (dateTime) {provider.onDateTimeChangedUserSpecificExercise(dateTime);}, initialDateTime: provider.initialDateTime, dateController: provider.dateController, timeController: provider.timeController),
+        DateTimePickerSheer(onDateTimeChanged: (dateTime) {
+          setState(() {
+            provider.onDateTimeChangedUserSpecificExercise(dateTime);
+          });
+        }, initialDateTime: provider.initialDateTime,),
         ElevatedButton(onPressed: () {
           provider.saveUserSpecificExercise(ScaffoldMessenger.of(context));
+          provider.resetUserSpecificExerciseForAdd();
+          provider.resetSelectedUserSpecificExercise();
           Navigator.pop(context);
         }, child: const Text("Save")),
       ],
