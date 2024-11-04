@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
+import 'package:trainingplaner/business/businessClasses/exercise_foundation_notes.dart';
 import 'package:trainingplaner/business/businessClasses/user_specific_exercise_data.dart';
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
+import 'package:trainingplaner/business/reports/exercise_foundation_notes_bus_report.dart';
 import 'package:trainingplaner/business/reports/user_specific_exercise_data_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_list_tile.dart';
@@ -42,6 +44,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   final TextEditingController categoriesController = TextEditingController();
   final TextEditingController muscleGroupsController = TextEditingController();
   final TextEditingController amountOfPeopleController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
 
 
   void initState() {
@@ -52,6 +55,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
       categoriesController.text = getSelectedBusinessClass!.exerciseFoundationCategories.join(', ');
       muscleGroupsController.text = getSelectedBusinessClass!.exerciseFoundationMuscleGroups.join(', ');
       amountOfPeopleController.text = getSelectedBusinessClass!.exerciseFoundationAmountOfPeople.toString();
+      notesController.text = getSelectedBusinessClass!.exerciseFoundationNotes?.exerciseFoundationNotes.join(', ') ?? "";
     } else {
       nameController.text = businessClassForAdd.exerciseFoundationName;
       descriptionController.text = businessClassForAdd.exerciseFoundationDescription;
@@ -59,6 +63,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
       categoriesController.text = businessClassForAdd.exerciseFoundationCategories.join(', ');
       muscleGroupsController.text = businessClassForAdd.exerciseFoundationMuscleGroups.join(', ');
       amountOfPeopleController.text = businessClassForAdd.exerciseFoundationAmountOfPeople.toString();
+      notesController.text = businessClassForAdd.exerciseFoundationNotes?.exerciseFoundationNotes.join(', ') ?? "";
     }
   }
 
@@ -83,6 +88,9 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
       case 'amountOfPeople':
         target.exerciseFoundationAmountOfPeople = int.tryParse(value) ?? 1;
         break;
+      case 'notes':
+        target.exerciseFoundationNotes = ExerciseFoundationNotesBus(exerciseFoundationNotesId: "", exerciseFoundationNotes: value.split(',').map((e) => e.trim()).toList(), exerciseFoundationId: target.getId());
+        break;
     }
     notifyListeners();
   }
@@ -99,21 +107,43 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   //                         View Methods
   // /////////////////////////////////////////////////////////////////////
 
-  StreamBuilder2 getAllExerciseFoundationsWithUserLinks() {
-    return StreamBuilder2(
-      streams: StreamTuple2(reportTaskVar.getAll(), userSpecificExerciseDataReport.getAll()),
+  ExerciseFoundationNotesBusReport exerciseFoundationNotesBusReport = ExerciseFoundationNotesBusReport();
+
+  StreamBuilder3 getAllExerciseFoundationsWithUserLinks() {
+    return StreamBuilder3(
+      streams: StreamTuple3(reportTaskVar.getAll(), userSpecificExerciseDataReport.getAll(), exerciseFoundationNotesBusReport.getAll()),
       builder: (context, snapshots) {
-        if (snapshots.snapshot1.connectionState == ConnectionState.waiting || snapshots.snapshot2.connectionState == ConnectionState.waiting) {
+        if (snapshots.snapshot1.connectionState == ConnectionState.waiting || snapshots.snapshot2.connectionState == ConnectionState.waiting || snapshots.snapshot2.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
-        } else if (snapshots.snapshot1.hasError || snapshots.snapshot2.hasError) {
-          return Text(snapshots.snapshot1.error.toString() + snapshots.snapshot2.error.toString());
+        } else if (snapshots.snapshot1.hasError || snapshots.snapshot2.hasError || snapshots.snapshot3.hasError) {
+          return Text(snapshots.snapshot1.error.toString() + snapshots.snapshot2.error.toString() + snapshots.snapshot3.error.toString());
         } else {
           List<ExerciseFoundationBus> exerciseFoundations = snapshots.snapshot1.data!;
-          List<UserSpecificExerciseBus> userSpecificExercise = snapshots.snapshot2.data!;
+          List<UserSpecificExerciseBus> userSpecificExercises = snapshots.snapshot2.data!;
+          List<ExerciseFoundationNotesBus> exerciseFoundationNotes = snapshots.snapshot3.data!;
+          
+
+          Map<String, List<UserSpecificExerciseBus>> userSpecificMap = {};
+          Map<String, ExerciseFoundationNotesBus> notesMap = {};
+          
+          // Build maps once
+          for (var exercise in userSpecificExercises) {
+            userSpecificMap.putIfAbsent(exercise.foundationId, () => []).add(exercise);
+          }
+          
+          for (var note in exerciseFoundationNotes) {
+            notesMap[note.exerciseFoundationId] = note;
+          }
+          
           return Column(
             children: exerciseFoundations.map((exerciseFoundation) {
-              List<UserSpecificExerciseBus> userSpecificExerciseForFoundation = userSpecificExercise.where((userSpecificExercise) => userSpecificExercise.foundationId == exerciseFoundation.exerciseFoundationId).toList();
-              return ExerciseFoundationListTile(exerciseFoundation: exerciseFoundation, userSpecificExercise: userSpecificExerciseForFoundation);
+              String id = exerciseFoundation.getId();
+              
+              
+              exerciseFoundation.userSpecific1RepMaxes = userSpecificMap[id] ?? [];
+              exerciseFoundation.exerciseFoundationNotes = notesMap[id];
+              
+              return ExerciseFoundationListTile(exerciseFoundation: exerciseFoundation);
             }).toList().cast<Widget>(),
           );
         }

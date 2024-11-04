@@ -10,9 +10,12 @@ class ExerciseFoundationNotesData implements TrainingsplanerDataInterface {
   CollectionReference collection = FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).collection("exerciseFoundationNotes");
 
   ExerciseFoundationNotesData({required this.exerciseFoundationNotesId, required this.exerciseFoundationNotes, required this.exerciseFoundationId});
-
   factory ExerciseFoundationNotesData.fromSnapshot(QueryDocumentSnapshot snapshot) {
-    return ExerciseFoundationNotesData(exerciseFoundationNotesId: snapshot.id, exerciseFoundationNotes: snapshot['notes'], exerciseFoundationId: snapshot['exerciseFoundationId']);
+    return ExerciseFoundationNotesData(
+      exerciseFoundationNotesId: snapshot.id,
+      exerciseFoundationNotes: List<String>.from(snapshot['notes']),
+      exerciseFoundationId: snapshot['exerciseFoundationId']
+    );
   }
 
   @override

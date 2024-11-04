@@ -1,8 +1,8 @@
 CRNT 
     -make seperate document for notes
-        -> make the provider stuff
-            -> use bus in provider 
-        !REPMAX.
+        - make add / update functionallity on save in the exercise foundation edit fields
+        
+    1REPMAX.
             ->  after 1rep max update update the list in the exercise foundation edit fields
             ->  reset the datetimepicker 
     make exercise foundation more perfomant

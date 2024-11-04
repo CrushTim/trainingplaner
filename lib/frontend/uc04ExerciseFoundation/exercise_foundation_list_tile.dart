@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/business/businessClasses/user_specific_exercise_data.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 class ExerciseFoundationListTile extends StatefulWidget {
   final ExerciseFoundationBus exerciseFoundation;
-  final List<UserSpecificExerciseBus> userSpecificExercise;
   const ExerciseFoundationListTile({
     required this.exerciseFoundation,
-    required this.userSpecificExercise,
     super.key,
   });
 
@@ -21,10 +18,9 @@ class ExerciseFoundationListTile extends StatefulWidget {
 class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile> {
   @override
   Widget build(BuildContext context) {
-    ExerciseFoundationBus exerciseFoundation = widget.exerciseFoundation;
-    List<UserSpecificExerciseBus> userSpecificExercise = widget.userSpecificExercise;
+
     //sort descending by date
-    userSpecificExercise.sort((a, b) {
+    widget.exerciseFoundation.userSpecific1RepMaxes.sort((a, b) {
       return b.date.compareTo(a.date);
     });
     return Container(
@@ -34,7 +30,7 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(
-        title: Text(exerciseFoundation.exerciseFoundationName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold,), textAlign: TextAlign.center,),
+        title: Text(widget.exerciseFoundation.exerciseFoundationName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold,), textAlign: TextAlign.center,),
         subtitle: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,11 +47,12 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(exerciseFoundation.exerciseFoundationDescription),
-                  Text("Categories: ${exerciseFoundation.exerciseFoundationCategories.join(", ")}"),
-                  Text("Muscle Groups: ${exerciseFoundation.exerciseFoundationMuscleGroups.join(", ")}"),
-                  Text("People: ${exerciseFoundation.exerciseFoundationAmountOfPeople}"),
-                  Text("1 Rep max: ${userSpecificExercise.isNotEmpty ? userSpecificExercise.first.oneRepMax : " - "}"),
+                  Text(widget.exerciseFoundation.exerciseFoundationDescription),
+                  Text("Categories: ${widget.exerciseFoundation.exerciseFoundationCategories.join(", ")}"),
+                  Text("Muscle Groups: ${widget.exerciseFoundation.exerciseFoundationMuscleGroups.join(", ")}"),
+                  Text("People: ${widget.exerciseFoundation.exerciseFoundationAmountOfPeople}"),
+                  Text("1 Rep max: ${widget.exerciseFoundation.userSpecific1RepMaxes.isNotEmpty ? widget.exerciseFoundation.userSpecific1RepMaxes.first.oneRepMax : " - "}"),
+                  Text("Notes: ${widget.exerciseFoundation.exerciseFoundationNotes?.exerciseFoundationNotes.join(", ")}"),
                   const SizedBox(height: 16),
                 ],
               ),
@@ -65,8 +62,8 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
         trailing: IconButton(
           onPressed: () {
             final provider = Provider.of<ExerciseFoundationProvider>(context, listen: false);
-            provider.setSelectedBusinessClass(exerciseFoundation);
-            provider.userSpecificExercise = userSpecificExercise;
+            provider.setSelectedBusinessClass(widget.exerciseFoundation);
+            provider.userSpecificExercise = widget.exerciseFoundation.userSpecific1RepMaxes;
             Navigator.push(
               context,
               MaterialPageRoute(

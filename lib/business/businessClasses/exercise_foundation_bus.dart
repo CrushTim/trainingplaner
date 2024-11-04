@@ -1,4 +1,6 @@
 import 'package:trainingplaner/backend/dataClasses/exercise_foundation_data.dart';
+import 'package:trainingplaner/business/businessClasses/exercise_foundation_notes.dart';
+import 'package:trainingplaner/business/businessClasses/user_specific_exercise_data.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 
 class ExerciseFoundationBus
@@ -23,6 +25,16 @@ class ExerciseFoundationBus
 
   ///represents the amount of people that are required to perform the exercise
   int exerciseFoundationAmountOfPeople;
+
+  ///a Notes object that a user can map to this exercise Foundation.
+  ///It is user dependent and will be mapped in the view streambuilder
+  
+  ExerciseFoundationNotesBus? exerciseFoundationNotes = ExerciseFoundationNotesBus(exerciseFoundationNotesId: "", exerciseFoundationNotes: [""], exerciseFoundationId: "");
+
+
+  ///A list of User Data objects- containing data for 1 Rep max values 
+  ///It is user dependent and will be mapped in the view streambuilder
+  List<UserSpecificExerciseBus> userSpecific1RepMaxes = [];
 
   ///constructor of the exercise foundation
   ExerciseFoundationBus({

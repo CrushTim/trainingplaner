@@ -68,6 +68,11 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
                 keyboardType: TextInputType.number,
                 onChanged: (value) => provider.handleTextFieldChange('amountOfPeople', value),
               ),
+              TextField(
+                controller: provider.notesController,
+                decoration: const InputDecoration(labelText: 'Notes (comma-separated)'),
+                onChanged: (value) => provider.handleTextFieldChange('notes', value),
+              ),
               provider.userSpecificExercise.isEmpty ? const Text("No 1 Rep max data available") : Column(
                 children: provider.userSpecificExercise.map((userSpecificExercise) {
                   return UserSpecificOneRepMaxListTile(userSpecificExercise: userSpecificExercise);
