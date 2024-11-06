@@ -39,9 +39,7 @@ class _UserSpecificOneRepMaxEditFieldsState extends State<UserSpecificOneRepMaxE
         }, initialDateTime: provider.initialDateTime,),
         ElevatedButton(onPressed: () {
           provider.saveUserSpecificExercise(ScaffoldMessenger.of(context));
-          provider.resetUserSpecificExerciseForAdd();
-          provider.resetSelectedUserSpecificExercise();
-          Navigator.pop(context);
+          Navigator.of(context).pop(true);
         }, child: const Text("Save")),
       ],
     );

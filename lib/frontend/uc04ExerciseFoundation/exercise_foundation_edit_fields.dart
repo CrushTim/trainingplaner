@@ -78,19 +78,34 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
                   return UserSpecificOneRepMaxListTile(userSpecificExercise: userSpecificExercise);
                 }).toList(),
               ),
-              ElevatedButton(onPressed: () {
+              ElevatedButton(onPressed: () async {
                 provider.userSpecificExerciseBusForAdd.foundationId = provider.getSelectedBusinessClass!.getId();
-                showDialog(
+                provider.initialDateTime = provider.userSpecificExerciseBusForAdd.date;
+                await showDialog(
                   context: context,
                   builder: (BuildContext dialogContext) => ChangeNotifierProvider.value(
                     value: provider,
                     child: Dialog(
-                      child: Column(children: [UserSpecificOneRepMaxEditFields(userSpecificExercise: provider.userSpecificExerciseBusForAdd)],),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          UserSpecificOneRepMaxEditFields(
+                            userSpecificExercise: provider.userSpecificExerciseBusForAdd
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ).then((_) {
-                  provider.resetUserSpecificExerciseForAdd();
-                  provider.resetSelectedUserSpecificExercise();
+                ).then((_) { 
+                  if (_ == true) {
+                    provider.userSpecificExercise.add(provider.userSpecificExerciseBusForAdd);
+                    setState(() {});
+                  }
+                  
+                provider.initialDateTime = DateTime.now();
+                provider.resetUserSpecificExerciseForAdd();
+                provider.resetSelectedUserSpecificExercise();
+                
                 });
               }, child: const Text("Add 1 Rep Max")),
               const SizedBox(height: 24),

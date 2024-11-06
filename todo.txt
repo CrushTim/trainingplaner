@@ -2,10 +2,6 @@ CRNT
     -make seperate document for notes
         - make add / update functionallity on save in the exercise foundation edit fields
         
-    1REPMAX.
-            ->  after 1rep max update update the list in the exercise foundation edit fields
-            ->  reset the datetimepicker 
-    make exercise foundation more perfomant
 
     make link between session and exercise foundation
 
@@ -37,3 +33,6 @@ BUG:
     -> isNew in session: will eigentlich über map prüfen, kann ich aber nicht, da die objektreferenz sich irgendwo ändert
         -> prompt look through the whole provider class and explain to me how the hashcode is different. following my logic i get all the sessions from the stream, map the planned ones to the keys in the map, add the unplanned ones into unplanned sessions and then map every unplanned session which has a plannedsession id to the according key value. where do i change the pointer so the hash code changes 
 
+    
+    1REPMAX.
+    make exercise foundation more perfomant

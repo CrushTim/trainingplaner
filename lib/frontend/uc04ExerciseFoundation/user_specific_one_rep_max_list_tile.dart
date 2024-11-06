@@ -28,9 +28,10 @@ class _UserSpecificOneRepMaxListTileState extends State<UserSpecificOneRepMaxLis
         child: Row(
           children: [
             IconButton(
-              onPressed: () {
+              onPressed: () async {
                 provider.setSelectedUserSpecificExercise(widget.userSpecificExercise);
-                showDialog(
+                provider.initialDateTime = widget.userSpecificExercise.date;
+                await showDialog(
                   context: context,
                   builder: (BuildContext dialogContext) => ChangeNotifierProvider.value(
                     value: provider,
@@ -46,9 +47,16 @@ class _UserSpecificOneRepMaxListTileState extends State<UserSpecificOneRepMaxLis
                     ),
                   ),
                 ).then((_) {
-                  // Cleanup when dialog is dismissed (either by save or cancel)
-                  provider.resetUserSpecificExerciseForAdd();
-                  provider.resetSelectedUserSpecificExercise();
+                  if (_ == true) {
+                    provider.userSpecificExercise.add(provider.userSpecificExerciseBusForAdd);
+                    setState(() {});
+                  }
+                  
+                provider.resetUserSpecificExerciseForAdd();
+                provider.resetSelectedUserSpecificExercise();
+                
+                  provider.onDateTimeChangedUserSpecificExercise(DateTime.now());
+                  provider.initialDateTime = DateTime.now();
                 });
               },
               icon: const Icon(Icons.edit)
@@ -56,6 +64,7 @@ class _UserSpecificOneRepMaxListTileState extends State<UserSpecificOneRepMaxLis
             IconButton(
                 onPressed: () {
                   provider.deleteUserSpecificExercise(widget.userSpecificExercise, ScaffoldMessenger.of(context));
+                  provider.userSpecificExercise.remove(widget.userSpecificExercise);
               },
               icon: const Icon(Icons.delete)
             ),

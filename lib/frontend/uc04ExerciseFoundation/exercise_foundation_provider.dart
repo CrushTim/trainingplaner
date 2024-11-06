@@ -170,10 +170,12 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   }
 
   void resetSelectedUserSpecificExercise() {
+    print("reset");
     selectedUserSpecificExercise = null;
   }
 
   void resetUserSpecificExerciseForAdd() {
+    print("add");
     userSpecificExerciseBusForAdd = UserSpecificExerciseBus(
       exerciseLinkID: "",
       oneRepMax: 0,
@@ -287,4 +289,85 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
       );
     }
   }
+
+  // /////////////////////////////////////////////////////////////////////
+  //                 Notes Methods
+  // /////////////////////////////////////////////////////////////////////
+
+  ExerciseFoundationNotesBus exerciseFoundationNotesBusForAdd = ExerciseFoundationNotesBus(
+    exerciseFoundationNotesId: "",
+    exerciseFoundationNotes: [],
+    exerciseFoundationId: "",
+  );
+
+  ExerciseFoundationNotesBus? selectedExerciseFoundationNotes;
+
+
+  // /////////////////////////////////////////////////////////////////////
+  //                 NOTES CRUD-Methods
+  // /////////////////////////////////////////////////////////////////////
+
+  Future<void> addExerciseFoundationNotes(
+    ExerciseFoundationNotesBus notes,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Added Notes";
+    try {
+      await notes.add()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  Future<void> updateExerciseFoundationNotes(
+    ExerciseFoundationNotesBus notes,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Updated Notes";
+    try {
+      await notes.update()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  Future<void> deleteExerciseFoundationNotes(
+    ExerciseFoundationNotesBus notes,
+    ScaffoldMessengerState scaffoldMessengerState, {
+    bool notify = true,
+  }) async {
+    String message = "Deleted Notes";
+    try {
+      await notes.delete()
+          .onError((error, stackTrace) => message = error.toString());
+    } catch (e) {
+      message = e.toString();
+    } finally {
+      if (notify) {
+        notifyListeners();
+      }
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+  
 }
