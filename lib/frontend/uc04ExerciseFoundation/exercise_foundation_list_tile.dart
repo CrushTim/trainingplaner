@@ -16,6 +16,14 @@ class ExerciseFoundationListTile extends StatefulWidget {
 }
 
 class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile> {
+
+  @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<ExerciseFoundationProvider>(context, listen: false);
+    provider.notesMap[widget.exerciseFoundation.getId()] != null ? provider.wasEmpty = false : provider.wasEmpty = true;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -64,6 +72,7 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
             final provider = Provider.of<ExerciseFoundationProvider>(context, listen: false);
             provider.setSelectedBusinessClass(widget.exerciseFoundation);
             provider.userSpecificExercise = widget.exerciseFoundation.userSpecific1RepMaxes;
+          
             Navigator.push(
               context,
               MaterialPageRoute(

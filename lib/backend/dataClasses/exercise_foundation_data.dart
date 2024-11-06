@@ -41,7 +41,7 @@ class ExerciseFoundationData implements TrainingsplanerDataInterface {
       'name': exerciseFoundationName,
       'description': exerciseFoundationDescription,
       'picturePath': exerciseFoundationPicturePath,
-      'categories': exerciseFoundationCategories,
+      'categories': exerciseFoundationCategories.join(","),
       'muscleGroups': exerciseFoundationMuscleGroups,
       'amountOfPeople': exerciseFoundationAmountOfPeople,
     };

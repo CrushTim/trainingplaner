@@ -101,6 +101,12 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     } else {
       await addBusinessClass(businessClassForAdd, scaffoldMessengerState);
     }
+
+    if(wasEmpty) {
+      await addExerciseFoundationNotes(businessClassForAdd.exerciseFoundationNotes!, scaffoldMessengerState);
+    } else {
+      await updateExerciseFoundationNotes(businessClassForAdd.exerciseFoundationNotes!, scaffoldMessengerState);
+    }
   }
 
   // /////////////////////////////////////////////////////////////////////
@@ -109,6 +115,9 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
 
   ExerciseFoundationNotesBusReport exerciseFoundationNotesBusReport = ExerciseFoundationNotesBusReport();
 
+
+          Map<String, List<UserSpecificExerciseBus>> userSpecificMap = {};
+          Map<String, ExerciseFoundationNotesBus> notesMap = {};
   StreamBuilder3 getAllExerciseFoundationsWithUserLinks() {
     return StreamBuilder3(
       streams: StreamTuple3(reportTaskVar.getAll(), userSpecificExerciseDataReport.getAll(), exerciseFoundationNotesBusReport.getAll()),
@@ -122,9 +131,6 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
           List<UserSpecificExerciseBus> userSpecificExercises = snapshots.snapshot2.data!;
           List<ExerciseFoundationNotesBus> exerciseFoundationNotes = snapshots.snapshot3.data!;
           
-
-          Map<String, List<UserSpecificExerciseBus>> userSpecificMap = {};
-          Map<String, ExerciseFoundationNotesBus> notesMap = {};
           
           // Build maps once
           for (var exercise in userSpecificExercises) {
@@ -170,12 +176,10 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   }
 
   void resetSelectedUserSpecificExercise() {
-    print("reset");
     selectedUserSpecificExercise = null;
   }
 
   void resetUserSpecificExerciseForAdd() {
-    print("add");
     userSpecificExerciseBusForAdd = UserSpecificExerciseBus(
       exerciseLinkID: "",
       oneRepMax: 0,
@@ -294,14 +298,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   //                 Notes Methods
   // /////////////////////////////////////////////////////////////////////
 
-  ExerciseFoundationNotesBus exerciseFoundationNotesBusForAdd = ExerciseFoundationNotesBus(
-    exerciseFoundationNotesId: "",
-    exerciseFoundationNotes: [],
-    exerciseFoundationId: "",
-  );
-
-  ExerciseFoundationNotesBus? selectedExerciseFoundationNotes;
-
+  bool wasEmpty = true;
 
   // /////////////////////////////////////////////////////////////////////
   //                 NOTES CRUD-Methods

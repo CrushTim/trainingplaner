@@ -112,6 +112,7 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
               ElevatedButton(
                 onPressed: () {
                   provider.saveExerciseFoundation(ScaffoldMessenger.of(context));
+                  provider.wasEmpty = true;
                   Navigator.pop(context);
                 },
                 child: const Text("Save"),
