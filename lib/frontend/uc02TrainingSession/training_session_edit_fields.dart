@@ -114,14 +114,13 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
             onDelete: (actualExercise) {
               if (trainingSessionProvider.plannedToActualExercises[exercise] != null ||
                   trainingSessionProvider.unplannedExercisesForSession.contains(exercise)) {
-                trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context),
-                    notify: false);
+                trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context));
                 trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
                     .remove(actualExercise.trainingExerciseID);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExercises
                     .remove(actualExercise);
                 trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
-                    notify: false);
+                 );
               }
             },
           ),

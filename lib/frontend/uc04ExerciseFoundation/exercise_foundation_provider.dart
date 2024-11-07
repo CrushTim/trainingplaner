@@ -89,23 +89,34 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
         target.exerciseFoundationAmountOfPeople = int.tryParse(value) ?? 1;
         break;
       case 'notes':
-        target.exerciseFoundationNotes = ExerciseFoundationNotesBus(exerciseFoundationNotesId: "", exerciseFoundationNotes: value.split(',').map((e) => e.trim()).toList(), exerciseFoundationId: target.getId());
+        String id = target.exerciseFoundationNotes?.exerciseFoundationNotesId ?? "";
+        target.exerciseFoundationNotes = ExerciseFoundationNotesBus(exerciseFoundationNotesId: id, exerciseFoundationNotes: value.split(',').map((e) => e.trim()).toList(), exerciseFoundationId: target.getId());
         break;
     }
-    notifyListeners();
   }
 
   Future<void> saveExerciseFoundation(ScaffoldMessengerState scaffoldMessengerState) async {
+    ExerciseFoundationNotesBus? targetNotes;
+    ExerciseFoundationBus target = getSelectedBusinessClass ?? businessClassForAdd;
+    String addId = "";
+    print(notesMap[target.getId()] == null);
     if (getSelectedBusinessClass != null) {
+      targetNotes = getSelectedBusinessClass!.exerciseFoundationNotes;
       await updateBusinessClass(getSelectedBusinessClass!, scaffoldMessengerState);
     } else {
-      await addBusinessClass(businessClassForAdd, scaffoldMessengerState);
+      targetNotes = businessClassForAdd.exerciseFoundationNotes;
+      addId = await addBusinessClass(businessClassForAdd, scaffoldMessengerState);
     }
 
-    if(wasEmpty) {
-      await addExerciseFoundationNotes(businessClassForAdd.exerciseFoundationNotes!, scaffoldMessengerState);
-    } else {
-      await updateExerciseFoundationNotes(businessClassForAdd.exerciseFoundationNotes!, scaffoldMessengerState);
+
+    if(targetNotes != null) {
+      targetNotes.exerciseFoundationId = getSelectedBusinessClass == null ? addId : getSelectedBusinessClass!.getId();
+      
+      if(notesMap[target.getId()] == null) {
+        await addExerciseFoundationNotes(targetNotes, scaffoldMessengerState);
+      } else {
+        await updateExerciseFoundationNotes(targetNotes, scaffoldMessengerState);
+      }
     }
   }
 
@@ -298,7 +309,6 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   //                 Notes Methods
   // /////////////////////////////////////////////////////////////////////
 
-  bool wasEmpty = true;
 
   // /////////////////////////////////////////////////////////////////////
   //                 NOTES CRUD-Methods

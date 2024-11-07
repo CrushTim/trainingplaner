@@ -1,9 +1,6 @@
 CRNT 
-    -make seperate document for notes
-        - make add / update functionallity on save in the exercise foundation edit fields
-        
-    check the if statement in the save function
-        -> i think it also needs the id 
+    workout view: add exercise ist kaputt
+    -> update view on delete and add
 
     make link between session and exercise foundation
 

@@ -110,9 +110,8 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
               }, child: const Text("Add 1 Rep Max")),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () {
-                  provider.saveExerciseFoundation(ScaffoldMessenger.of(context));
-                  provider.wasEmpty = true;
+                onPressed: () async {
+                  await provider.saveExerciseFoundation(ScaffoldMessenger.of(context));
                   Navigator.pop(context);
                 },
                 child: const Text("Save"),
