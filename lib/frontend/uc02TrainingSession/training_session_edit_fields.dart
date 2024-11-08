@@ -111,16 +111,18 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                     notify: false);
               }
             },
-            onDelete: (actualExercise) {
+            onDelete: (actualExercise) async{
               if (trainingSessionProvider.plannedToActualExercises[exercise] != null ||
                   trainingSessionProvider.unplannedExercisesForSession.contains(exercise)) {
-                trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context));
-                trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
+                  await trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context));
+                
+                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),);
+                setState(() {
+                  trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
                     .remove(actualExercise.trainingExerciseID);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExercises
                     .remove(actualExercise);
-                trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
-                 );
+                });
               }
             },
           ),
@@ -130,20 +132,22 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
           TrainingExcerciseRow(
             actualTrainingExercise: exercise,
             plannedTrainingExercise: null,
-            onUpdate: (actualExercise) {
-              trainingSessionProvider.updateExercises([exercise], ScaffoldMessenger.of(context), notify: false);
+            onUpdate: (actualExercise) async{
+               await trainingSessionProvider.updateExercises([exercise], ScaffoldMessenger.of(context), notify: false);
             },
-            onDelete: (actualExercise) {
+            onDelete: (actualExercise) async {
               if (trainingSessionProvider.plannedToActualExercises[exercise] != null ||
                   trainingSessionProvider.unplannedExercisesForSession.contains(exercise)) {
-                trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context),
+                  await trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context),
                     notify: false);
+                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
+                    notify: false);
+                setState(() {
                 trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
                     .remove(actualExercise.trainingExerciseID);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExercises
                     .remove(actualExercise);
-                trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
-                    notify: false);
+                });
               }
             },
           )
