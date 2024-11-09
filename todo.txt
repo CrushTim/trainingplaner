@@ -1,8 +1,7 @@
 CRNT 
-    workout view: add exercise ist kaputt
-    -> update view on delete and add
 
-    make link between session and exercise foundation
+    
+    make link between session and exercise foundation -> choose foundation id 
 
     make overview clickable
         -> open day view with planned and actual sessions 

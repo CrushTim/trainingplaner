@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
+import 'package:provider/provider.dart';
+import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
@@ -8,6 +10,7 @@ import 'package:trainingplaner/business/reports/training_session_bus_report.dart
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
 import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<
@@ -27,6 +30,48 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   List<TrainingExerciseBus> unplannedExercisesForSession = [];
   List<TrainingExerciseBus> unplannedExercises = [];
   List<TrainingCycleBus> allCycles = [];
+
+  final TextEditingController exerciseNameController = TextEditingController();
+  final TextEditingController exerciseDescriptionController = TextEditingController();
+  final TextEditingController targetPercentageController = TextEditingController();
+  String? selectedFoundationId;
+  List<ExerciseFoundationBus> availableFoundations = [];
+
+  TrainingExerciseBus exerciseForAdd = TrainingExerciseBus(
+    trainingExerciseID: "",
+    exerciseName: "",
+    exerciseDescription: "",
+    exerciseFoundationID: "",
+    targetPercentageOf1RM: 100,
+    exerciseReps: [],
+    exerciseWeights: [],
+    isPlanned: false,
+    plannedExerciseId: "",
+    date: DateTime.now(),
+  );
+
+  TrainingExerciseBus? selectedExercise;
+
+  void resetExerciseForAdd() {
+    exerciseForAdd = TrainingExerciseBus(
+      trainingExerciseID: "",
+      exerciseName: "",
+      exerciseDescription: "",
+      exerciseFoundationID: "",
+      targetPercentageOf1RM: 100,
+      exerciseReps: [],
+      exerciseWeights: [],
+      isPlanned: false,
+      plannedExerciseId: "",
+      date: DateTime.now(),
+    );
+  }
+
+  void setSelectedExercise(TrainingExerciseBus? exercise) {
+    selectedExercise = exercise;
+    notifyListeners();
+  }
+
   TrainingSessionProvider()
       : super(
             businessClassForAdd: TrainingSessionBus(
@@ -257,31 +302,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  //add a new Exercise to the database
-  Future<void> addExerciseToSession(ScaffoldMessengerState scaffoldMessengerState) async {
-    TrainingExerciseBus newExercise = TrainingExerciseBus(
-      trainingExerciseID: "", // Add a unique ID or generate one
-      exerciseName: "mock",
-      exerciseDescription: "mock",
-      exerciseFoundationID: "mock",
-      targetPercentageOf1RM: 100,
-      exerciseReps: [], // Add an empty list or initial reps
-      exerciseWeights: [], // Add an empty list or initial weights
-      isPlanned: false, // Set to false for a new exercise
-      plannedExerciseId: "",
-      date: DateTime.now(),
-    );
-
-    //TODO: make add dialog
-    String exerciseID = await addExercise(
-            newExercise, scaffoldMessengerState,
-        notify: false);
-    selectedActualSession!.trainingSessionExcercisesIds.add(exerciseID);
-    newExercise.trainingExerciseID = exerciseID;
-    selectedActualSession!.trainingSessionExercises.add(newExercise);
-    updateBusinessClass(selectedActualSession!, scaffoldMessengerState,
-        notify: false);
-  }
 
   // /////////////////////////////////////////////////////////////////////
   //                         SESSION CRUD
@@ -489,5 +509,21 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         },
       ),
     );
+  }
+
+
+  void handleExerciseFieldChange(String field, String value) {
+    TrainingExerciseBus target = selectedExercise ?? exerciseForAdd;
+    switch (field) {
+      case 'name':
+        target.exerciseName = value;
+        break;
+      case 'description':
+        target.exerciseDescription = value;
+        break;
+      case 'targetPercentage':
+        target.targetPercentageOf1RM = int.tryParse(value) ?? 100;
+        break;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/workout_selection_view.dart';
 
@@ -46,7 +47,16 @@ class _WorkoutViewState extends State<WorkoutView> {
           sessionProvider.getCurrentTrainingSessionStreamBuilder(),
           IconButton(
             onPressed: () {
-              sessionProvider.addExerciseToSession(ScaffoldMessenger.of(context));
+              showDialog(
+                context: context,
+                builder: (context) => ChangeNotifierProvider.value(
+                  value: sessionProvider,
+                  child: const AddExerciseEditFields(),
+                ),
+              ).then((value) {
+                sessionProvider.resetExerciseForAdd();
+                sessionProvider.selectedExercise = null;
+              });
             },
             icon: const Icon(Icons.add),
           ),
