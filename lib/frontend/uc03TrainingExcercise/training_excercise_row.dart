@@ -95,9 +95,15 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: Text(
-                          widget.plannedTrainingExercise?.exerciseName ??
-                              widget.actualTrainingExercise!.exerciseName),
+                      child: Column(
+                        children: [
+                          Text(
+                              widget.plannedTrainingExercise?.exerciseName ??
+                                  widget.actualTrainingExercise!.exerciseName),
+                          Text(widget.plannedTrainingExercise?.exerciseFoundationID ??
+                              widget.actualTrainingExercise!.exerciseFoundationID),
+                        ],
+                      ),
                     ),
                     const Flexible(
                       child: VerticalDivider(

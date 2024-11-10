@@ -42,22 +42,7 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
               keyboardType: TextInputType.number,
               onChanged: (value) => provider.handleExerciseFieldChange('targetPercentage', value),
             ),
-            //TODO: add stream of foundation and make dropdown and autofill
-            DropdownButtonFormField<String>(
-              value: provider.selectedFoundationId,
-              decoration: const InputDecoration(labelText: 'Exercise Foundation'),
-              items: [
-                const DropdownMenuItem<String>(
-                  value: null,
-                  child: Text('Select Foundation'),
-                ),
-                ...provider.availableFoundations.map((foundation) => DropdownMenuItem<String>(
-                  value: foundation.getId(),
-                  child: Text(foundation.exerciseFoundationName),
-                )),
-              ],
-              onChanged: (value) => {},
-            ),
+            provider.getFoundationAutoComplete(),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -85,6 +70,10 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                       notify: true,
                     );
                     provider.resetExerciseForAdd();
+                    provider.selectedExercise = null;
+                    provider.exerciseNameController.clear();
+                    provider.exerciseDescriptionController.clear();
+                    provider.targetPercentageController.clear();
                     Navigator.pop(context);
                   },
                   child: const Text('Save'),

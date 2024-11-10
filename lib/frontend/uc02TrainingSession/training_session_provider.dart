@@ -5,6 +5,7 @@ import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
+import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
@@ -34,7 +35,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   final TextEditingController exerciseNameController = TextEditingController();
   final TextEditingController exerciseDescriptionController = TextEditingController();
   final TextEditingController targetPercentageController = TextEditingController();
-  String? selectedFoundationId;
   List<ExerciseFoundationBus> availableFoundations = [];
 
   TrainingExerciseBus exerciseForAdd = TrainingExerciseBus(
@@ -525,5 +525,45 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         target.targetPercentageOf1RM = int.tryParse(value) ?? 100;
         break;
     }
+  }
+
+  ////////////////////////////////STUFF FOR FOUNDATION ID ///////////////////////////////////
+  
+  ExerciseFoundationBusReport exerciseFoundationReport = ExerciseFoundationBusReport();
+
+  StreamBuilder getFoundationAutoComplete() {
+    return StreamBuilder(
+      stream: exerciseFoundationReport.getAll(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text(snapshot.error.toString());
+        } else {
+          availableFoundations = snapshot.data!;
+          return Autocomplete<ExerciseFoundationBus>(
+            
+            displayStringForOption: (ExerciseFoundationBus option) => option.exerciseFoundationName,
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text == '') {
+                return const Iterable<ExerciseFoundationBus>.empty();
+              }
+              return availableFoundations.where((foundation) {
+                return foundation.exerciseFoundationName
+                    .toLowerCase()
+                    .contains(textEditingValue.text.toLowerCase());
+              });
+            },
+            onSelected: (ExerciseFoundationBus selection) {
+              if (selectedExercise != null) {
+                selectedExercise!.exerciseFoundationID = selection.getId();
+              } else {
+                exerciseForAdd.exerciseFoundationID = selection.getId();
+              }
+            },
+          );
+        }
+      },
+    );
   }
 }
