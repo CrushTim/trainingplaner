@@ -12,7 +12,9 @@ class DayFieldCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      constraints: const BoxConstraints(
+        minHeight: 100,
+      ),
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.black,
@@ -30,9 +32,8 @@ class DayFieldCalendar extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
             ] +
-            //TODO make workouts selectable and open in workout view
             List.generate(workouts.length, (index) {
-              return Text(workouts[index]);
+              return Text(workouts.elementAt(index).trainingSessionName);
             }),
       ),
     );

@@ -11,7 +11,6 @@ import 'package:trainingplaner/business/reports/training_session_bus_report.dart
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
 import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<

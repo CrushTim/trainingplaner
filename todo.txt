@@ -1,11 +1,11 @@
 CRNT 
 
-    
-    make link between session and exercise foundation -> choose foundation id 
+    make dayfield list of sessions clickable and open workout view with selected session
 
-    make overview clickable
-        -> open day view with planned and actual sessions 
-        ->open cycle view (edit fields of the cycle) and list all planned sessions
+    make cycles get in view
+    display cycles in overview as a bar
+    make them clickable and open editcycle view
+
 
     make advanced planning functionality
         -> copy session with all exercises
