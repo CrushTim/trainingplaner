@@ -385,11 +385,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           List<TrainingExerciseBus> allExercises = snapshots.snapshot2.data!;
           allCycles = snapshots.snapshot3.data!;
 
-          mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
-          getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSessions() : null;
-          
-
-          unplannedExercisesForSession = getUnplannedExercisesForSession();
+          initializeSessionMaps(allSessions, allExercises);
 
 
           if(selectedActualSession != null || getSelectedBusinessClass != null){
@@ -400,6 +396,15 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         }
       },
     );
+  }
+
+  void initializeSessionMaps(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
+    
+    mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
+    getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSessions() : null;
+    
+    
+    unplannedExercisesForSession = getUnplannedExercisesForSession();
   }
  
 
@@ -564,5 +569,14 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         }
       },
     );
+  }
+
+  void resetAllListsAndBusinessClasses() {
+    clearAllMapsAndLists();
+    resetExerciseForAdd();
+    setSelectedExercise(null); 
+    resetSelectedBusinessClass();
+    selectedActualSession = null;
+    resetBusinessClassForAdd();
   }
 }

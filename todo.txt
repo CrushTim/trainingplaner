@@ -1,8 +1,11 @@
 CRNT 
+    
+    überprüfe setting planned and actual session
+    make distinction between planned and unplanned sessions
+    show planned and unplanned in a row
+    
 
-    make dayfield list of sessions clickable and open workout view with selected session
-
-    make cycles get in view
+make cycles get in view
     display cycles in overview as a bar
     make them clickable and open editcycle view
 
