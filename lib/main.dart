@@ -10,6 +10,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fireabase_ui_auth;
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const Main());
 }
