@@ -41,7 +41,9 @@ class DayFieldCalendar extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.black,
+                  
                 ),
+                color: workouts[index].isPlanned ? Colors.green : Colors.grey,
               ),
               child: GestureDetector(
                 onTap: () async {

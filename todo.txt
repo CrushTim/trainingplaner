@@ -1,12 +1,10 @@
 CRNT 
     
     überprüfe setting planned and actual session
-    make distinction between planned and unplanned sessions
     show planned and unplanned in a row
     
 
 make cycles get in view
-    display cycles in overview as a bar
     make them clickable and open editcycle view
 
 

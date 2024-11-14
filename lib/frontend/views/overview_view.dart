@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:provider/provider.dart';
+import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
@@ -8,7 +9,6 @@ import 'package:trainingplaner/frontend/costum_widgets/day_field_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_overview_view.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({super.key});
@@ -18,7 +18,6 @@ class OverviewView extends StatefulWidget {
 }
 
 class _OverviewViewState extends State<OverviewView> {
-  int cycles = 2;
   @override
   Widget build(BuildContext context) {
 
@@ -73,23 +72,35 @@ class _OverviewViewState extends State<OverviewView> {
 
   TrainingSessionProvider sessionProvider = Provider.of<TrainingSessionProvider>(context);
   TrainingCycleProvider trainingCycleProvider = Provider.of<TrainingCycleProvider>(context);
+  
     return Scaffold(
-      body: StreamBuilder2(
-        streams: StreamTuple2(sessionProvider.reportTaskVar.getAll(), sessionProvider.trainingExerciseBusReport.getAll()) ,
+      body: StreamBuilder3(
+        streams: StreamTuple3(
+          sessionProvider.reportTaskVar.getAll(), 
+          sessionProvider.trainingExerciseBusReport.getAll(),
+          trainingCycleProvider.reportTaskVar.getAll()
+        ),
         builder: (context, snapshot) {
-          if(snapshot.snapshot1.connectionState == ConnectionState.waiting || snapshot.snapshot2.connectionState == ConnectionState.waiting){
+          if(snapshot.snapshot1.connectionState == ConnectionState.waiting || 
+             snapshot.snapshot2.connectionState == ConnectionState.waiting ||
+             snapshot.snapshot3.connectionState == ConnectionState.waiting){
             return const Center(child: CircularProgressIndicator(),);
           }
-          if(snapshot.snapshot1.hasError || snapshot.snapshot2.hasError){
+          if(snapshot.snapshot1.hasError || snapshot.snapshot2.hasError || snapshot.snapshot3.hasError){
             if(snapshot.snapshot1.hasError){
               return Text(snapshot.snapshot1.error.toString());
             }
             if(snapshot.snapshot2.hasError){
               return Text(snapshot.snapshot2.error.toString());
             }
+            if(snapshot.snapshot3.hasError){
+              return Text(snapshot.snapshot3.error.toString());
+            }
           }
           List<TrainingSessionBus> sessions = snapshot.snapshot1.data!;
           List<TrainingExerciseBus> exercises = snapshot.snapshot2.data!;
+          List<TrainingCycleBus> cycles = snapshot.snapshot3.data!;
+          
           sessionProvider.initializeSessionMaps(sessions, exercises);
           Map<DateTime, List<dynamic>> sessionDateMap = generateSessionDateMap();
 
@@ -111,13 +122,16 @@ class _OverviewViewState extends State<OverviewView> {
               return Column(
                 children: <Widget>[
                   CycleBarCalendar(title: weekMap.keys.elementAt(index).toString(), color: Colors.grey),
-                  ...List<Widget>.generate(cycles, (index) {
-                    return CycleBarCalendar(title: "Cycle $index", color: Colors.blue);
-                  }),
+                  for(var cycle in cycles)
+                    if (cycle.beginDate.isBefore(weekMap.entries.elementAt(index).value.last.add(const Duration(days: 1))) &&
+                        cycle.endDate.isAfter(weekMap.entries.elementAt(index).value.first.subtract(const Duration(days: 1))))
+                      CycleBarCalendar(title: cycle.getName(), color: Colors.blue)
+                  ,
                   Row(
                     //TODO: make week to calendar week and check for right assignment
                     children: List.generate(weekMap.entries.elementAt(index).value.length, (indexx) {
                       final date = weekMap.entries.elementAt(index).value.elementAt(indexx);
+
                       return Expanded(child: DayFieldCalendar(date: date, workouts: sessionDateMap[date] ?? [],),);
                     }),
                   )
