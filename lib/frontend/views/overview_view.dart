@@ -121,14 +121,13 @@ class _OverviewViewState extends State<OverviewView> {
             children: List.generate(weekMap.length, (index) {
               return Column(
                 children: <Widget>[
-                  CycleBarCalendar(title: weekMap.keys.elementAt(index).toString(), color: Colors.grey),
+                  CycleBarCalendar(cycle: null, title: weekMap.keys.elementAt(index).toString(), color: Colors.grey),
                   for(var cycle in cycles)
                     if (cycle.beginDate.isBefore(weekMap.entries.elementAt(index).value.last.add(const Duration(days: 1))) &&
                         cycle.endDate.isAfter(weekMap.entries.elementAt(index).value.first.subtract(const Duration(days: 1))))
-                      CycleBarCalendar(title: cycle.getName(), color: Colors.blue)
+                        CycleBarCalendar(cycle: cycle, title: cycle.getName(), color: Colors.blue)
                   ,
                   Row(
-                    //TODO: make week to calendar week and check for right assignment
                     children: List.generate(weekMap.entries.elementAt(index).value.length, (indexx) {
                       final date = weekMap.entries.elementAt(index).value.elementAt(indexx);
 
@@ -157,31 +156,3 @@ class _OverviewViewState extends State<OverviewView> {
     );
   }
 }
-// ListView(
-//         children: List.generate(52, (index) {
-//           return Column(
-//             children: <Widget>[
-//                   CycleBarCalendar(
-//                       title: "Week ${index + 1}", color: Colors.grey),
-//                 ] +
-//                 List<Widget>.generate(cycles, (index) {
-//                   return CycleBarCalendar(
-//                       title: "Cycle $index", color: Colors.blue);
-//                 }) +
-//                 [
-//                   //THE days in the week
-//                   Row(
-//                     children: List.generate(7, (indexx) {
-//                       return Expanded(
-//                         child: DayFieldCalendar(
-//                           date: DateTime(2024, 1, 1)
-//                               .add(Duration(days: ((index + 1) * 7 + indexx))),
-//                           workouts: const ["upper body", "flexibility"],
-//                         ),
-//                       );
-//                     }),
-//                   )
-//                 ],
-//           );
-//         }),
-//       ),

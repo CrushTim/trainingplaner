@@ -4,8 +4,10 @@ CRNT
     show planned and unplanned in a row
     
 
-make cycles get in view
-    make them clickable and open editcycle view
+    make planning functionallity
+        -> make a view where you can 
+            -plan a cycle 
+            -plan sessions
 
 
     make advanced planning functionality

@@ -58,7 +58,7 @@ class DayFieldCalendar extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => ChangeNotifierProvider.value(
                         value: trainingSessionProvider, 
-                        child: WorkoutView()
+                        child: const WorkoutView()
                       )
                     )
                   );
