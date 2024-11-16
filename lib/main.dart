@@ -8,6 +8,7 @@ import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provide
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fireabase_ui_auth;
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
+import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,6 +68,7 @@ class Main extends StatelessWidget {
                   create: (context) => TrainingCycleProvider()),
               ChangeNotifierProvider(
                   create: (context) => ExerciseFoundationProvider()),
+              ChangeNotifierProvider(create: (context) => OverviewProvider()),
             ], child: const HomePage()),
       },
     );

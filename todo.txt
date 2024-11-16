@@ -1,9 +1,6 @@
 CRNT 
     
-    überprüfe setting planned and actual session
-    show planned and unplanned in a row
     
-
     make planning functionallity
         -> make a view where you can 
             -plan a cycle 
