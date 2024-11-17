@@ -1,10 +1,10 @@
 CRNT 
     
-    
-    make planning functionallity
-        -> make a view where you can 
-            -plan a cycle 
-            -plan sessions
+
+    cycle planning view:
+        -> show the week fields like in overview
+        -> make add update delete session functionality
+
 
 
     make advanced planning functionality

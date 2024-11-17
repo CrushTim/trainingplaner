@@ -20,7 +20,7 @@ class TrainingCycleProvider
 
   /// Method to retrieve the training cycles to return as draggables and 
   /// to be used in the edit_cycles_view
-  Widget getTrainingCycles() {
+  Widget getTrainingCycles({bool planningMode = false}) {
     return StreamBuilder<List<TrainingCycleBus>>(
       stream: reportTaskVar.getAll(),
       builder: (context, snapshot) {
@@ -37,7 +37,10 @@ class TrainingCycleProvider
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: snapshot.data!.map((cycle) => 
-            TrainingCycleListTile(trainingCycleBus: cycle)
+            TrainingCycleListTile(
+              trainingCycleBus: cycle,
+              planningMode: planningMode,
+            )
           ).toList(),
         );
       },
