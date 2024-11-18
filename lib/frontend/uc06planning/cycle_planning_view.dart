@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/day_field_calendar.dart';
+import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 
 class CyclePlanningView extends StatefulWidget {
   final TrainingCycleBus cycle;
@@ -54,6 +56,10 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
   @override
   Widget build(BuildContext context) {
     final sessionProvider = Provider.of<TrainingSessionProvider>(context);
+    final cycleProvider = Provider.of<TrainingCycleProvider>(context);
+    final overviewProvider = Provider.of<OverviewProvider>(context);
+    
+    overviewProvider.initializeProviders(sessionProvider, cycleProvider);
     
     return Scaffold(
       appBar: AppBar(

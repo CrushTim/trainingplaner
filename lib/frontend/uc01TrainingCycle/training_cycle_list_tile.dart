@@ -5,6 +5,7 @@ import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_edit_fi
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/cycle_planning_view.dart';
+import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 
 class TrainingCycleListTile extends StatefulWidget {
   final TrainingCycleBus trainingCycleBus;
@@ -34,7 +35,16 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
               builder: (context) => MultiProvider(
                 providers: [
                   ChangeNotifierProvider.value(value: trainingCycleProvider),
-                  ChangeNotifierProvider(create: (_) => TrainingSessionProvider()),
+                  ChangeNotifierProvider(
+                    create: (_) {
+                      var sessionProvider = TrainingSessionProvider();
+                      sessionProvider.allCycles = [widget.trainingCycleBus];
+                      return sessionProvider;
+                    }
+                  ),
+                  ChangeNotifierProvider(
+                    create: (_) => OverviewProvider(),
+                  ),
                 ],
                 child: CyclePlanningView(cycle: widget.trainingCycleBus),
               ),

@@ -6,7 +6,6 @@ CRNT
         -> make add update delete session functionality
 
 
-
     make advanced planning functionality
         -> copy session with all exercises
         -> copy session with exercises and added progressive overload
