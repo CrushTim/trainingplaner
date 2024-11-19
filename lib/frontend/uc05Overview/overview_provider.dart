@@ -302,4 +302,109 @@ class OverviewProvider extends ChangeNotifier {
       ),
     );
   }
+
+  List<Widget> buildPlanningSessionRows(
+    BuildContext context,
+    Map<dynamic, dynamic> plannedSessions,
+    List unpaired,
+    TrainingSessionProvider trainingSessionProvider,
+    DateTime date,
+  ) {
+    List<Widget> sessionRows = [];
+    DateTime? lastTappedSession;
+    DateTime lastTapTime = DateTime.now();
+
+    Widget buildPlanningSessionTile(
+      dynamic plannedSession,
+      dynamic actualSession,
+      TrainingSessionProvider trainingSessionProvider,
+      Color color,
+    ) {
+      return Draggable<Map<String, dynamic>>(
+        data: {
+          'plannedSession': plannedSession,
+          'actualSession': actualSession,
+        },
+        feedback: Material(
+          child: Container(
+            width: 100,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              color: color.withOpacity(0.7),
+            ),
+            child: Text(
+              (actualSession ?? plannedSession).trainingSessionName,
+              style: const TextStyle(color: Colors.black),
+            ),
+          ),
+        ),
+        childWhenDragging: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            color: Colors.grey.withOpacity(0.3),
+          ),
+          child: Text(
+            (actualSession ?? plannedSession).trainingSessionName,
+            style: const TextStyle(color: Colors.grey),
+          ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            color: color,
+          ),
+          child: Text(
+            (actualSession ?? plannedSession).trainingSessionName
+          ),
+        ),
+      );
+    }
+
+    // Add planned-unplanned pairs
+    for (var entry in plannedSessions.entries) {
+      sessionRows.add(
+        Row(
+          children: [
+            Expanded(
+              child: buildPlanningSessionTile(
+                entry.key,
+                entry.value,
+                trainingSessionProvider,
+                Colors.green,
+              ),
+            ),
+            if (entry.value != null)
+              Expanded(
+                child: buildPlanningSessionTile(
+                  entry.key,
+                  entry.value,
+                  trainingSessionProvider,
+                  Colors.grey,
+                ),
+              ),
+          ],
+        )
+      );
+    }
+
+    // Add unpaired unplanned sessions
+    for (var session in unpaired) {
+      sessionRows.add(
+        Row(
+          children: [
+            Expanded(
+              child: buildPlanningSessionTile(
+                null,
+                session,
+                trainingSessionProvider,
+                Colors.grey,
+              ),
+            ),
+          ],
+        )
+      );
+    }
+
+    return sessionRows;
+  }
 }

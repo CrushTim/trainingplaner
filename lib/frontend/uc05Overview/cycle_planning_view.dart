@@ -5,7 +5,7 @@ import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart'
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc05Overview/day_field_calendar.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_day_field_calendar.dart';
 
 class CyclePlanningView extends StatefulWidget {
   final TrainingCycleBus cycle;
@@ -36,20 +36,57 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
   Map<int, List<DateTime>> mapSessionsToWeeks(Map<DateTime, List<dynamic>> sessionDateMap) {
     Map<int, List<DateTime>> weekMap = {};
     
-    sessionDateMap.keys.forEach((date) {
-      int woy = ((date.difference(DateTime(date.year, 1, 1)).inDays + 
-          DateTime(date.year, 1, 1).weekday) / 7).ceil();
+    // Helper function to get ISO week number
+    int getISOWeekNumber(DateTime date) {
+      // Shift to Monday being first day of week (ISO standard)
+      int dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
+      int woy = ((dayOfYear - date.weekday + 10) / 7).floor();
       
-      if (!weekMap.containsKey(woy)) {
-        weekMap[woy] = [];
+      // Handle edge cases at year boundaries
+      if (woy < 1) {
+        // If week < 1, it belongs to the last week of previous year
+        return getISOWeekNumber(DateTime(date.year - 1, 12, 31));
+      } else if (woy > 52) {
+        // Check if this is actually week 1 of next year
+        DateTime lastDayOfYear = DateTime(date.year, 12, 31);
+        if (getISOWeekNumber(lastDayOfYear) == 1) {
+          return 1;
+        }
       }
-      weekMap[woy]!.add(date);
+      return woy;
+    }
+
+    // Group dates by ISO week
+    for (DateTime date in sessionDateMap.keys) {
+      int weekNumber = getISOWeekNumber(date);
+      
+      if (!weekMap.containsKey(weekNumber)) {
+        weekMap[weekNumber] = [];
+      }
+      weekMap[weekNumber]!.add(date);
+    }
+
+    // Ensure each week has exactly 7 days
+    weekMap.forEach((weekNumber, dates) {
+      if (dates.length < 7) {
+        // Find the Monday of this week
+        DateTime firstDate = dates.first;
+        DateTime monday = firstDate.subtract(Duration(days: firstDate.weekday - 1));
+        
+        // Add any missing days
+        for (int i = 0; i < 7; i++) {
+          DateTime currentDate = monday.add(Duration(days: i));
+          if (!dates.any((d) => d.year == currentDate.year && 
+                              d.month == currentDate.month && 
+                              d.day == currentDate.day)) {
+            dates.add(currentDate);
+          }
+        }
+        // Sort the dates
+        dates.sort();
+      }
     });
-    
-    weekMap.forEach((week, dates) {
-      dates.sort();
-    });
-    
+
     return weekMap;
   }
 
@@ -122,9 +159,13 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                       (dayIndex) {
                         final date = weekMap.entries.elementAt(index).value[dayIndex];
                         return Expanded(
-                          child: DayFieldCalendar(
+                          child: PlanningDayFieldCalendar(
                             date: date,
                             workouts: sessionDateMap[date] ?? [],
+                            onAddPressed: () {
+                              // TODO: Implement add session functionality for this specific date
+                              print('Add pressed for date: $date');
+                            },
                           ),
                         );
                       },
