@@ -6,6 +6,7 @@ import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_day_field_calendar.dart';
+import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 
 class CyclePlanningView extends StatefulWidget {
   final TrainingCycleBus cycle;
@@ -163,8 +164,16 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                             date: date,
                             workouts: sessionDateMap[date] ?? [],
                             onAddPressed: () {
-                              // TODO: Implement add session functionality for this specific date
-                              print('Add pressed for date: $date');
+                              showDialog(
+                                context: context,
+                                builder: (context) => ChangeNotifierProvider.value(
+                                  value: sessionProvider,
+                                  child: AddPlanningSessionDialog(
+                                    initialDate: date,
+                                    cycleId: widget.cycle.getId(),
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         );
