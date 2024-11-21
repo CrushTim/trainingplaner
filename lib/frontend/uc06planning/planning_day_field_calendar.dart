@@ -47,13 +47,19 @@ class PlanningDayFieldCalendar extends StatelessWidget {
         color: Colors.red,
       ),
       child: DragTarget<Map<String, dynamic>>(
-        onAcceptWithDetails: (details) {
+        onAcceptWithDetails: (details) async {
           final data = details.data;
-          print('Session dropped on date: $date');
-          print('Drop position: ${details.offset}');
-          print('Planned Session: ${data['plannedSession']?.trainingSessionName}');
-          print('Actual Session: ${data['actualSession']?.trainingSessionName}');
-          // TODO: Implement the logic to update the session date
+          final plannedSession = data['plannedSession'];
+          
+          try {
+            await trainingSessionProvider.copySessionToDate(
+              plannedSession,
+              date,
+              ScaffoldMessenger.of(context),
+            );
+          } catch (e) {
+            // Error is already handled in provider
+          }
         },
         builder: (context, candidateData, rejectedData) {
           return Column(
@@ -66,7 +72,77 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                   fontWeight: FontWeight.bold
                 ),
               ),
-              ...sessionRows,
+              ...sessionRows.map((row) {
+                if (row is Row) {
+                  return Row(
+                    children: row.children.map((child) {
+                      if (child is Expanded && child.child is Draggable) {
+                        return Expanded(
+                          child: GestureDetector(
+                            onDoubleTap: () {
+                              final data = (child.child as Draggable).data as Map<String, dynamic>;
+                              final session = data['plannedSession'];
+                              final RenderBox button = context.findRenderObject() as RenderBox;
+                              final Offset localOffset = button.localToGlobal(Offset.zero);
+                              showMenu(
+                                context: context,
+                                position: RelativeRect.fromLTRB(
+                                  localOffset.dx,
+                                  localOffset.dy,
+                                  localOffset.dx + button.size.width,
+                                  localOffset.dy + button.size.height,
+                                ),
+                                items: [
+                                  PopupMenuItem(
+                                    child: const Text('Edit'),
+                                    onTap: () {
+                                      Future.delayed(Duration.zero, () async {
+                                        try {
+                                          await trainingSessionProvider.handleSessionEdit(
+                                            session,
+                                            date,
+                                            ScaffoldMessenger.of(context),
+                                            context,
+                                          );
+                                        } catch (e) {
+                                          // Error already handled in provider
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text('Delete'),
+                                    onTap: () {
+                                      Future.delayed(Duration.zero, () async {
+                                        try {
+                                          await trainingSessionProvider.handleSessionDelete(
+                                            session,
+                                            ScaffoldMessenger.of(context),
+                                          );
+                                        } catch (e) {
+                                          // Error already handled in provider
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                            child: LongPressDraggable<Map<String, dynamic>>(
+                              data: (child.child as Draggable).data as Map<String, dynamic>?,
+                              feedback: (child.child as Draggable).feedback,
+                              childWhenDragging: (child.child as Draggable).childWhenDragging,
+                              child: (child.child as Draggable).child,
+                            ),
+                          ),
+                        );
+                      }
+                      return child;
+                    }).toList(),
+                  );
+                }
+                return row;
+              }).toList(),
               IconButton(
                 onPressed: onAddPressed,
                 icon: const Icon(Icons.add),

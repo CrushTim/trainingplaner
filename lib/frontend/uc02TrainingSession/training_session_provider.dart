@@ -12,6 +12,7 @@ import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart'
 import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<
     TrainingSessionBus, TrainingSessionBusReport> {
@@ -578,5 +579,80 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     resetSelectedBusinessClass();
     selectedActualSession = null;
     resetBusinessClassForAdd();
+  }
+
+  Future<void> copySessionToDate(
+    TrainingSessionBus plannedSession,
+    DateTime newDate,
+    ScaffoldMessengerState scaffoldMessengerState,
+  ) async {
+    final newSession = TrainingSessionBus(
+      trainingSessionId: "",
+      trainingSessionName: plannedSession.trainingSessionName,
+      trainingSessionDescription: plannedSession.trainingSessionDescription,
+      trainingSessionStartDate: DateTime(
+        newDate.year,
+        newDate.month,
+        newDate.day,
+        plannedSession.trainingSessionStartDate.hour,
+        plannedSession.trainingSessionStartDate.minute,
+      ),
+      trainingSessionLength: plannedSession.trainingSessionLength,
+      trainingSessionExcercisesIds: List.from(plannedSession.trainingSessionExcercisesIds),
+      trainingSessionEmphasis: List.from(plannedSession.trainingSessionEmphasis),
+      isPlanned: true,
+      trainingCycleId: plannedSession.trainingCycleId,
+    );
+
+    try {
+      await addBusinessClass(newSession, scaffoldMessengerState);
+    } catch (e) {
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(content: Text('Error copying session: ${e.toString()}')),
+      );
+      rethrow;
+    }
+  }
+
+  Future<void> handleSessionEdit(
+    TrainingSessionBus session,
+    DateTime date,
+    ScaffoldMessengerState scaffoldMessenger,
+    BuildContext context,
+  ) async {
+    try {
+      setSelectedBusinessClass(session, notify: false);
+      setActualAndPlannedSession(session, plannedToActualSessions[session]);
+      
+      await showDialog(
+        context: context,
+        builder: (context) => ChangeNotifierProvider.value(
+          value: this,
+          child: AddPlanningSessionDialog(
+            initialDate: date,
+            cycleId: session.trainingCycleId,
+          ),
+        ),
+      );
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text('Error editing session: ${e.toString()}')),
+      );
+      rethrow;
+    }
+  }
+
+  Future<void> handleSessionDelete(
+    TrainingSessionBus session,
+    ScaffoldMessengerState scaffoldMessenger,
+  ) async {
+    try {
+      await deleteBusinessClass(session, scaffoldMessenger);
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text('Error deleting session: ${e.toString()}')),
+      );
+      rethrow;
+    }
   }
 }

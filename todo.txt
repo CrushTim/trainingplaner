@@ -2,7 +2,9 @@ CRNT
     
 
     cycle planning view:
-        -> show the week fields like in overview
+    make addSession Dialog logic work with selected and foradd 
+    test the delete
+    make the dialog show above the view not bugged in a new view
         -> make add update delete session functionality
 
 
