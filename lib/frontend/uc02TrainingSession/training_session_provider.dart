@@ -52,6 +52,14 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   TrainingExerciseBus? selectedExercise;
 
+
+  void updateSessionDate(DateTime date) {
+    selectedSessionDate = date;
+    final target = getSelectedBusinessClass ?? businessClassForAdd;
+    target.trainingSessionStartDate = date;
+    notifyListeners();
+  }
+
   void resetExerciseForAdd() {
     exerciseForAdd = TrainingExerciseBus(
       trainingExerciseID: "",
@@ -605,12 +613,53 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
 
     try {
-      await addBusinessClass(newSession, scaffoldMessengerState);
+      await addBusinessClass(newSession, scaffoldMessengerState, notify: false);
     } catch (e) {
       scaffoldMessengerState.showSnackBar(
         SnackBar(content: Text('Error copying session: ${e.toString()}')),
       );
       rethrow;
+    }
+  }
+
+  final TextEditingController sessionNameController = TextEditingController();
+  final TextEditingController sessionDescriptionController = TextEditingController();
+  final TextEditingController sessionEmphasisController = TextEditingController();
+  final TextEditingController sessionLengthController = TextEditingController();
+  DateTime selectedSessionDate = DateTime.now();
+
+  void initStateSessionDialog() {
+    final target = getSelectedBusinessClass;
+    if (target != null) {
+      sessionNameController.text = target.trainingSessionName;
+      sessionDescriptionController.text = target.trainingSessionDescription;
+      sessionEmphasisController.text = target.trainingSessionEmphasis.join(', ');
+      sessionLengthController.text = target.trainingSessionLength.toString();
+      selectedSessionDate = target.trainingSessionStartDate;
+    } else {
+      sessionNameController.clear();
+      sessionDescriptionController.clear();
+      sessionEmphasisController.clear();
+      sessionLengthController.text = "60";
+      selectedSessionDate = DateTime.now();
+    }
+  }
+
+  void handleSessionFieldChange(String field, String value) {
+    final target = getSelectedBusinessClass ?? businessClassForAdd;
+    switch (field) {
+      case 'name':
+        target.trainingSessionName = value;
+        break;
+      case 'description':
+        target.trainingSessionDescription = value;
+        break;
+      case 'emphasis':
+        target.trainingSessionEmphasis = value.split(',').map((e) => e.trim()).toList();
+        break;
+      case 'length':
+        target.trainingSessionLength = int.tryParse(value) ?? 60;
+        break;
     }
   }
 
@@ -623,6 +672,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     try {
       setSelectedBusinessClass(session, notify: false);
       setActualAndPlannedSession(session, plannedToActualSessions[session]);
+      initStateSessionDialog();
       
       await showDialog(
         context: context,
@@ -634,6 +684,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           ),
         ),
       );
+
+      resetSessionControllers();
     } catch (e) {
       scaffoldMessenger.showSnackBar(
         SnackBar(content: Text('Error editing session: ${e.toString()}')),
@@ -642,17 +694,28 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  Future<void> handleSessionDelete(
-    TrainingSessionBus session,
-    ScaffoldMessengerState scaffoldMessenger,
-  ) async {
-    try {
-      await deleteBusinessClass(session, scaffoldMessenger);
-    } catch (e) {
-      scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text('Error deleting session: ${e.toString()}')),
+  void resetSessionControllers() {
+    sessionNameController.clear();
+    sessionDescriptionController.clear();
+    sessionEmphasisController.clear();
+    sessionLengthController.text = "60";
+    selectedSessionDate = DateTime.now();
+  }
+
+  Future<void> saveSession(BuildContext context) async {
+    if (getSelectedBusinessClass != null) {
+      await updateSelectedBusinessClass(
+        ScaffoldMessenger.of(context),
       );
-      rethrow;
+    } else {
+      await addBusinessClass(
+        businessClassForAdd,
+        ScaffoldMessenger.of(context),
+      );
+    }
+    
+    if (context.mounted) {
+      Navigator.pop(context);
     }
   }
 }

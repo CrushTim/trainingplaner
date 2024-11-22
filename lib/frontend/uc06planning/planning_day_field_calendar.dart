@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
+import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 
 
 class PlanningDayFieldCalendar extends StatelessWidget {
@@ -96,33 +97,29 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                   PopupMenuItem(
                                     child: const Text('Edit'),
                                     onTap: () {
-                                      Future.delayed(Duration.zero, () async {
-                                        try {
-                                          await trainingSessionProvider.handleSessionEdit(
-                                            session,
-                                            date,
-                                            ScaffoldMessenger.of(context),
-                                            context,
-                                          );
-                                        } catch (e) {
-                                          // Error already handled in provider
-                                        }
-                                      });
+                                      trainingSessionProvider.setSelectedBusinessClass(session, notify: false);
+                                      showDialog(
+                                          context: context,
+                                        builder: (context) => ChangeNotifierProvider.value(
+                                          value: trainingSessionProvider,
+                                          child: AddPlanningSessionDialog(
+                                            initialDate: date,
+                                              cycleId: session.trainingCycleId,
+                                            ),
+                                          ),
+                                          ).then((_) {
+                                            // Reset everything after dialog closes
+                                            trainingSessionProvider.resetSessionControllers();
+                                            trainingSessionProvider.resetSelectedBusinessClass();
+                                            trainingSessionProvider.resetBusinessClassForAdd();
+                                            trainingSessionProvider.clearAllMapsAndLists();
+                                          });
                                     },
                                   ),
                                   PopupMenuItem(
                                     child: const Text('Delete'),
                                     onTap: () {
-                                      Future.delayed(Duration.zero, () async {
-                                        try {
-                                          await trainingSessionProvider.handleSessionDelete(
-                                            session,
-                                            ScaffoldMessenger.of(context),
-                                          );
-                                        } catch (e) {
-                                          // Error already handled in provider
-                                        }
-                                      });
+                                      trainingSessionProvider.deleteBusinessClass(session, ScaffoldMessenger.of(context), notify: false);
                                     },
                                   ),
                                 ],
@@ -142,7 +139,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                   );
                 }
                 return row;
-              }).toList(),
+              }),
               IconButton(
                 onPressed: onAddPressed,
                 icon: const Icon(Icons.add),

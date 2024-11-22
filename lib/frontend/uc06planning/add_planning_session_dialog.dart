@@ -28,8 +28,8 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
   @override
   void initState() {
     super.initState();
-    selectedDate = widget.initialDate;
-    lengthController.text = "60"; // Default session length
+    TrainingSessionProvider provider = Provider.of<TrainingSessionProvider>(context, listen: false);
+    provider.initStateSessionDialog();
   }
 
   @override
@@ -43,30 +43,32 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: nameController,
+              controller: provider.sessionNameController,
               decoration: const InputDecoration(labelText: 'Session Name'),
+              onChanged: (value) => provider.handleSessionFieldChange('name', value),
             ),
             TextField(
-              controller: descriptionController,
+              controller: provider.sessionDescriptionController,
               decoration: const InputDecoration(labelText: 'Description'),
+              onChanged: (value) => provider.handleSessionFieldChange('description', value),
             ),
             TextField(
-              controller: emphasisController,
+              controller: provider.sessionEmphasisController,
               decoration: const InputDecoration(labelText: 'Emphasis (comma separated)'),
+              onChanged: (value) => provider.handleSessionFieldChange('emphasis', value),
             ),
             TextField(
-              controller: lengthController,
+              controller: provider.sessionLengthController,
               decoration: const InputDecoration(labelText: 'Length (minutes)'),
               keyboardType: TextInputType.number,
+              onChanged: (value) => provider.handleSessionFieldChange('length', value),
             ),
             DatePickerSheer(
-              initialDateTime: selectedDate,
-              onDateTimeChanged: (DateTime newDateTime) {
-                setState(() {
-                  selectedDate = newDateTime;
-                });
-              },
-              dateController: TextEditingController(text: selectedDate.toString()),
+              initialDateTime: provider.selectedSessionDate,
+              onDateTimeChanged: provider.updateSessionDate,
+              dateController: TextEditingController(
+                text: provider.selectedSessionDate.toString()
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -77,29 +79,8 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
-                  onPressed: () async {
-                    final session = TrainingSessionBus(
-                      trainingSessionId: "",
-                      isPlanned: true,
-                      trainingSessionName: nameController.text,
-                      trainingSessionDescription: descriptionController.text,
-                      trainingSessionEmphasis: emphasisController.text.split(',').map((e) => e.trim()).toList(),
-                      trainingSessionExcercisesIds: [],
-                      trainingSessionLength: int.tryParse(lengthController.text) ?? 60,
-                      trainingSessionStartDate: selectedDate,
-                      trainingCycleId: widget.cycleId,
-                    );
-
-                    await provider.addBusinessClass(
-                      session,
-                      ScaffoldMessenger.of(context),
-                    );
-
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text('Save'),
+                  onPressed: () => provider.saveSession(context),
+                  child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),
                 ),
               ],
             ),

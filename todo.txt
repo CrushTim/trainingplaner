@@ -2,12 +2,6 @@ CRNT
     
 
     cycle planning view:
-    make addSession Dialog logic work with selected and foradd 
-    test the delete
-    make the dialog show above the view not bugged in a new view
-        -> make add update delete session functionality
-
-
     make advanced planning functionality
         -> copy session with all exercises
         -> copy session with exercises and added progressive overload
