@@ -4,6 +4,7 @@ CRNT
     cycle planning view:
     make advanced planning functionality
         -> copy session with all exercises
+        
         -> copy session with exercises and added progressive overload
 
     TEST everything
