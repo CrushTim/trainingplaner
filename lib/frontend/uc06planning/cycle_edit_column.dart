@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class CycleEditColumn extends StatelessWidget {
+  final List<dynamic> weekSessions;
+
   const CycleEditColumn({
     super.key,
+    required this.weekSessions,
   });
 
   @override
   Widget build(BuildContext context) {
+    final planningProvider = Provider.of<PlanningProvider>(context);
+    
     return Container(
       constraints: const BoxConstraints(
         minHeight: 100,
@@ -38,9 +46,15 @@ class CycleEditColumn extends StatelessWidget {
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
             itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'option1',
-                child: Text('To Implement 1'),
+              PopupMenuItem(
+                value: 'copyWeek',
+                child: const Text('Copy Week'),
+                onTap: () {
+                  planningProvider.storeWeekSessions(weekSessions.cast<TrainingSessionBus>());
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Week copied')),
+                  );
+                },
               ),
               const PopupMenuItem(
                 value: 'option2',
@@ -51,9 +65,6 @@ class CycleEditColumn extends StatelessWidget {
                 child: Text('To Implement 3'),
               ),
             ],
-            onSelected: (value) {
-              // TODO: Implement additional options
-            },
           ),
         ],
       ),

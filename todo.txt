@@ -2,6 +2,9 @@ CRNT
     
 
     cycle planning view:
+
+       copy week sessions
+                -> make insert week option disabled first and if copied sessions are not empty make it enabled and the add a copy of every session with exercises and progressive overload function
     make advanced planning functionality
         -> copy session with all exercises
         

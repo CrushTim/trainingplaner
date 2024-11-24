@@ -171,7 +171,10 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                         },
                       ),
                       Expanded(
-                        child: const CycleEditColumn(
+                        child: CycleEditColumn(
+                          weekSessions: weekMap.entries.elementAt(index).value
+                              .expand((date) => sessionDateMap[date] ?? [])
+                              .toList(),
                         ),
                       ),
                     ],
