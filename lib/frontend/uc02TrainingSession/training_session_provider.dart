@@ -122,9 +122,9 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   /// Returns a list of unplanned exercises for the selected session
   List<TrainingExerciseBus> getUnplannedExercisesForSession() {
-    return selectedActualSession!.trainingSessionExercises
+    return selectedActualSession?.trainingSessionExercises
         .where((exercise) => !plannedToActualExercises.containsValue(exercise))
-        .toList();
+        .toList() ?? [];
   }
 
   // /////////////////////////////////////////////////////////////////////

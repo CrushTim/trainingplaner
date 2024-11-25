@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class CycleEditColumn extends StatelessWidget {
   final List<dynamic> weekSessions;
-
+  final int copiedWeek;
   const CycleEditColumn({
     super.key,
     required this.weekSessions,
+    required this.copiedWeek,
   });
 
   @override
@@ -50,19 +52,29 @@ class CycleEditColumn extends StatelessWidget {
                 value: 'copyWeek',
                 child: const Text('Copy Week'),
                 onTap: () {
-                  planningProvider.storeWeekSessions(weekSessions.cast<TrainingSessionBus>());
+                  planningProvider.storeWeekSessions(weekSessions.cast<TrainingSessionBus>(), copiedWeek);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Week copied')),
                   );
                 },
               ),
-              const PopupMenuItem(
-                value: 'option2',
-                child: Text('To Implement 2'),
-              ),
-              const PopupMenuItem(
-                value: 'option3',
-                child: Text('To Implement 3'),
+              PopupMenuItem(
+                value: 'insertWeek',
+                child: Text(
+                  'Insert Week',
+                  
+                ),
+                onTap: () {
+                  final sessionProvider = Provider.of<TrainingSessionProvider>(
+                    context,
+                    listen: false,
+                  );
+                  planningProvider.insertWeekSessions(
+                    copiedWeek,
+                    sessionProvider,
+                    ScaffoldMessenger.of(context),
+                  );
+                },
               ),
             ],
           ),

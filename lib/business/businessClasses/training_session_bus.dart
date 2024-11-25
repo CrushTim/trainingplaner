@@ -144,13 +144,13 @@ class TrainingSessionBus
   @override
   Future<void> update() async {
     validateForUpdate();
-    toData().update();
+    await toData().update();
   }
 
   @override
   Future<void> delete() async {
     validateForDelete();
-    toData().delete();
+    await toData().delete();
   }
 
   // //////////////////////////////////////////////////////////////

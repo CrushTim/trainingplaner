@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 
@@ -79,7 +78,14 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
-                  onPressed: () => provider.saveSession(context),
+                  onPressed: () {
+                    if (provider.getSelectedBusinessClass != null) {
+                      provider.getSelectedBusinessClass!.trainingCycleId = widget.cycleId;
+                    } else {
+                      provider.businessClassForAdd.trainingCycleId = widget.cycleId;
+                    }
+                    provider.saveSession(context);
+                  },
                   child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),
                 ),
               ],

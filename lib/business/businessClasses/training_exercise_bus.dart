@@ -129,7 +129,6 @@ class TrainingExerciseBus
   @override
   Future<String> add() async {
     validateForAdd();
-    trainingExerciseID = await toData().add();
     return toData().add();
   }
 

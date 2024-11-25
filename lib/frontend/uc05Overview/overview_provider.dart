@@ -311,8 +311,6 @@ class OverviewProvider extends ChangeNotifier {
     DateTime date,
   ) {
     List<Widget> sessionRows = [];
-    DateTime? lastTappedSession;
-    DateTime lastTapTime = DateTime.now();
 
     Widget buildPlanningSessionTile(
       dynamic plannedSession,
