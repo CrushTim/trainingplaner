@@ -22,68 +22,77 @@ class _TrainingCycleEditFieldsState extends State<TrainingCycleEditFields> {
   Widget build(BuildContext context) {
     final provider = Provider.of<TrainingCycleProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Cycle"),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: provider.nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-                onChanged: (value) => provider.handleTextFieldChange('name', value),
-              ),
-              TextField(
-                controller: provider.descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                onChanged: (value) => provider.handleTextFieldChange('description', value),
-              ),
-              TextField(
-                controller: provider.emphasisController,
-                decoration: const InputDecoration(labelText: 'Emphasis'),
-                onChanged: (value) => provider.handleTextFieldChange('emphasis', value),
-              ),
-              const SizedBox(height: 16),
-              DatePickerSheer(
-                initialDateTime: provider.startDate,
-                onDateTimeChanged: provider.updateStartDate,
-                dateController: provider.startDateController,
-              ),
-              const SizedBox(height: 16),
-              DatePickerSheer(
-                initialDateTime: provider.endDate,
-                onDateTimeChanged: provider.updateEndDate,
-                dateController: provider.endDateController,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: provider.getSelectedBusinessClass == null ? provider.businessClassForAdd.parent : provider.getSelectedBusinessClass?.parent,
-                decoration: const InputDecoration(labelText: 'Parent Cycle'),
-                items: [
-                  const DropdownMenuItem<String>(
-                    value: null,
-                    child: Text('No Parent'),
-                  ),
-                  ...provider.businessClasses.map((cycle) => DropdownMenuItem<String>(
-                    value: cycle.getId(),
-                    child: Text(cycle.cycleName),
-                  )),
-                ],
-                onChanged: (value) => provider.updateParent(value),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  provider.saveTrainingCycle(ScaffoldMessenger.of(context));
-                  Navigator.pop(context);
-                },
-                child: const Text("Save"),
-              ),
-            ],
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        // Reset everything when popping
+        provider.resetBusinessClassForAdd();
+        provider.resetSelectedBusinessClass();
+        provider.resetControllers();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Edit Cycle"),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: provider.nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                  onChanged: (value) => provider.handleTextFieldChange('name', value),
+                ),
+                TextField(
+                  controller: provider.descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  onChanged: (value) => provider.handleTextFieldChange('description', value),
+                ),
+                TextField(
+                  controller: provider.emphasisController,
+                  decoration: const InputDecoration(labelText: 'Emphasis'),
+                  onChanged: (value) => provider.handleTextFieldChange('emphasis', value),
+                ),
+                const SizedBox(height: 16),
+                DatePickerSheer(
+                  initialDateTime: provider.startDate,
+                  onDateTimeChanged: provider.updateStartDate,
+                  dateController: provider.startDateController,
+                ),
+                const SizedBox(height: 16),
+                DatePickerSheer(
+                  initialDateTime: provider.endDate,
+                  onDateTimeChanged: provider.updateEndDate,
+                  dateController: provider.endDateController,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: provider.getSelectedBusinessClass == null ? provider.businessClassForAdd.parent : provider.getSelectedBusinessClass?.parent,
+                  decoration: const InputDecoration(labelText: 'Parent Cycle'),
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('No Parent'),
+                    ),
+                    ...provider.businessClasses.map((cycle) => DropdownMenuItem<String>(
+                      value: cycle.getId(),
+                      child: Text(cycle.cycleName),
+                    )),
+                  ],
+                  onChanged: (value) => provider.updateParent(value),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    provider.saveTrainingCycle(ScaffoldMessenger.of(context));
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Save"),
+                ),
+              ],
+            ),
           ),
         ),
       ),

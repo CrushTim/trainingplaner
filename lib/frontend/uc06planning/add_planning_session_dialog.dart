@@ -85,6 +85,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                       provider.businessClassForAdd.trainingCycleId = widget.cycleId;
                     }
                     provider.saveSession(context);
+                    Navigator.pop(context);
                   },
                   child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),
                 ),
