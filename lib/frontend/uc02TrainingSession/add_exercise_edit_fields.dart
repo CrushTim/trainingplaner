@@ -18,7 +18,7 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TrainingSessionProvider>(context);
-    var target = provider.selectedExercise ?? provider.exerciseForAdd;
+    var target = provider.exerciseProvider.getSelectedBusinessClass ?? provider.exerciseProvider.businessClassForAdd;
 
     return Dialog(
       child: Padding(
@@ -27,20 +27,20 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: provider.exerciseNameController,
+              controller: provider.exerciseProvider.exerciseNameController,
               decoration: const InputDecoration(labelText: 'Exercise Name'),
-              onChanged: (value) => provider.handleExerciseFieldChange('name', value),
+              onChanged: (value) => provider.exerciseProvider.handleExerciseFieldChange('name', value),
             ),
             TextField(
-              controller: provider.exerciseDescriptionController,
+              controller: provider.exerciseProvider.exerciseDescriptionController,
               decoration: const InputDecoration(labelText: 'Description'),
-              onChanged: (value) => provider.handleExerciseFieldChange('description', value),
+              onChanged: (value) => provider.exerciseProvider.handleExerciseFieldChange('description', value),
             ),
             TextField(
-              controller: provider.targetPercentageController,
+              controller: provider.exerciseProvider.targetPercentageController,
               decoration: const InputDecoration(labelText: 'Target Percentage of 1RM'),
               keyboardType: TextInputType.number,
-              onChanged: (value) => provider.handleExerciseFieldChange('targetPercentage', value),
+              onChanged: (value) => provider.exerciseProvider.handleExerciseFieldChange('targetPercentage', value),
             ),
             provider.getFoundationAutoComplete(),
             const SizedBox(height: 24),
@@ -49,7 +49,7 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
               children: [
                 TextButton(
                   onPressed: () {
-                    provider.resetExerciseForAdd();
+                    provider.exerciseProvider.resetSelectedBusinessClass();
                     Navigator.pop(context);
                   },
                   child: const Text('Cancel'),
@@ -65,11 +65,12 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                     // Add to local collections first
                     provider.selectedActualSession!.trainingSessionExcercisesIds.add(tempId);
                     provider.selectedActualSession!.trainingSessionExercises.add(target);
+                    final scaffoldMessenger = ScaffoldMessenger.of(context);
                     
                     // Trigger the async operation in the background
-                    provider.addExercise(
+                    provider.exerciseProvider.addBusinessClass(
                       target,
-                      ScaffoldMessenger.of(context),
+                      scaffoldMessenger,
                       notify: false,
                     ).then((String permanentId) {
                       // Update the local references with the permanent ID
@@ -82,22 +83,25 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                       // Update the session in the background
                       provider.updateBusinessClass(
                         provider.selectedActualSession!,
-                        ScaffoldMessenger.of(context),
+                        scaffoldMessenger,
                         notify: true,
                       );
                     }).catchError((error) {
-                      // Handle error - maybe show a sync failed message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to sync: ${error.toString()}')),
-                      );
+                      // Store context in local variable before async gap
+                      
+                      // Check if widget is still mounted before showing snackbar
+                      if (context.mounted) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(content: Text('Failed to sync: ${error.toString()}')),
+                        );
+                      }
                     });
 
                     // Clear the form
-                    provider.resetExerciseForAdd();
-                    provider.selectedExercise = null;
-                    provider.exerciseNameController.clear();
-                    provider.exerciseDescriptionController.clear();
-                    provider.targetPercentageController.clear();
+                    provider.exerciseProvider.resetSelectedBusinessClass();
+                    provider.exerciseProvider.exerciseNameController.clear();
+                    provider.exerciseProvider.exerciseDescriptionController.clear();
+                    provider.exerciseProvider.targetPercentageController.clear();
                     Navigator.pop(context);
                   },
                   child: const Text('Save'),

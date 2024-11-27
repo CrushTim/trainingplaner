@@ -4,6 +4,7 @@ import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart'
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/cycle_planning_view.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 
@@ -37,7 +38,7 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
                   ChangeNotifierProvider.value(value: trainingCycleProvider),
                   ChangeNotifierProvider(
                     create: (_) {
-                      var sessionProvider = TrainingSessionProvider();
+                      var sessionProvider = TrainingSessionProvider(exerciseProvider: TrainingExerciseProvider());
                       sessionProvider.allCycles = [widget.trainingCycleBus];
                       return sessionProvider;
                     }

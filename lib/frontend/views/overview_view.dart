@@ -77,7 +77,7 @@ class _OverviewViewState extends State<OverviewView> {
       body: StreamBuilder3(
         streams: StreamTuple3(
           sessionProvider.reportTaskVar.getAll(), 
-          sessionProvider.trainingExerciseBusReport.getAll(),
+          sessionProvider.exerciseProvider.reportTaskVar.getAll(),
           trainingCycleProvider.reportTaskVar.getAll()
         ),
         builder: (context, snapshot) {

@@ -89,7 +89,7 @@ class OverviewProvider extends ChangeNotifier {
     return StreamBuilder3(
       streams: StreamTuple3(
         sessionProvider.reportTaskVar.getAll(),
-        sessionProvider.trainingExerciseBusReport.getAll(),
+        sessionProvider.exerciseProvider.reportTaskVar.getAll(),
         cycleProvider.reportTaskVar.getAll(),
       ),
       builder: (context, snapshot) {

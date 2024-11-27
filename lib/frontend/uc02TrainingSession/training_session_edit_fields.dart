@@ -13,12 +13,8 @@ class TrainingSessionEditFields extends StatefulWidget {
 }
 
 class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
-
-
-
   @override
   Widget build(BuildContext context) {
-    print("build");
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
     final session = trainingSessionProvider.selectedActualSession!;
     final TextEditingController workoutNameController =
@@ -95,15 +91,14 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
           },
           dateController: TextEditingController(text: startDate.toString()),
         ),
-        // show all the exercises in the session by showing
-        for (TrainingExerciseBus exercise
-            in trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises ?? [])
+        // show all the exercises in the session
+        for (TrainingExerciseBus exercise in trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises ?? [])
           TrainingExcerciseRow(
-            actualTrainingExercise: trainingSessionProvider.plannedToActualExercises[exercise],
+            actualTrainingExercise: trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise],
             plannedTrainingExercise: exercise,
             onUpdate: (actualExercise) async {
-              if (trainingSessionProvider.plannedToActualExercises[exercise] == null) {
-                String addId = await trainingSessionProvider.addExercise(
+              if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] == null) {
+                String addId = await trainingSessionProvider.exerciseProvider.addBusinessClass(
                     actualExercise, ScaffoldMessenger.of(context),
                     notify: false);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds.add(addId);
@@ -111,12 +106,11 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                 trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
                     notify: false);
               } else {
-                trainingSessionProvider.updateExercises([actualExercise], ScaffoldMessenger.of(context),
-                    notify: false);
+                trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, ScaffoldMessenger.of(context));
               }
             },
             onDelete: (actualExercise) async{
-              if (trainingSessionProvider.plannedToActualExercises[exercise] != null ) {
+              if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ) {
                   await trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context));
                 
                 await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),);
@@ -125,25 +119,25 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                     .remove(actualExercise.trainingExerciseID);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExercises
                     .remove(actualExercise);
-                    trainingSessionProvider.plannedToActualExercises.remove(exercise);
+                    trainingSessionProvider.exerciseProvider.plannedToActualExercises.remove(exercise);
                     trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
-                    trainingSessionProvider.unplannedExercisesForSession.remove(exercise);
+                    trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
                 });
               }
             },
           ),
 
-        //add all the unplanned exercises
-        for (TrainingExerciseBus exercise in trainingSessionProvider.unplannedExercisesForSession)
+        // add all the unplanned exercises
+        for (TrainingExerciseBus exercise in trainingSessionProvider.exerciseProvider.unplannedExercisesForSession)
           TrainingExcerciseRow(
             actualTrainingExercise: exercise,
             plannedTrainingExercise: null,
             onUpdate: (actualExercise) async{
-               await trainingSessionProvider.updateExercises([exercise], ScaffoldMessenger.of(context), notify: false);
+               await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, ScaffoldMessenger.of(context));
             },
             onDelete: (actualExercise) async {
-              if (trainingSessionProvider.plannedToActualExercises[exercise] != null ||
-                  trainingSessionProvider.unplannedExercisesForSession.contains(exercise)) {
+              if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ||
+                  trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.contains(exercise)) {
                   await trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context),
                     notify: false);
                 await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
@@ -153,9 +147,9 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                     .remove(actualExercise.trainingExerciseID);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExercises
                     .remove(actualExercise);
-                    trainingSessionProvider.plannedToActualExercises.remove(exercise);
+                    trainingSessionProvider.exerciseProvider.plannedToActualExercises.remove(exercise);
                     trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
-                    trainingSessionProvider.unplannedExercisesForSession.remove(exercise);
+                    trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
                 });
               }
             },

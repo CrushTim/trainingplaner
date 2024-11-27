@@ -7,6 +7,7 @@ import 'package:trainingplaner/frontend/home_page.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' as fireabase_ui_auth;
+import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
@@ -64,7 +65,7 @@ class Main extends StatelessWidget {
             ),
         '/home': (context) => MultiProvider(providers: [
               ChangeNotifierProvider(
-                  create: (context) => TrainingSessionProvider()),
+                  create: (context) => TrainingSessionProvider(exerciseProvider: TrainingExerciseProvider())),
               ChangeNotifierProvider(
                   create: (context) => TrainingCycleProvider()),
               ChangeNotifierProvider(

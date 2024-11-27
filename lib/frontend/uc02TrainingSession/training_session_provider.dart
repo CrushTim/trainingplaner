@@ -6,81 +6,19 @@ import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart'
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
-import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
 import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<
     TrainingSessionBus, TrainingSessionBusReport> {
-  TrainingExerciseBusReport trainingExerciseBusReport =
-      TrainingExerciseBusReport();
+  late TrainingExerciseProvider exerciseProvider;
 
-  TrainingSessionBus? selectedActualSession;
-
-  bool hasNoPlannedSession = false;
-
-  bool isPlannedSessionWithoutActual = false;
-
-  Map<TrainingSessionBus, TrainingSessionBus?> plannedToActualSessions = {};
-  List<TrainingSessionBus> unplannedSessions = [];
-  Map<TrainingExerciseBus, TrainingExerciseBus?> plannedToActualExercises = {};
-  List<TrainingExerciseBus> unplannedExercisesForSession = [];
-  List<TrainingExerciseBus> unplannedExercises = [];
-  List<TrainingCycleBus> allCycles = [];
-
-  final TextEditingController exerciseNameController = TextEditingController();
-  final TextEditingController exerciseDescriptionController = TextEditingController();
-  final TextEditingController targetPercentageController = TextEditingController();
-  List<ExerciseFoundationBus> availableFoundations = [];
-
-  TrainingExerciseBus exerciseForAdd = TrainingExerciseBus(
-    trainingExerciseID: "",
-    exerciseName: "",
-    exerciseDescription: "",
-    exerciseFoundationID: "",
-    targetPercentageOf1RM: 100,
-    exerciseReps: [],
-    exerciseWeights: [],
-    isPlanned: false,
-    plannedExerciseId: "",
-    date: DateTime.now(),
-  );
-
-  TrainingExerciseBus? selectedExercise;
-
-
-  void updateSessionDate(DateTime date) {
-    selectedSessionDate = date;
-    final target = getSelectedBusinessClass ?? businessClassForAdd;
-    target.trainingSessionStartDate = date;
-    notifyListeners();
-  }
-
-  void resetExerciseForAdd() {
-    exerciseForAdd = TrainingExerciseBus(
-      trainingExerciseID: "",
-      exerciseName: "",
-      exerciseDescription: "",
-      exerciseFoundationID: "",
-      targetPercentageOf1RM: 100,
-      exerciseReps: [],
-      exerciseWeights: [],
-      isPlanned: false,
-      plannedExerciseId: "",
-      date: DateTime.now(),
-    );
-  }
-
-  void setSelectedExercise(TrainingExerciseBus? exercise) {
-    selectedExercise = exercise;
-    notifyListeners();
-  }
-
-  TrainingSessionProvider()
+  TrainingSessionProvider({required this.exerciseProvider})
       : super(
             businessClassForAdd: TrainingSessionBus(
                 trainingSessionId: "",
@@ -94,11 +32,31 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
                 trainingCycleId: ""),
             reportTaskVar: TrainingSessionBusReport());
 
-    // /////////////////////////////////////////////////////////////////////
-    //                         SETTER
-    // /////////////////////////////////////////////////////////////////////
-    void setActualAndPlannedSession(
-      TrainingSessionBus? plannedSession, TrainingSessionBus? actualSession) {
+  TrainingSessionBus? selectedActualSession;
+  bool hasNoPlannedSession = false;
+  bool isPlannedSessionWithoutActual = false;
+  Map<TrainingSessionBus, TrainingSessionBus?> plannedToActualSessions = {};
+  List<TrainingSessionBus> unplannedSessions = [];
+  List<TrainingCycleBus> allCycles = [];
+  DateTime selectedSessionDate = DateTime.now();
+
+  final TextEditingController sessionNameController = TextEditingController();
+  final TextEditingController sessionDescriptionController = TextEditingController();
+  final TextEditingController sessionEmphasisController = TextEditingController();
+  final TextEditingController sessionLengthController = TextEditingController();
+
+  void updateSessionDate(DateTime date) {
+    selectedSessionDate = date;
+    final target = getSelectedBusinessClass ?? businessClassForAdd;
+    target.trainingSessionStartDate = date;
+    notifyListeners();
+  }
+
+  // /////////////////////////////////////////////////////////////////////
+  //                         SETTER
+  // /////////////////////////////////////////////////////////////////////
+  void setActualAndPlannedSession(
+    TrainingSessionBus? plannedSession, TrainingSessionBus? actualSession) {
     setSelectedBusinessClass(plannedSession, notify: false);
     selectedActualSession = actualSession;
     if(selectedActualSession == null){
@@ -123,7 +81,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   /// Returns a list of unplanned exercises for the selected session
   List<TrainingExerciseBus> getUnplannedExercisesForSession() {
     return selectedActualSession?.trainingSessionExercises
-        .where((exercise) => !plannedToActualExercises.containsValue(exercise))
+        .where((exercise) => !exerciseProvider.plannedToActualExercises.containsValue(exercise))
         .toList() ?? [];
   }
 
@@ -134,10 +92,10 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   ///is used to clear the maps and lists after a new selection of a session or exercise
   void clearAllMapsAndLists(){
           plannedToActualSessions.clear();
-          plannedToActualExercises.clear();
+          exerciseProvider.plannedToActualExercises.clear();
           unplannedSessions.clear();
-          unplannedExercises.clear();
-          unplannedExercisesForSession.clear();
+          exerciseProvider.unplannedExercises.clear();
+          exerciseProvider.unplannedExercisesForSession.clear();
           selectedActualSession?.trainingSessionExercises.clear();
           getSelectedBusinessClass?.trainingSessionExercises.clear();
   }
@@ -160,12 +118,13 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   /// is used to map the sessions and exercises to the lists after a new selection of a session or exercise
   void mapSessionsAndExercisesInCurrentBuilder(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
     clearAllMapsAndLists();
-    
+    print(allSessions);  
     mapPlannedAndUnplannedSessions(allSessions);
     mapUnplannedSessionsToPlanned();
     mapPlannedAndUnplannedExercises(allExercises);
     mapUnplannedExercisesToPlanned(allExercises);
     assignExercisesToSessions(allExercises);
+    print(exerciseProvider.plannedToActualExercises);
   }
 
   /// Maps all sessions to either planned or unplanned lists
@@ -197,23 +156,23 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   void mapPlannedAndUnplannedExercises(List<TrainingExerciseBus> allExercises) {
     for (var exercise in allExercises) {
       if (exercise.isPlanned) {
-        plannedToActualExercises[exercise] = null;
+        exerciseProvider.plannedToActualExercises[exercise] = null;
       } else {
-        unplannedExercises.add(exercise);
+        exerciseProvider.unplannedExercises.add(exercise);
       }
     }
   }
 
   /// Maps unplanned exercises to their corresponding planned exercises
   void mapUnplannedExercisesToPlanned(List<TrainingExerciseBus> allExercises) {
-    for (var exercise in List.from(unplannedExercises)) {
+    for (var exercise in List.from(exerciseProvider.unplannedExercises)) {
       TrainingExerciseBus? plannedExercise = allExercises.firstWhere(
         (e) => e.trainingExerciseID == exercise.plannedExerciseId,
         orElse: () => exercise,
       );
       if (plannedExercise != exercise) {
-        plannedToActualExercises[plannedExercise] = exercise;
-        unplannedExercises.remove(exercise);
+        exerciseProvider.plannedToActualExercises[plannedExercise] = exercise;
+        exerciseProvider.unplannedExercises.remove(exercise);
       }
     }
   }
@@ -234,60 +193,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-
-  // /////////////////////////////////////////////////////////////////////
-  //                         EXERCISE CRUD
-  // /////////////////////////////////////////////////////////////////////
-
-  Future<void> updateExercises(
-    List<TrainingExerciseBus> exercises,
-    ScaffoldMessengerState scaffoldMessengerState, {
-    bool notify = true,
-  }) async {
-    String message = "Exercises updated";
-    try {
-      for (var exercise in exercises) {
-        await exercise.update().onError((error, stackTrace) {
-          message =
-              "Error updating ${exercise.exerciseName}: ${error.toString()}";
-          throw error!;
-        });
-      }
-    } catch (e) {
-      message = e.toString();
-    } finally {
-      if (notify) {
-        notifyListeners();
-      }
-      scaffoldMessengerState.showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    }
-  }
-
-  Future<String> addExercise(
-    TrainingExerciseBus exercise,
-    ScaffoldMessengerState scaffoldMessengerState, {
-    bool notify = true,
-  }) async {
-    String exerciseID = "";
-    String message = "Added ${exercise.getName()}";
-    try {
-      exerciseID = await exercise.add();
-      return exerciseID;
-    } catch (e) {
-      message = e.toString();
-    } finally {
-      if (notify) {
-        notifyListeners();
-      }
-
-      scaffoldMessengerState.showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    }
-    return exerciseID;
-  }
 
   Future<void> deleteExercise(TrainingExerciseBus exercise,
       ScaffoldMessengerState scaffoldMessengerState,
@@ -333,7 +238,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       ...(selectedActualSession?.trainingSessionExercises ?? []),
     ];
 
-    await updateExercises(exercisesToUpdate, scaffoldMessenger, notify: false);
+        await exerciseProvider.updateExercises(exercisesToUpdate, scaffoldMessenger, notify: false);
     // Update the actual session
     if(hasNoPlannedSession){
       await updateBusinessClass(selectedActualSession!, scaffoldMessenger,
@@ -373,7 +278,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   StreamBuilder3 getCurrentTrainingSessionStreamBuilder() {
     return StreamBuilder3(
       streams: StreamTuple3(
-          reportTaskVar.getAll(), trainingExerciseBusReport.getAll(), TrainingCycleBusReport().getAll()),
+          reportTaskVar.getAll(), exerciseProvider.reportTaskVar.getAll(), TrainingCycleBusReport().getAll()),
       builder: (context, snapshots) {
         if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
             snapshots.snapshot2.connectionState == ConnectionState.waiting ||
@@ -413,7 +318,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSessions() : null;
     
     
-    unplannedExercisesForSession = getUnplannedExercisesForSession();
+    exerciseProvider.unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(getSelectedBusinessClass!.trainingSessionId);
   }
  
 
@@ -422,7 +327,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   ///returns a Strembuilder with a list of all session 
   StreamBuilder2 getAllSessionsForWorkoutView() {
     return StreamBuilder2(
-      streams: StreamTuple2(reportTaskVar.getAll(), trainingExerciseBusReport.getAll()),
+      streams: StreamTuple2(reportTaskVar.getAll(), exerciseProvider.reportTaskVar.getAll()),
       builder: (context, snapshots) {
         if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
             snapshots.snapshot2.connectionState == ConnectionState.waiting) {
@@ -525,20 +430,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   }
 
 
-  void handleExerciseFieldChange(String field, String value) {
-    TrainingExerciseBus target = selectedExercise ?? exerciseForAdd;
-    switch (field) {
-      case 'name':
-        target.exerciseName = value;
-        break;
-      case 'description':
-        target.exerciseDescription = value;
-        break;
-      case 'targetPercentage':
-        target.targetPercentageOf1RM = int.tryParse(value) ?? 100;
-        break;
-    }
-  }
+  
 
   ////////////////////////////////STUFF FOR FOUNDATION ID ///////////////////////////////////
   
@@ -553,7 +445,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
         } else {
-          availableFoundations = snapshot.data!;
+          exerciseProvider.availableFoundations = snapshot.data!;
           return Autocomplete<ExerciseFoundationBus>(
             
             displayStringForOption: (ExerciseFoundationBus option) => option.exerciseFoundationName,
@@ -561,17 +453,17 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
               if (textEditingValue.text == '') {
                 return const Iterable<ExerciseFoundationBus>.empty();
               }
-              return availableFoundations.where((foundation) {
+              return exerciseProvider.availableFoundations.where((foundation) {
                 return foundation.exerciseFoundationName
                     .toLowerCase()
                     .contains(textEditingValue.text.toLowerCase());
               });
             },
             onSelected: (ExerciseFoundationBus selection) {
-              if (selectedExercise != null) {
-                selectedExercise!.exerciseFoundationID = selection.getId();
+              if (exerciseProvider.getSelectedBusinessClass != null) {
+                exerciseProvider.getSelectedBusinessClass!.exerciseFoundationID = selection.getId();
               } else {
-                exerciseForAdd.exerciseFoundationID = selection.getId();
+                exerciseProvider.businessClassForAdd.exerciseFoundationID = selection.getId();
               }
             },
           );
@@ -582,11 +474,11 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   void resetAllListsAndBusinessClasses() {
     clearAllMapsAndLists();
-    resetExerciseForAdd();
-    setSelectedExercise(null); 
+    exerciseProvider.resetBusinessClassForAdd();
+    exerciseProvider.resetSelectedBusinessClass(); 
     resetSelectedBusinessClass();
     selectedActualSession = null;
-    resetBusinessClassForAdd();
+    exerciseProvider.resetBusinessClassForAdd();
   }
 
   Future<void> copySessionToDate(
@@ -621,12 +513,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       rethrow;
     }
   }
-
-  final TextEditingController sessionNameController = TextEditingController();
-  final TextEditingController sessionDescriptionController = TextEditingController();
-  final TextEditingController sessionEmphasisController = TextEditingController();
-  final TextEditingController sessionLengthController = TextEditingController();
-  DateTime selectedSessionDate = DateTime.now();
 
   void initStateSessionDialog() {
     final target = getSelectedBusinessClass;

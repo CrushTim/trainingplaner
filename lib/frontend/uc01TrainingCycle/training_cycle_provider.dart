@@ -162,12 +162,7 @@ class TrainingCycleProvider
     resetControllers();
   }
 
-  void fetchParentCycles() {
-    //show a selectable drop down menu with the parent cycles 
 
-
-  }
-  
   void resetControllers() {
     nameController.clear();
     descriptionController.clear();
