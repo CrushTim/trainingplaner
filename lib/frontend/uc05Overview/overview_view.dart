@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_overview_view.dart';
@@ -27,6 +29,20 @@ class _OverviewViewState extends State<OverviewView> {
       body: overviewProvider.streamBuilderForOverview(),
       appBar: AppBar(
         title: const Text("Weekly - Overview"),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              if (context.mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/login',
+                  (route) => false,
+                );
+              }
+            },
+            icon: const Icon(Icons.logout)
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

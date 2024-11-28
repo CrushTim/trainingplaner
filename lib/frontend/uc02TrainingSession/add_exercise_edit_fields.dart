@@ -49,14 +49,14 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
               children: [
                 TextButton(
                   onPressed: () {
-                    provider.exerciseProvider.resetSelectedBusinessClass();
+                    provider.exerciseProvider.resetBusinessClassForAdd();
                     Navigator.pop(context);
                   },
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Generate a temporary local ID (you can use UUID or timestamp)
+                    // Generate a temporary local ID
                     String tempId = DateTime.now().millisecondsSinceEpoch.toString();
                     
                     // Set the temporary ID
@@ -65,7 +65,19 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                     // Add to local collections first
                     provider.selectedActualSession!.trainingSessionExcercisesIds.add(tempId);
                     provider.selectedActualSession!.trainingSessionExercises.add(target);
+                    
+                    // Add to unplanned exercises list to ensure it's displayed
+                    provider.exerciseProvider.unplannedExercisesForSession.add(target);
+                    
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
+                    
+                    
+                    // Update session in database immediately with temporary ID
+                    provider.updateBusinessClass(
+                      provider.selectedActualSession!,
+                      scaffoldMessenger,
+                      notify: true,
+                    );
                     
                     // Trigger the async operation in the background
                     provider.exerciseProvider.addBusinessClass(
@@ -78,18 +90,15 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                       if (index != -1) {
                         provider.selectedActualSession!.trainingSessionExcercisesIds[index] = permanentId;
                         target.trainingExerciseID = permanentId;
+                        
+                        // Update session again with permanent ID
+                        provider.updateBusinessClass(
+                          provider.selectedActualSession!,
+                          scaffoldMessenger,
+                          notify: true,
+                        );
                       }
-                      
-                      // Update the session in the background
-                      provider.updateBusinessClass(
-                        provider.selectedActualSession!,
-                        scaffoldMessenger,
-                        notify: true,
-                      );
                     }).catchError((error) {
-                      // Store context in local variable before async gap
-                      
-                      // Check if widget is still mounted before showing snackbar
                       if (context.mounted) {
                         scaffoldMessenger.showSnackBar(
                           SnackBar(content: Text('Failed to sync: ${error.toString()}')),
@@ -97,7 +106,7 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                       }
                     });
 
-                    // Clear the form
+                    // Clear the form and close dialog
                     provider.exerciseProvider.resetSelectedBusinessClass();
                     provider.exerciseProvider.exerciseNameController.clear();
                     provider.exerciseProvider.exerciseDescriptionController.clear();

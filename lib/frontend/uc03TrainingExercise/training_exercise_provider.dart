@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
+import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 
@@ -82,8 +83,8 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
     }
   }
 
-  List<TrainingExerciseBus> getUnplannedExercisesForSession(String sessionId) {
-    return unplannedExercises.where((exercise) => 
+  List<TrainingExerciseBus> getUnplannedExercisesForSession(TrainingSessionBus session) {
+    return session.trainingSessionExercises.where((exercise) => 
       !plannedToActualExercises.containsValue(exercise)).toList();
   }
 

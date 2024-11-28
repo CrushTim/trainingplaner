@@ -74,16 +74,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  // /////////////////////////////////////////////////////////////////////
-  //                         GETTER
-  // /////////////////////////////////////////////////////////////////////
 
-  /// Returns a list of unplanned exercises for the selected session
-  List<TrainingExerciseBus> getUnplannedExercisesForSession() {
-    return selectedActualSession?.trainingSessionExercises
-        .where((exercise) => !exerciseProvider.plannedToActualExercises.containsValue(exercise))
-        .toList() ?? [];
-  }
 
   // /////////////////////////////////////////////////////////////////////
   //                         RESETTER
@@ -318,7 +309,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSessions() : null;
     
     
-    exerciseProvider.unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(getSelectedBusinessClass!.trainingSessionId);
+    exerciseProvider.unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
   }
  
 
