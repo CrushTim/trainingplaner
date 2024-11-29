@@ -67,47 +67,44 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                     provider.selectedActualSession!.trainingSessionExercises.add(target);
                     
                     // Add to unplanned exercises list to ensure it's displayed
-                    provider.exerciseProvider.unplannedExercisesForSession.add(target);
+                    provider.unplannedExercisesForSession.add(target);
                     
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
                     
+                    // Notify both providers to update UI
+                    provider.notifyListeners();
+                    provider.exerciseProvider.notifyListeners();
                     
-                    // Update session in database immediately with temporary ID
+                    // Background database operations
                     provider.updateBusinessClass(
                       provider.selectedActualSession!,
                       scaffoldMessenger,
-                      notify: true,
-                    );
+                      notify: false,
+                    ).catchError((error) {
+                      debugPrint('Failed to update session: $error');
+                    });
                     
-                    // Trigger the async operation in the background
                     provider.exerciseProvider.addBusinessClass(
                       target,
                       scaffoldMessenger,
                       notify: false,
                     ).then((String permanentId) {
-                      // Update the local references with the permanent ID
-                      int index = provider.selectedActualSession!.trainingSessionExcercisesIds.indexOf(tempId);
-                      if (index != -1) {
-                        provider.selectedActualSession!.trainingSessionExcercisesIds[index] = permanentId;
-                        target.trainingExerciseID = permanentId;
-                        
-                        // Update session again with permanent ID
-                        provider.updateBusinessClass(
-                          provider.selectedActualSession!,
-                          scaffoldMessenger,
-                          notify: true,
-                        );
-                      }
-                    }).catchError((error) {
-                      if (context.mounted) {
-                        scaffoldMessenger.showSnackBar(
-                          SnackBar(content: Text('Failed to sync: ${error.toString()}')),
-                        );
+                      if (permanentId.isNotEmpty) {
+                        int index = provider.selectedActualSession!.trainingSessionExcercisesIds.indexOf(tempId);
+                        if (index != -1) {
+                          provider.selectedActualSession!.trainingSessionExcercisesIds[index] = permanentId;
+                          target.trainingExerciseID = permanentId;
+                          provider.updateBusinessClass(
+                            provider.selectedActualSession!,
+                            scaffoldMessenger,
+                            notify: false,
+                          );
+                        }
                       }
                     });
 
-                    // Clear the form and close dialog
-                    provider.exerciseProvider.resetSelectedBusinessClass();
+                    // Clear form and close dialog
+                    provider.exerciseProvider.resetBusinessClassForAdd();
                     provider.exerciseProvider.exerciseNameController.clear();
                     provider.exerciseProvider.exerciseDescriptionController.clear();
                     provider.exerciseProvider.targetPercentageController.clear();

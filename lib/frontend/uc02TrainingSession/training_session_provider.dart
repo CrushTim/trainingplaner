@@ -56,15 +56,28 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   //                         SETTER
   // /////////////////////////////////////////////////////////////////////
   void setActualAndPlannedSession(
-    TrainingSessionBus? plannedSession, TrainingSessionBus? actualSession) {
+    TrainingSessionBus? plannedSession, 
+    TrainingSessionBus? actualSession
+  ) {
     setSelectedBusinessClass(plannedSession, notify: false);
-    selectedActualSession = actualSession;
-    if(selectedActualSession == null){
-      selectedActualSession = getSelectedBusinessClass!.createActualSession();
+    
+    // First check if we have an actual session passed in
+    if (actualSession != null) {
+      selectedActualSession = actualSession;
+      isPlannedSessionWithoutActual = false;
+    } 
+    // Then check if there's one in the map
+    else if (plannedSession != null && plannedToActualSessions[plannedSession] != null) {
+      selectedActualSession = plannedToActualSessions[plannedSession];
+      isPlannedSessionWithoutActual = false;
+    }
+    // Only create new actual session if we truly don't have one
+    else if (plannedSession != null) {
+      selectedActualSession = plannedSession.createActualSession();
       isPlannedSessionWithoutActual = true;
     }
   }  /// Sets the selected actual and planned sessions
-  void setSelectedSessions() {
+  void setSelectedSession() {
     if (plannedToActualSessions.keys.isNotEmpty) {
       setActualAndPlannedSession(plannedToActualSessions.keys.first,
           plannedToActualSessions[plannedToActualSessions.keys.first]);
@@ -116,6 +129,9 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     mapUnplannedExercisesToPlanned(allExercises);
     assignExercisesToSessions(allExercises);
     print(exerciseProvider.plannedToActualExercises);
+    if(selectedActualSession != null){
+      unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
+    }
   }
 
   /// Maps all sessions to either planned or unplanned lists
@@ -306,7 +322,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   void initializeSessionMaps(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
     
     mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
-    getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSessions() : null;
+    getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSession() : null;
     
     
     exerciseProvider.unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
@@ -426,6 +442,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   ////////////////////////////////STUFF FOR FOUNDATION ID ///////////////////////////////////
   
   ExerciseFoundationBusReport exerciseFoundationReport = ExerciseFoundationBusReport();
+
+  List<TrainingExerciseBus> unplannedExercisesForSession = [];
 
   StreamBuilder getFoundationAutoComplete() {
     return StreamBuilder(
