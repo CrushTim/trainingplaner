@@ -20,7 +20,6 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
   @override
   void initState() {
     super.initState();
-    final provider = Provider.of<ExerciseFoundationProvider>(context, listen: false);
   }
 
   @override
@@ -71,7 +70,6 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
             final provider = Provider.of<ExerciseFoundationProvider>(context, listen: false);
             provider.setSelectedBusinessClass(widget.exerciseFoundation);
             provider.userSpecificExercise = widget.exerciseFoundation.userSpecific1RepMaxes;
-            print(provider.notesMap);
             if(provider.notesMap[widget.exerciseFoundation.getId()] != null) {
             }
           

@@ -1,5 +1,20 @@
 CRNT 
-    
+
+    bugfix:
+
+        workout view:
+            adding doesnt work at all anymore?????? 
+            
+            when offline why does it not show the exercise 
+            -> check the add exercise dialog
+
+        session edit fields:
+            date is wrong when init
+
+        trainingexercise provider:
+            -reset controller
+
+        
 
     cycle planning view:
 

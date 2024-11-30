@@ -24,7 +24,6 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
 
   @override
   Widget build(BuildContext context) {
-    print("actualTrainingExercise: ${widget.actualTrainingExercise?.exerciseName}");
     TrainingExerciseBus? actualExercise = widget.actualTrainingExercise;
     actualExercise ??= widget.plannedTrainingExercise!.createActualExercise();
 

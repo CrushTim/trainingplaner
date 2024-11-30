@@ -112,7 +112,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                             trainingSessionProvider.resetSessionControllers();
                                             trainingSessionProvider.resetSelectedBusinessClass();
                                             trainingSessionProvider.resetBusinessClassForAdd();
-                                            trainingSessionProvider.clearAllMapsAndLists();
+                                            trainingSessionProvider.resetAllMapsAndLists();
                                           });
                                     },
                                   ),

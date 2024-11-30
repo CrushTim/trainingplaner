@@ -28,7 +28,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
   void initState() {
     super.initState();
     TrainingSessionProvider provider = Provider.of<TrainingSessionProvider>(context, listen: false);
-    provider.initStateSessionDialog();
+    provider.initControllers();
   }
 
   @override
@@ -44,23 +44,23 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
             TextField(
               controller: provider.sessionNameController,
               decoration: const InputDecoration(labelText: 'Session Name'),
-              onChanged: (value) => provider.handleSessionFieldChange('name', value),
+              onChanged: (value) => provider.handleSessionFieldChangeForPlanned('name', value),
             ),
             TextField(
               controller: provider.sessionDescriptionController,
               decoration: const InputDecoration(labelText: 'Description'),
-              onChanged: (value) => provider.handleSessionFieldChange('description', value),
+              onChanged: (value) => provider.handleSessionFieldChangeForPlanned('description', value),
             ),
             TextField(
               controller: provider.sessionEmphasisController,
               decoration: const InputDecoration(labelText: 'Emphasis (comma separated)'),
-              onChanged: (value) => provider.handleSessionFieldChange('emphasis', value),
+              onChanged: (value) => provider.handleSessionFieldChangeForPlanned('emphasis', value),
             ),
             TextField(
               controller: provider.sessionLengthController,
               decoration: const InputDecoration(labelText: 'Length (minutes)'),
               keyboardType: TextInputType.number,
-              onChanged: (value) => provider.handleSessionFieldChange('length', value),
+              onChanged: (value) => provider.handleSessionFieldChangeForPlanned('length', value),
             ),
             DatePickerSheer(
               initialDateTime: provider.selectedSessionDate,

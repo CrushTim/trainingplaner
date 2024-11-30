@@ -27,15 +27,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
         TextEditingController(text: session.trainingSessionEmphasis.join(','));
     DateTime startDate = session.trainingSessionStartDate;
 
-    void updateSessionFromFields() {
-      session.trainingSessionName = workoutNameController.text;
-      session.trainingSessionLength =
-          int.tryParse(workoutLengthController.text) ??
-              session.trainingSessionLength;
-      session.trainingSessionDescription = sessionDescriptionController.text;
-      session.trainingSessionEmphasis = sessionEmphasisController.text.split(',');
-      session.trainingSessionStartDate = startDate;
-    }
 
     return Column(
       children: <Widget>[
@@ -44,24 +35,24 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
           decoration: const InputDecoration(labelText: "Workout Name"),
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
-          onChanged: (_) => updateSessionFromFields(),
+          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('name', _),
         ),
         TextField(
           controller: sessionDescriptionController,
           decoration: const InputDecoration(labelText: "Session Description"),
-          onChanged: (_) => updateSessionFromFields(),
+          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('description', _),
         ),
         TextField(
           controller: sessionEmphasisController,
           decoration: const InputDecoration(labelText: "Session Emphasis"),
-          onChanged: (_) => updateSessionFromFields(),
+          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('emphasis', _),
         ),
         TextField(
           controller: workoutLengthController,
           decoration:
               const InputDecoration(labelText: "Workout Length in minutes"),
           keyboardType: TextInputType.number,
-          onChanged: (_) => updateSessionFromFields(),
+          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('length', _),
         ),
         DropdownButtonFormField<String>(
           value: session.trainingCycleId.isEmpty ? null : session.trainingCycleId,
@@ -79,7 +70,7 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
           onChanged: (value) {
             setState(() {
               session.trainingCycleId = value ?? '';
-              updateSessionFromFields();
+              trainingSessionProvider.handleSessionFieldChangeForActual('cycle', value ?? '');
             });
           },
         ),
@@ -87,7 +78,7 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
           initialDateTime: startDate,
           onDateTimeChanged: (DateTime newDateTime) {
             startDate = newDateTime;
-            updateSessionFromFields();
+            trainingSessionProvider.handleSessionFieldChangeForActual('date', newDateTime.toString());
           },
           dateController: TextEditingController(text: startDate.toString()),
         ),
@@ -97,23 +88,27 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
             actualTrainingExercise: trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise],
             plannedTrainingExercise: exercise,
             onUpdate: (actualExercise) async {
+              ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] == null) {
                 String addId = await trainingSessionProvider.exerciseProvider.addBusinessClass(
-                    actualExercise, ScaffoldMessenger.of(context),
+                    actualExercise, scaffoldMessenger,
                     notify: false);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds.add(addId);
                 actualExercise.trainingExerciseID = addId;
-                trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
+                trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
                     notify: false);
               } else {
-                trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, ScaffoldMessenger.of(context));
+                trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
               }
             },
             onDelete: (actualExercise) async{
+              ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ) {
-                  await trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context));
+                  await trainingSessionProvider.exerciseProvider. deleteBusinessClass(actualExercise, scaffoldMessenger,
+                    notify: false);
                 
-                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),);
+                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
+                    notify: false);
                 setState(() {
                   trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
                     .remove(actualExercise.trainingExerciseID);
@@ -133,14 +128,17 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
             actualTrainingExercise: exercise,
             plannedTrainingExercise: null,
             onUpdate: (actualExercise) async{
-               await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, ScaffoldMessenger.of(context));
+              ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+               await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
+              //TODO:check for setState
             },
             onDelete: (actualExercise) async {
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ||
                   trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.contains(exercise)) {
-                  await trainingSessionProvider.deleteExercise(actualExercise, ScaffoldMessenger.of(context),
+                  ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+                  await trainingSessionProvider.exerciseProvider.deleteBusinessClass(actualExercise, scaffoldMessenger,
                     notify: false);
-                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, ScaffoldMessenger.of(context),
+                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
                     notify: false);
                 setState(() {
                   trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds

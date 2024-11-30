@@ -71,9 +71,6 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                     
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
                     
-                    // Notify both providers to update UI
-                    provider.notifyListeners();
-                    provider.exerciseProvider.notifyListeners();
                     
                     // Background database operations
                     provider.updateBusinessClass(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
-import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
@@ -12,7 +11,6 @@ import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<
     TrainingSessionBus, TrainingSessionBusReport> {
@@ -94,7 +92,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   // /////////////////////////////////////////////////////////////////////
   ///method to clear all the maps and lists
   ///is used to clear the maps and lists after a new selection of a session or exercise
-  void clearAllMapsAndLists(){
+  void resetAllMapsAndLists(){
           plannedToActualSessions.clear();
           exerciseProvider.plannedToActualExercises.clear();
           unplannedSessions.clear();
@@ -103,6 +101,41 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           selectedActualSession?.trainingSessionExercises.clear();
           getSelectedBusinessClass?.trainingSessionExercises.clear();
   }
+
+  ///method to reset the session controllers
+  ///is used to reset the session controllers after a new selection of a session or exercise
+  void resetSessionControllers() {
+    sessionNameController.clear();
+    sessionDescriptionController.clear();
+    sessionEmphasisController.clear();
+    sessionLengthController.text = "60";
+    selectedSessionDate = DateTime.now();
+  }
+
+  void resetAllListsAndBusinessClasses() {
+    resetAllMapsAndLists();
+    exerciseProvider.resetBusinessClassForAdd();
+    exerciseProvider.resetSelectedBusinessClass(); 
+    resetSelectedBusinessClass();
+    selectedActualSession = null;
+    exerciseProvider.resetBusinessClassForAdd();
+  }
+
+  // /////////////////////////////////////////////////////////////////////
+  //                         INITIALIZER
+  // /////////////////////////////////////////////////////////////////////
+  
+  ///method to initialize the session maps
+  ///
+   void initializeSessionMaps(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
+    
+    mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
+    getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSession() : null;
+    
+    
+    exerciseProvider.unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
+  }
+
 
   // /////////////////////////////////////////////////////////////////////
   //                         MAPPER
@@ -121,17 +154,26 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   /// Maps all sessions and exercises to either planned or unplanned lists
   /// is used to map the sessions and exercises to the lists after a new selection of a session or exercise
   void mapSessionsAndExercisesInCurrentBuilder(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
-    clearAllMapsAndLists();
-    print(allSessions);  
-    mapPlannedAndUnplannedSessions(allSessions);
-    mapUnplannedSessionsToPlanned();
-    mapPlannedAndUnplannedExercises(allExercises);
-    mapUnplannedExercisesToPlanned(allExercises);
+    resetAllMapsAndLists();
+    //initialize the session maps 
+    mapSessionsToSessionMap(allSessions);
+    //initialize the exercise maps 
+    mapExercisesToExerciseMap(allExercises);
+    //assign the exercises to the sessions
     assignExercisesToSessions(allExercises);
-    print(exerciseProvider.plannedToActualExercises);
+    //if there is a selected actual session, get the unplanned exercises for the session
     if(selectedActualSession != null){
       unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
     }
+  }
+
+  void mapSessionsToSessionMap(List<TrainingSessionBus> allSessions){
+    //map all Sessions to the planned keys of the map or keep the actual sessions in the unplanned list
+    mapPlannedAndUnplannedSessions(allSessions);
+
+    //now go through all the actual sessions in the unplanned list and map them to the planned sessions
+    //if there is no planned session for an actual session, keep the actual session in the unplanned list
+    mapUnplannedSessionsToPlanned();
   }
 
   /// Maps all sessions to either planned or unplanned lists
@@ -157,6 +199,15 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         unplannedSessions.remove(session);
       }
     }
+  }
+
+  void mapExercisesToExerciseMap(List<TrainingExerciseBus> allExercises){
+    //map all exercises to the planned keys of the map or keep the unplanned exercises in the unplanned list
+    mapPlannedAndUnplannedExercises(allExercises);
+
+    //now go through all the unplanned exercises in the unplanned list and map them to the planned exercises
+    //if there is no planned exercise for an unplanned exercise, keep the unplanned exercise in the unplanned list
+    mapUnplannedExercisesToPlanned(allExercises);
   }
 
   /// Maps all exercises to either planned or unplanned lists
@@ -201,26 +252,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   }
 
 
-  Future<void> deleteExercise(TrainingExerciseBus exercise,
-      ScaffoldMessengerState scaffoldMessengerState,
-      {bool notify = true}) async {
-    String message = "Deleted ${exercise.getName()}";
-    try {
-      await exercise.delete().onError((error, stackTrace) {
-        message = "Error deleting ${exercise.getName()}: ${error.toString()}";
-        throw error!;
-      });
-    } catch (e) {
-      message = e.toString();
-    } finally {
-      if (notify) {
-        notifyListeners();
-      }
-      scaffoldMessengerState.showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    }
-  }
 
 
   // /////////////////////////////////////////////////////////////////////
@@ -319,19 +350,13 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
-  void initializeSessionMaps(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
-    
-    mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
-    getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSession() : null;
-    
-    
-    exerciseProvider.unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
-  }
+ 
  
 
 
   ///method to get all the existing sessions from the database ordered by date to make them selectable for the workout view
   ///returns a Strembuilder with a list of all session 
+  ///maps all the planned and unplanned next to each other in the list 
   StreamBuilder2 getAllSessionsForWorkoutView() {
     return StreamBuilder2(
       streams: StreamTuple2(reportTaskVar.getAll(), exerciseProvider.reportTaskVar.getAll()),
@@ -481,14 +506,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
-  void resetAllListsAndBusinessClasses() {
-    clearAllMapsAndLists();
-    exerciseProvider.resetBusinessClassForAdd();
-    exerciseProvider.resetSelectedBusinessClass(); 
-    resetSelectedBusinessClass();
-    selectedActualSession = null;
-    exerciseProvider.resetBusinessClassForAdd();
-  }
+  
 
   Future<void> copySessionToDate(
     TrainingSessionBus plannedSession,
@@ -523,7 +541,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  void initStateSessionDialog() {
+  void initControllers() {
     final target = getSelectedBusinessClass;
     if (target != null) {
       sessionNameController.text = target.trainingSessionName;
@@ -540,7 +558,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  void handleSessionFieldChange(String field, String value) {
+  void handleSessionFieldChangeForPlanned(String field, String value) {
     final target = getSelectedBusinessClass ?? businessClassForAdd;
     switch (field) {
       case 'name':
@@ -558,44 +576,29 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  Future<void> handleSessionEdit(
-    TrainingSessionBus session,
-    DateTime date,
-    ScaffoldMessengerState scaffoldMessenger,
-    BuildContext context,
-  ) async {
-    try {
-      setSelectedBusinessClass(session, notify: false);
-      setActualAndPlannedSession(session, plannedToActualSessions[session]);
-      initStateSessionDialog();
-      
-      await showDialog(
-        context: context,
-        builder: (context) => ChangeNotifierProvider.value(
-          value: this,
-          child: AddPlanningSessionDialog(
-            initialDate: date,
-            cycleId: session.trainingCycleId,
-          ),
-        ),
-      );
-
-      resetSessionControllers();
-    } catch (e) {
-      scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text('Error editing session: ${e.toString()}')),
-      );
-      rethrow;
+  void handleSessionFieldChangeForActual(String field, String value) {
+    final target = selectedActualSession ?? businessClassForAdd;
+    switch (field) {
+      case 'name':
+        target.trainingSessionName = value;
+        break;
+      case 'description':
+        target.trainingSessionDescription = value;
+        break;
+      case 'emphasis':
+        target.trainingSessionEmphasis = value.split(',').map((e) => e.trim()).toList();
+        break;
+      case 'length':
+        target.trainingSessionLength = int.tryParse(value) ?? 60;
+        break;
+      case 'cycle':
+        target.trainingCycleId = value;
+        break;
+      case 'date':
+        target.trainingSessionStartDate = DateTime.parse(value);
+        break;
     }
-  }
-
-  void resetSessionControllers() {
-    sessionNameController.clear();
-    sessionDescriptionController.clear();
-    sessionEmphasisController.clear();
-    sessionLengthController.text = "60";
-    selectedSessionDate = DateTime.now();
-  }
+  } 
 
   Future<void> saveSession(BuildContext context) async {
     if (getSelectedBusinessClass != null) {
