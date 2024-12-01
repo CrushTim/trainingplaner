@@ -3,10 +3,15 @@ CRNT
     bugfix:
 
         workout view:
-            adding doesnt work at all anymore?????? 
+        i want to make an offline first approach in this saving field. when i add the exercise, the list of the exercise rows only updates when i trigger the updateBusinessClass und the trainingSessionProvider. My gues is, that 
             
-            when offline why does it not show the exercise 
-            -> check the add exercise dialog
+            when offline
+                -> enable persistend updates on the exercises
+
+            when returning online:
+                    -> bugfix the exceptions after returning online
+                -> make the updates persistent, and delete the temp exercises
+                
 
         session edit fields:
             date is wrong when init

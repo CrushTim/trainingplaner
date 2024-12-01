@@ -56,31 +56,19 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Generate a temporary local ID
-                    String tempId = DateTime.now().millisecondsSinceEpoch.toString();
-                    
-                    // Set the temporary ID
-                    target.trainingExerciseID = tempId;
-                    
-                    // Add to local collections first
-                    provider.selectedActualSession!.trainingSessionExcercisesIds.add(tempId);
-                    provider.selectedActualSession!.trainingSessionExercises.add(target);
-                    
-                    // Add to unplanned exercises list to ensure it's displayed
-                    provider.unplannedExercisesForSession.add(target);
-                    
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
                     
+                    // Generate a temporary local ID
+                    String tempId = DateTime.now().millisecondsSinceEpoch.toString();
+                    target.trainingExerciseID = tempId;
                     
-                    // Background database operations
-                    provider.updateBusinessClass(
-                      provider.selectedActualSession!,
-                      scaffoldMessenger,
-                      notify: false,
-                    ).catchError((error) {
-                      debugPrint('Failed to update session: $error');
-                    });
+                    // Add to provider's collections using the new method
+                    provider.addTemporaryExercise(target);
                     
+                    // Close dialog
+                    Navigator.pop(context);
+                    
+                    // Handle database operations
                     provider.exerciseProvider.addBusinessClass(
                       target,
                       scaffoldMessenger,
@@ -94,18 +82,18 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                           provider.updateBusinessClass(
                             provider.selectedActualSession!,
                             scaffoldMessenger,
-                            notify: false,
+                            notify: true,
                           );
                         }
+                        provider.tempExercises.remove(target);
                       }
                     });
 
-                    // Clear form and close dialog
+                    // Clear form fields
                     provider.exerciseProvider.resetBusinessClassForAdd();
                     provider.exerciseProvider.exerciseNameController.clear();
                     provider.exerciseProvider.exerciseDescriptionController.clear();
                     provider.exerciseProvider.targetPercentageController.clear();
-                    Navigator.pop(context);
                   },
                   child: const Text('Save'),
                 ),
@@ -116,4 +104,5 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
       ),
     );
   }
+
 }

@@ -15,6 +15,7 @@ class TrainingSessionEditFields extends StatefulWidget {
 class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
   @override
   Widget build(BuildContext context) {
+
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
     final session = trainingSessionProvider.selectedActualSession!;
     final TextEditingController workoutNameController =
@@ -130,7 +131,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
             onUpdate: (actualExercise) async{
               ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
                await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
-              //TODO:check for setState
             },
             onDelete: (actualExercise) async {
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ||

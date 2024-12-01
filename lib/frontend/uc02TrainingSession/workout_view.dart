@@ -53,11 +53,7 @@ class _WorkoutViewState extends State<WorkoutView> {
                   value: sessionProvider,
                   child: const AddExerciseEditFields(),
                 ),
-              ).then((value) {
-                sessionProvider.exerciseProvider.resetAllExerciseLists();
-                
-                sessionProvider.exerciseProvider.resetSelectedBusinessClass();
-              });
+              );
             },
             icon: const Icon(Icons.add),
           ),

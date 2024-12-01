@@ -55,34 +55,6 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
     }
   }
 
-  void mapExercisesToSession(List<TrainingExerciseBus> allExercises, String sessionId) {
-    resetAllExerciseLists();
-    
-    for (var exercise in allExercises) {
-      if (exercise.isPlanned) {
-        plannedToActualExercises[exercise] = null;
-      } else {
-        unplannedExercises.add(exercise);
-      }
-    }
-
-    mapUnplannedExercisesToPlanned(allExercises);
-    notifyListeners();
-  }
-
-  void mapUnplannedExercisesToPlanned(List<TrainingExerciseBus> allExercises) {
-    for (var exercise in List.from(unplannedExercises)) {
-      TrainingExerciseBus? plannedExercise = allExercises.firstWhere(
-        (e) => e.trainingExerciseID == exercise.plannedExerciseId,
-        orElse: () => exercise,
-      );
-      if (plannedExercise != exercise) {
-        plannedToActualExercises[plannedExercise] = exercise;
-        unplannedExercises.remove(exercise);
-      }
-    }
-  }
-
   List<TrainingExerciseBus> getUnplannedExercisesForSession(TrainingSessionBus session) {
     return session.trainingSessionExercises.where((exercise) => 
       !plannedToActualExercises.containsValue(exercise)).toList();

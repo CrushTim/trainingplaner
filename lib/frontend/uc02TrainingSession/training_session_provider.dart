@@ -42,12 +42,16 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   final TextEditingController sessionDescriptionController = TextEditingController();
   final TextEditingController sessionEmphasisController = TextEditingController();
   final TextEditingController sessionLengthController = TextEditingController();
-
+  List<TrainingExerciseBus> tempExercises = [];
   void updateSessionDate(DateTime date) {
     selectedSessionDate = date;
     final target = getSelectedBusinessClass ?? businessClassForAdd;
     target.trainingSessionStartDate = date;
     notifyListeners();
+  }
+
+  void notifyListeners() {
+    super.notifyListeners();
   }
 
   // /////////////////////////////////////////////////////////////////////
@@ -154,16 +158,28 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   /// Maps all sessions and exercises to either planned or unplanned lists
   /// is used to map the sessions and exercises to the lists after a new selection of a session or exercise
   void mapSessionsAndExercisesInCurrentBuilder(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
+    // Store temporary exercises before reset
     resetAllMapsAndLists();
+    
+    // Restore temporary exercises to session
+    if (selectedActualSession != null && tempExercises.isNotEmpty) {
+      selectedActualSession!.trainingSessionExercises.addAll(tempExercises);
+      selectedActualSession!.trainingSessionExcercisesIds
+          .addAll(tempExercises.map((e) => e.trainingExerciseID));
+    }
+    
     //initialize the session maps 
     mapSessionsToSessionMap(allSessions);
     //initialize the exercise maps 
     mapExercisesToExerciseMap(allExercises);
     //assign the exercises to the sessions
     assignExercisesToSessions(allExercises);
+    
     //if there is a selected actual session, get the unplanned exercises for the session
     if(selectedActualSession != null){
-      unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
+    }
+    if(tempExercises.isNotEmpty){
+      exerciseProvider.unplannedExercisesForSession.addAll(tempExercises);
     }
   }
 
@@ -203,7 +219,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   void mapExercisesToExerciseMap(List<TrainingExerciseBus> allExercises){
     //map all exercises to the planned keys of the map or keep the unplanned exercises in the unplanned list
-    mapPlannedAndUnplannedExercises(allExercises);
+    mapPlannedExercises(allExercises);
 
     //now go through all the unplanned exercises in the unplanned list and map them to the planned exercises
     //if there is no planned exercise for an unplanned exercise, keep the unplanned exercise in the unplanned list
@@ -211,7 +227,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   }
 
   /// Maps all exercises to either planned or unplanned lists
-  void mapPlannedAndUnplannedExercises(List<TrainingExerciseBus> allExercises) {
+  void mapPlannedExercises(List<TrainingExerciseBus> allExercises) {
     for (var exercise in allExercises) {
       if (exercise.isPlanned) {
         exerciseProvider.plannedToActualExercises[exercise] = null;
@@ -468,8 +484,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   
   ExerciseFoundationBusReport exerciseFoundationReport = ExerciseFoundationBusReport();
 
-  List<TrainingExerciseBus> unplannedExercisesForSession = [];
-
   StreamBuilder getFoundationAutoComplete() {
     return StreamBuilder(
       stream: exerciseFoundationReport.getAll(),
@@ -615,5 +629,30 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     if (context.mounted) {
       Navigator.pop(context);
     }
+  }
+
+  void addTemporaryExercise(TrainingExerciseBus exercise) {
+    // Create a copy of the exercise to prevent reference issues
+    TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
+      trainingExerciseID: exercise.trainingExerciseID,
+      exerciseName: exercise.exerciseName,
+      exerciseDescription: exercise.exerciseDescription,
+      exerciseFoundationID: exercise.exerciseFoundationID,
+      exerciseReps: List.from(exercise.exerciseReps),
+      exerciseWeights: List.from(exercise.exerciseWeights),
+      date: exercise.date,
+      isPlanned: false,
+      targetPercentageOf1RM: exercise.targetPercentageOf1RM,
+    );
+
+    selectedActualSession?.trainingSessionExcercisesIds.add(exerciseCopy.trainingExerciseID);
+    selectedActualSession?.trainingSessionExercises.add(exerciseCopy);
+    exerciseProvider.unplannedExercisesForSession.add(exerciseCopy);
+
+    tempExercises.add(exerciseCopy);
+    notifyListeners();
+    
+    // Force rebuild of the session view
+    print("unplannedExercisesForSession AFTER TEMP: ${exerciseProvider.unplannedExercisesForSession}");
   }
 }
