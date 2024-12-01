@@ -12,6 +12,8 @@ import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundati
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -30,6 +32,7 @@ class Main extends StatelessWidget {
     ];
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       theme: ThemeData(
           inputDecorationTheme: const InputDecorationTheme(
         border: OutlineInputBorder(

@@ -11,10 +11,14 @@ import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
+import 'package:trainingplaner/main.dart';
+import 'package:trainingplaner/services/connectivity_service.dart';
 
 class TrainingSessionProvider extends TrainingsplanerProvider<
     TrainingSessionBus, TrainingSessionBusReport> {
   late TrainingExerciseProvider exerciseProvider;
+  final ConnectivityService _connectivityService = ConnectivityService();
+  bool _isOnline = true;
 
   TrainingSessionProvider({required this.exerciseProvider})
       : super(
@@ -28,7 +32,15 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
                 trainingSessionLength: 1,
                 trainingSessionStartDate: DateTime.now(),
                 trainingCycleId: ""),
-            reportTaskVar: TrainingSessionBusReport());
+            reportTaskVar: TrainingSessionBusReport()) {
+    _connectivityService.connectionStream.listen((bool isOnline) {
+      if (!_isOnline && isOnline) {
+        // We're back online, sync temporary exercises
+        _syncTemporaryExercises();
+      }
+      _isOnline = isOnline;
+    });
+  }
 
   TrainingSessionBus? selectedActualSession;
   bool hasNoPlannedSession = false;
@@ -136,8 +148,9 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     mapSessionsAndExercisesInCurrentBuilder(allSessions, allExercises);
     getSelectedBusinessClass == null && selectedActualSession == null ? setSelectedSession() : null;
     
-    
+  if(selectedActualSession != null){
     exerciseProvider.unplannedExercisesForSession = exerciseProvider.getUnplannedExercisesForSession(selectedActualSession!);
+  }    
   }
 
 
@@ -631,28 +644,77 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  void addTemporaryExercise(TrainingExerciseBus exercise) {
-    // Create a copy of the exercise to prevent reference issues
-    TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
-      trainingExerciseID: exercise.trainingExerciseID,
-      exerciseName: exercise.exerciseName,
-      exerciseDescription: exercise.exerciseDescription,
-      exerciseFoundationID: exercise.exerciseFoundationID,
-      exerciseReps: List.from(exercise.exerciseReps),
-      exerciseWeights: List.from(exercise.exerciseWeights),
-      date: exercise.date,
-      isPlanned: false,
-      targetPercentageOf1RM: exercise.targetPercentageOf1RM,
-    );
+  Future<void> addTemporaryExercise(TrainingExerciseBus exercise) async {
+    if (_connectivityService.isConnected) {
+      print("Online");
+      // Online - add directly to database
+      final permanentId = await exerciseProvider.addBusinessClass(
+        exercise,
+        ScaffoldMessenger.of(navigatorKey.currentContext!),
+      );
+      selectedActualSession?.trainingSessionExcercisesIds.add(permanentId);
+      exerciseProvider.unplannedExercisesForSession.add(exercise);
 
-    selectedActualSession?.trainingSessionExcercisesIds.add(exerciseCopy.trainingExerciseID);
-    selectedActualSession?.trainingSessionExercises.add(exerciseCopy);
-    exerciseProvider.unplannedExercisesForSession.add(exerciseCopy);
+      updateBusinessClass(selectedActualSession!, ScaffoldMessenger.of(navigatorKey.currentContext!));
+    } else {
+      print("Offline");
+      // Offline - add to temporary storage
+      TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
+        trainingExerciseID: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+        exerciseName: exercise.exerciseName,
+        exerciseDescription: exercise.exerciseDescription,
+        exerciseFoundationID: exercise.exerciseFoundationID,
+        exerciseReps: List.from(exercise.exerciseReps),
+        exerciseWeights: List.from(exercise.exerciseWeights),
+        date: exercise.date,
+        isPlanned: false,
+        targetPercentageOf1RM: exercise.targetPercentageOf1RM,
+      );
 
-    tempExercises.add(exerciseCopy);
-    notifyListeners();
+      selectedActualSession?.trainingSessionExcercisesIds.add(exerciseCopy.trainingExerciseID);
+      selectedActualSession?.trainingSessionExercises.add(exerciseCopy);
+      exerciseProvider.unplannedExercisesForSession.add(exerciseCopy);
+      tempExercises.add(exerciseCopy);
+      
+    }
     
-    // Force rebuild of the session view
-    print("unplannedExercisesForSession AFTER TEMP: ${exerciseProvider.unplannedExercisesForSession}");
+      notifyListeners();
+  }
+
+  Future<void> _syncTemporaryExercises() async {
+    if (tempExercises.isEmpty || selectedActualSession == null) return;
+
+    final scaffoldMessenger = ScaffoldMessenger.of(navigatorKey.currentContext!);
+    
+    try {
+      for (var exercise in List.from(tempExercises)) {
+        // Add the exercise permanently
+        final permanentId = await exerciseProvider.addBusinessClass(
+          exercise,
+          scaffoldMessenger,
+          notify: false,
+        );
+        print("Permanent ID: $permanentId");
+        
+        // Update the session with the new permanent ID
+        final index = selectedActualSession!.trainingSessionExcercisesIds
+            .indexOf(exercise.trainingExerciseID);
+        if (index != -1) {
+          selectedActualSession!.trainingSessionExcercisesIds[index] = permanentId;
+          exercise.trainingExerciseID = permanentId;
+        }
+        
+        tempExercises.remove(exercise);
+      }
+      
+      // Update the session with all changes
+      await updateBusinessClass(selectedActualSession!, scaffoldMessenger);
+      
+      notifyListeners();
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text('Error syncing offline changes: ${e.toString()}')),
+      );
+    }
   }
 }

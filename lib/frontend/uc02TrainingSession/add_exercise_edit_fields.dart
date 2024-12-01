@@ -56,7 +56,6 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    final scaffoldMessenger = ScaffoldMessenger.of(context);
                     
                     // Generate a temporary local ID
                     String tempId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -68,26 +67,6 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                     // Close dialog
                     Navigator.pop(context);
                     
-                    // Handle database operations
-                    provider.exerciseProvider.addBusinessClass(
-                      target,
-                      scaffoldMessenger,
-                      notify: false,
-                    ).then((String permanentId) {
-                      if (permanentId.isNotEmpty) {
-                        int index = provider.selectedActualSession!.trainingSessionExcercisesIds.indexOf(tempId);
-                        if (index != -1) {
-                          provider.selectedActualSession!.trainingSessionExcercisesIds[index] = permanentId;
-                          target.trainingExerciseID = permanentId;
-                          provider.updateBusinessClass(
-                            provider.selectedActualSession!,
-                            scaffoldMessenger,
-                            notify: true,
-                          );
-                        }
-                        provider.tempExercises.remove(target);
-                      }
-                    });
 
                     // Clear form fields
                     provider.exerciseProvider.resetBusinessClassForAdd();

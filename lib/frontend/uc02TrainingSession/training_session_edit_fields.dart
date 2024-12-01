@@ -4,6 +4,7 @@ import 'package:trainingplaner/business/businessClasses/training_exercise_bus.da
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
+import 'package:trainingplaner/services/connectivity_service.dart';
 
 class TrainingSessionEditFields extends StatefulWidget {
   const TrainingSessionEditFields({super.key});
@@ -15,6 +16,12 @@ class TrainingSessionEditFields extends StatefulWidget {
 class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
   @override
   Widget build(BuildContext context) {
+
+    ConnectivityService connectivityService = ConnectivityService();
+    bool isOnlinee = connectivityService.isConnected;
+    connectivityService.connectionStream.listen((bool isOnline) {
+      isOnlinee = isOnline;
+    });
 
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
     final session = trainingSessionProvider.selectedActualSession!;
@@ -130,7 +137,9 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
             plannedTrainingExercise: null,
             onUpdate: (actualExercise) async{
               ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
-               await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
+              if (isOnlinee) {
+                await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
+              }
             },
             onDelete: (actualExercise) async {
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ||

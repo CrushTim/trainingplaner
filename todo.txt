@@ -3,15 +3,17 @@ CRNT
     bugfix:
 
         workout view:
-        i want to make an offline first approach in this saving field. when i add the exercise, the list of the exercise rows only updates when i trigger the updateBusinessClass und the trainingSessionProvider. My gues is, that 
-            
             when offline
                 -> enable persistend updates on the exercises
 
             when returning online:
-                    -> bugfix the exceptions after returning online
+                    -> make unplannedforsession and trainingsessions stuff update or add dependent on isonline and if the exercise existed before
                 -> make the updates persistent, and delete the temp exercises
                 
+                working on existing offline exercises does not update when returning online
+
+                when returning online it also adds the temp exercise ids to the session update in the database
+            
 
         session edit fields:
             date is wrong when init
