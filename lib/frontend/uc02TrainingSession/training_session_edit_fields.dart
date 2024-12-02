@@ -98,25 +98,25 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
             onUpdate: (actualExercise) async {
               ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] == null) {
-                String addId = await trainingSessionProvider.exerciseProvider.addBusinessClass(
+                if(isOnlinee){String addId = await trainingSessionProvider.exerciseProvider.addBusinessClass(
                     actualExercise, scaffoldMessenger,
                     notify: false);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds.add(addId);
                 actualExercise.trainingExerciseID = addId;
                 trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
                     notify: false);
-              } else {
-                trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
-              }
+                }
+                } else {
+                  if (isOnlinee) {
+                    trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
+                  } else {
+                    trainingSessionProvider.tempExercises.add(actualExercise);
+                  }
+                }
             },
             onDelete: (actualExercise) async{
               ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ) {
-                  await trainingSessionProvider.exerciseProvider. deleteBusinessClass(actualExercise, scaffoldMessenger,
-                    notify: false);
-                
-                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
-                    notify: false);
                 setState(() {
                   trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
                     .remove(actualExercise.trainingExerciseID);
@@ -126,6 +126,16 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                     trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
                     trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
                 });
+                if (isOnlinee) {
+                await trainingSessionProvider.exerciseProvider.deleteBusinessClass(actualExercise, scaffoldMessenger,
+                    notify: false);
+                
+                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
+                    notify: false);
+                } else {
+                  trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
+                  print("temp exercises to delete: ${trainingSessionProvider.tempExercisesToDelete.length}");
+                }
               }
             },
           ),
@@ -145,11 +155,8 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ||
                   trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.contains(exercise)) {
                   ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
-                  await trainingSessionProvider.exerciseProvider.deleteBusinessClass(actualExercise, scaffoldMessenger,
-                    notify: false);
-                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
-                    notify: false);
-                setState(() {
+
+                  setState(() {
                   trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
                     .remove(actualExercise.trainingExerciseID);
                 trainingSessionProvider.selectedActualSession!.trainingSessionExercises
@@ -158,6 +165,18 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                     trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
                     trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
                 });
+
+                  if (isOnlinee) {
+                  await trainingSessionProvider.exerciseProvider.deleteBusinessClass(actualExercise, scaffoldMessenger,
+                    notify: false);
+                await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
+                    notify: false);
+                  } else {
+                    trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
+                    print("temp exercises to delete: ${trainingSessionProvider.tempExercisesToDelete.length}");
+                  }
+
+                
               }
             },
           )

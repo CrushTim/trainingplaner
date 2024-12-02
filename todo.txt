@@ -4,15 +4,13 @@ CRNT
 
         workout view:
             when offline
-                -> enable persistend updates on the exercises
+                -> enable persistend updates on the exercises - make offline handling for every object (sessions, exercises exist in sessionprovider);
 
             when returning online:
-                    -> make unplannedforsession and trainingsessions stuff update or add dependent on isonline and if the exercise existed before
-                -> make the updates persistent, and delete the temp exercises
                 
                 working on existing offline exercises does not update when returning online
 
-                when returning online it also adds the temp exercise ids to the session update in the database
+
             
 
         session edit fields:

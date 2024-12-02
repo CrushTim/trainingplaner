@@ -20,6 +20,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   final ConnectivityService _connectivityService = ConnectivityService();
   bool _isOnline = true;
 
+  List<TrainingExerciseBus> tempExercisesToDelete = [];
+
   TrainingSessionProvider({required this.exerciseProvider})
       : super(
             businessClassForAdd: TrainingSessionBus(
@@ -62,9 +64,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     notifyListeners();
   }
 
-  void notifyListeners() {
-    super.notifyListeners();
-  }
 
   // /////////////////////////////////////////////////////////////////////
   //                         SETTER
@@ -646,7 +645,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   Future<void> addTemporaryExercise(TrainingExerciseBus exercise) async {
     if (_connectivityService.isConnected) {
-      print("Online");
+      ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(const SnackBar(content: Text('Online')));
       // Online - add directly to database
       final permanentId = await exerciseProvider.addBusinessClass(
         exercise,
@@ -657,7 +656,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
       updateBusinessClass(selectedActualSession!, ScaffoldMessenger.of(navigatorKey.currentContext!));
     } else {
-      print("Offline");
+      ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(const SnackBar(content: Text('Offline - only The Last Session with its exercises will be saved')));
       // Offline - add to temporary storage
       TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
         trainingExerciseID: 'temp_${DateTime.now().millisecondsSinceEpoch}',
@@ -682,19 +681,22 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   }
 
   Future<void> _syncTemporaryExercises() async {
-    if (tempExercises.isEmpty || selectedActualSession == null) return;
+    if ((tempExercises.isEmpty && tempExercisesToDelete.isEmpty) || selectedActualSession == null ) return;
 
     final scaffoldMessenger = ScaffoldMessenger.of(navigatorKey.currentContext!);
     
     try {
       for (var exercise in List.from(tempExercises)) {
-        // Add the exercise permanently
-        final permanentId = await exerciseProvider.addBusinessClass(
+        //Check if the exercise is already in the database
+        if (exerciseProvider.plannedToActualExercises.values.contains(exercise)) {
+          exerciseProvider.updateBusinessClass(exercise, scaffoldMessenger, notify: false);
+        } else {
+          // Add the exercise permanently
+          final permanentId = await exerciseProvider.addBusinessClass(
           exercise,
           scaffoldMessenger,
           notify: false,
         );
-        print("Permanent ID: $permanentId");
         
         // Update the session with the new permanent ID
         final index = selectedActualSession!.trainingSessionExcercisesIds
@@ -704,12 +706,28 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           exercise.trainingExerciseID = permanentId;
         }
         
-        tempExercises.remove(exercise);
-      }
+          tempExercises.remove(exercise);
+        }
       
+      
+      }
+
+      for(var exercise in tempExercisesToDelete){
+        print("temp exercises to delete IN SYNC METHOD: ${tempExercisesToDelete}");
+        exerciseProvider.deleteBusinessClass(exercise, scaffoldMessenger, notify: false);
+        selectedActualSession!.trainingSessionExcercisesIds.remove(exercise.trainingExerciseID);
+        selectedActualSession!.trainingSessionExercises.remove(exercise);
+      }
+      tempExercisesToDelete.clear();
+      
+      // Create a new list with only the non-temporary IDs
+      selectedActualSession!.trainingSessionExcercisesIds = 
+          selectedActualSession!.trainingSessionExcercisesIds
+              .where((id) => !id.startsWith('temp_'))
+              .toList();
+      print("temp goes into update");
       // Update the session with all changes
       await updateBusinessClass(selectedActualSession!, scaffoldMessenger);
-      
       notifyListeners();
     } catch (e) {
       scaffoldMessenger.showSnackBar(
