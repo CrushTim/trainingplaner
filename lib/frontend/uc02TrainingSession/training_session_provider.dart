@@ -77,16 +77,19 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     // First check if we have an actual session passed in
     if (actualSession != null) {
       selectedActualSession = actualSession;
+      selectedSessionDate = actualSession.trainingSessionStartDate;
       isPlannedSessionWithoutActual = false;
     } 
     // Then check if there's one in the map
     else if (plannedSession != null && plannedToActualSessions[plannedSession] != null) {
       selectedActualSession = plannedToActualSessions[plannedSession];
+      selectedSessionDate = selectedActualSession!.trainingSessionStartDate;
       isPlannedSessionWithoutActual = false;
     }
     // Only create new actual session if we truly don't have one
     else if (plannedSession != null) {
       selectedActualSession = plannedSession.createActualSession();
+      selectedSessionDate = plannedSession.trainingSessionStartDate;
       isPlannedSessionWithoutActual = true;
     }
   }  /// Sets the selected actual and planned sessions
@@ -418,7 +421,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
             itemCount: sortedSessions.length,
             itemBuilder: (context, index) {
               TrainingSessionBus session = sortedSessions[index];
-              TrainingSessionBus? actualSession = plannedToActualSessions[session];
 
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -428,33 +430,46 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
                 ),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: SessionTile(
-                        session: session,
-                        isPlanned: true,
-                        onTap: () {
-                          setActualAndPlannedSession(session, plannedToActualSessions[session]);
-                          Navigator.pop(context);
-                          notifyListeners();
-                        },
-                      ),
-                    ),
-                    if (actualSession != null || !session.isPlanned)
+                    if (session.isPlanned) 
+                      // For planned sessions, show both planned and actual in a row
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SessionTile(
+                                session: session,
+                                isPlanned: true,
+                                onTap: () {
+                                  setActualAndPlannedSession(session, plannedToActualSessions[session]);
+                                  Navigator.pop(context);
+                                  notifyListeners();
+                                },
+                              ),
+                            ),
+                            if (plannedToActualSessions[session] != null)
+                              Expanded(
+                                child: SessionTile(
+                                  session: plannedToActualSessions[session]!,
+                                  isPlanned: false,
+                                  onTap: () {
+                                    setActualAndPlannedSession(session, plannedToActualSessions[session]);
+                                    Navigator.pop(context);
+                                    notifyListeners();
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+                      )
+                    else
+                      // For unplanned sessions, show just the actual session
                       Expanded(
                         child: SessionTile(
-                          session: actualSession ?? session,
+                          session: session,
                           isPlanned: false,
                           onTap: () {
-                            if (unplannedSessions.contains(session)) {
-                              setActualAndPlannedSession(null, session);
-                              hasNoPlannedSession = true;
-                            } else {
-                              TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
-                                (s) => s.trainingSessionId == session.plannedSessionId,
-                                orElse: () => session,
-                              );
-                              setActualAndPlannedSession(plannedSession, session);
-                            }
+                            setActualAndPlannedSession(null, session);
+                            hasNoPlannedSession = true;
                             Navigator.pop(context);
                             notifyListeners();
                           },
@@ -470,28 +485,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
-  void handleSessionTileTap(
-    TrainingSessionBus session,
-    bool isPlanned,
-    BuildContext context,
-  ) {
-    if (isPlanned) {
-      setActualAndPlannedSession(session, plannedToActualSessions[session]);
-    } else {
-      if (unplannedSessions.contains(session)) {
-        setActualAndPlannedSession(null, session);
-        hasNoPlannedSession = true;
-      } else {
-        TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
-          (s) => s.trainingSessionId == session.plannedSessionId,
-          orElse: () => session,
-        );
-        setActualAndPlannedSession(plannedSession, session);
-      }
-    }
-    Navigator.pop(context);
-    notifyListeners();
-  }
+
 
 
   
@@ -567,11 +561,10 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       scaffoldMessengerState.showSnackBar(
         SnackBar(content: Text('Error copying session: ${e.toString()}')),
       );
-      rethrow;
     }
   }
 
-  void initControllers() {
+  void initControllersForPlanningView() {
     final target = getSelectedBusinessClass;
     if (target != null) {
       sessionNameController.text = target.trainingSessionName;

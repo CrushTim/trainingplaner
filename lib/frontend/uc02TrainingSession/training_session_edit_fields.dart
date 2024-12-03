@@ -23,6 +23,7 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
       isOnlinee = isOnline;
     });
 
+
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
     final session = trainingSessionProvider.selectedActualSession!;
     final TextEditingController workoutNameController =

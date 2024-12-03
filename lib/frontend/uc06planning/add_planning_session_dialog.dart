@@ -28,7 +28,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
   void initState() {
     super.initState();
     TrainingSessionProvider provider = Provider.of<TrainingSessionProvider>(context, listen: false);
-    provider.initControllers();
+    provider.initControllersForPlanningView();
   }
 
   @override

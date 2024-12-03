@@ -11,11 +11,6 @@ CRNT
                 working on existing offline exercises does not update when returning online
 
 
-            
-
-        session edit fields:
-            date is wrong when init
-
         trainingexercise provider:
             -reset controller
 
