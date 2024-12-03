@@ -681,16 +681,21 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   }
 
   Future<void> _syncTemporaryExercises() async {
+    print("temp exercises in sync method: ${tempExercises}");
     if ((tempExercises.isEmpty && tempExercisesToDelete.isEmpty) || selectedActualSession == null ) return;
 
     final scaffoldMessenger = ScaffoldMessenger.of(navigatorKey.currentContext!);
     
     try {
       for (var exercise in List.from(tempExercises)) {
+        print("temp exercises IN SYNC METHOD: ${tempExercises}");
         //Check if the exercise is already in the database
-        if (exerciseProvider.plannedToActualExercises.values.contains(exercise)) {
+        if (exerciseProvider.plannedToActualExercises.values.contains(exercise) || exerciseProvider.unplannedExercises.contains(exercise)) {
+          print("exercise is in planned to actual exercises");
           exerciseProvider.updateBusinessClass(exercise, scaffoldMessenger, notify: false);
+          tempExercises.remove(exercise);
         } else {
+          print("add exercise too");
           // Add the exercise permanently
           final permanentId = await exerciseProvider.addBusinessClass(
           exercise,
