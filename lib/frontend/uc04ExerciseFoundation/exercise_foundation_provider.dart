@@ -99,7 +99,6 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     ExerciseFoundationNotesBus? targetNotes;
     ExerciseFoundationBus target = getSelectedBusinessClass ?? businessClassForAdd;
     String addId = "";
-    print(notesMap[target.getId()] == null);
     if (getSelectedBusinessClass != null) {
       targetNotes = getSelectedBusinessClass!.exerciseFoundationNotes;
       await updateBusinessClass(getSelectedBusinessClass!, scaffoldMessengerState);

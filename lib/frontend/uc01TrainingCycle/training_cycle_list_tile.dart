@@ -102,7 +102,9 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
           child: IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              //TODO delete the cycle
+              trainingCycleProvider.deleteBusinessClass(widget.trainingCycleBus, ScaffoldMessenger.of(context));
+              trainingCycleProvider.resetSelectedBusinessClass();
+              
             },
           ),
         ),

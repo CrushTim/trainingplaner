@@ -98,7 +98,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
             onUpdate: (actualExercise) async {
               ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
               if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] == null) {
-                print("exercise check is different then i want maybe");
                 if(isOnlinee){String addId = await trainingSessionProvider.exerciseProvider.addBusinessClass(
                     actualExercise, scaffoldMessenger,
                     notify: false);
@@ -135,7 +134,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                     notify: false);
                 } else {
                   trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
-                  print("temp exercises to delete: ${trainingSessionProvider.tempExercisesToDelete.length}");
                 }
               }
             },
@@ -151,7 +149,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
               if (isOnlinee) {
                 await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
               } else {
-                print("it was the other case exercise idiota");
                 trainingSessionProvider.tempExercises.add(actualExercise);
               }
             },
@@ -177,7 +174,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                     notify: false);
                   } else {
                     trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
-                    print("temp exercises to delete: ${trainingSessionProvider.tempExercisesToDelete.length}");
                   }
 
                 

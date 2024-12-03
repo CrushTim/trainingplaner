@@ -60,7 +60,7 @@ class CycleEditColumn extends StatelessWidget {
               ),
               PopupMenuItem(
                 value: 'insertWeek',
-                child: Text(
+                child: const Text(
                   'Insert Week',
                   
                 ),

@@ -7,9 +7,9 @@ import 'package:trainingplaner/business/businessClasses/training_session_bus.dar
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
-import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_tile.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
 import 'package:trainingplaner/main.dart';
 import 'package:trainingplaner/services/connectivity_service.dart';
@@ -428,9 +428,38 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
                 ),
                 child: Row(
                   children: [
-                    Expanded(child: _buildSessionTile(session, context, isPlanned: true)),
+                    Expanded(
+                      child: SessionTile(
+                        session: session,
+                        isPlanned: true,
+                        onTap: () {
+                          setActualAndPlannedSession(session, plannedToActualSessions[session]);
+                          Navigator.pop(context);
+                          notifyListeners();
+                        },
+                      ),
+                    ),
                     if (actualSession != null || !session.isPlanned)
-                      Expanded(child: _buildSessionTile(actualSession ?? session, context, isPlanned: false)),
+                      Expanded(
+                        child: SessionTile(
+                          session: actualSession ?? session,
+                          isPlanned: false,
+                          onTap: () {
+                            if (unplannedSessions.contains(session)) {
+                              setActualAndPlannedSession(null, session);
+                              hasNoPlannedSession = true;
+                            } else {
+                              TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
+                                (s) => s.trainingSessionId == session.plannedSessionId,
+                                orElse: () => session,
+                              );
+                              setActualAndPlannedSession(plannedSession, session);
+                            }
+                            Navigator.pop(context);
+                            notifyListeners();
+                          },
+                        ),
+                      ),
                   ],
                 ),
               );
@@ -441,52 +470,27 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
-  //TODO: extract to costum widget
-  Widget _buildSessionTile(TrainingSessionBus session, BuildContext context, {required bool isPlanned}) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      color: isPlanned ? Colors.orange[100] : Colors.green[100],
-      child: ListTile(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(session.trainingSessionName, style: const TextStyle(fontWeight: FontWeight.bold)),
-            Row(
-              children: [
-                Text(getDateStringForDisplay(session.trainingSessionStartDate)),
-                Text(getTimeStringForDisplay(session.trainingSessionStartDate)),
-              ],
-            ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(session.trainingSessionDescription),
-            Text(session.trainingSessionEmphasis.join(', ')),
-            Text(session.trainingSessionExercises.map((e) => e.exerciseName).join(', ')),
-          ],
-        ),
-        onTap: () {
-          if (isPlanned) {
-            setActualAndPlannedSession(session, plannedToActualSessions[session]);
-          } else {
-            if (unplannedSessions.contains(session)) {
-              setActualAndPlannedSession(null, session);
-              hasNoPlannedSession = true;
-            } else {
-              TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
-                (s) => s.trainingSessionId == session.plannedSessionId,
-                orElse: () => session,
-              );
-              setActualAndPlannedSession(plannedSession, session);
-            }
-          }
-          Navigator.pop(context);
-          notifyListeners();
-        },
-      ),
-    );
+  void handleSessionTileTap(
+    TrainingSessionBus session,
+    bool isPlanned,
+    BuildContext context,
+  ) {
+    if (isPlanned) {
+      setActualAndPlannedSession(session, plannedToActualSessions[session]);
+    } else {
+      if (unplannedSessions.contains(session)) {
+        setActualAndPlannedSession(null, session);
+        hasNoPlannedSession = true;
+      } else {
+        TrainingSessionBus? plannedSession = plannedToActualSessions.keys.firstWhere(
+          (s) => s.trainingSessionId == session.plannedSessionId,
+          orElse: () => session,
+        );
+        setActualAndPlannedSession(plannedSession, session);
+      }
+    }
+    Navigator.pop(context);
+    notifyListeners();
   }
 
 
@@ -681,21 +685,17 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   }
 
   Future<void> _syncTemporaryExercises() async {
-    print("temp exercises in sync method: ${tempExercises}");
     if ((tempExercises.isEmpty && tempExercisesToDelete.isEmpty) || selectedActualSession == null ) return;
 
     final scaffoldMessenger = ScaffoldMessenger.of(navigatorKey.currentContext!);
     
     try {
       for (var exercise in List.from(tempExercises)) {
-        print("temp exercises IN SYNC METHOD: ${tempExercises}");
         //Check if the exercise is already in the database
         if (exerciseProvider.plannedToActualExercises.values.contains(exercise) || exerciseProvider.unplannedExercises.contains(exercise)) {
-          print("exercise is in planned to actual exercises");
           exerciseProvider.updateBusinessClass(exercise, scaffoldMessenger, notify: false);
           tempExercises.remove(exercise);
         } else {
-          print("add exercise too");
           // Add the exercise permanently
           final permanentId = await exerciseProvider.addBusinessClass(
           exercise,
@@ -718,7 +718,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       }
 
       for(var exercise in tempExercisesToDelete){
-        print("temp exercises to delete IN SYNC METHOD: ${tempExercisesToDelete}");
         exerciseProvider.deleteBusinessClass(exercise, scaffoldMessenger, notify: false);
         selectedActualSession!.trainingSessionExcercisesIds.remove(exercise.trainingExerciseID);
         selectedActualSession!.trainingSessionExercises.remove(exercise);
@@ -730,7 +729,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           selectedActualSession!.trainingSessionExcercisesIds
               .where((id) => !id.startsWith('temp_'))
               .toList();
-      print("temp goes into update");
       // Update the session with all changes
       await updateBusinessClass(selectedActualSession!, scaffoldMessenger);
       notifyListeners();

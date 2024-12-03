@@ -183,8 +183,6 @@ class TrainingExerciseBus
   //validate the training exercise for update operation
   @override
   void validateForUpdate() {
-    //TODO: implement validation of is the current working user
-
     //check if the id is not empty
     if (trainingExerciseID.isEmpty) {
       throw Exception("The training exercise id is empty");
@@ -218,8 +216,6 @@ class TrainingExerciseBus
   //validate the training exercise for delete operation
   @override
   void validateForDelete() {
-    //TODO: implement validation of is the current working user
-
     //check if the id is not empty
     if (trainingExerciseID.isEmpty) {
       throw Exception("The training exercise id is empty");

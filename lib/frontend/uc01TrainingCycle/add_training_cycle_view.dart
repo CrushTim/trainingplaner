@@ -16,7 +16,7 @@ class _AddTrainingCycleViewState extends State<AddTrainingCycleView> {
       appBar: AppBar(
         title: const Text("Add Training Cycle"),
       ),
-      body: TrainingCycleEditFields(),
+      body: const TrainingCycleEditFields(),
     );
   }
 }

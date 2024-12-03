@@ -59,15 +59,17 @@ class _OverviewViewState extends State<OverviewView> {
                 onTap: () {
                   // Wrap in Future.delayed to avoid navigator conflict with popup
                   Future.delayed(Duration.zero, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
+                    if(context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
                         builder: (context) => ChangeNotifierProvider.value(
                           value: cycleProvider,
                           child: const TrainingCycleOverviewView(),
                         ),
                       ),
-                    );
+                      );
+                    }
                   });
                 },
               ),
@@ -75,9 +77,10 @@ class _OverviewViewState extends State<OverviewView> {
                 child: const Text('Planning'),
                 onTap: () {
                   Future.delayed(Duration.zero, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
+                    if(context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
                         builder: (context) => MultiProvider(
                           providers: [
                             ChangeNotifierProvider.value(value: cycleProvider),
@@ -88,6 +91,7 @@ class _OverviewViewState extends State<OverviewView> {
                         ),
                       ),
                     );
+                    }
                   });
                 },
               ),

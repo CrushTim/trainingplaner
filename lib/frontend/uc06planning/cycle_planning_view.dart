@@ -36,7 +36,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
   Map<int, List<DateTime>> mapSessionsToWeeks(Map<DateTime, List<dynamic>> sessionDateMap) {
     Map<int, List<DateTime>> weekMap = {};
     
-    sessionDateMap.keys.forEach((date) {
+    for(var date in sessionDateMap.keys){
       int woy = ((date.difference(DateTime(date.year, 1, 1)).inDays + 
           DateTime(date.year, 1, 1).weekday) / 7).ceil();
       
@@ -44,7 +44,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
         weekMap[woy] = [];
       }
       weekMap[woy]!.add(date);
-    });
+    }
     
     weekMap.forEach((week, dates) {
       dates.sort();

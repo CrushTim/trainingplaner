@@ -48,7 +48,7 @@ class _ExerciseFoundationListTileState extends State<ExerciseFoundationListTile>
               //  fit: BoxFit.contain,
               //),
             ),
-            SizedBox(width: 10), // Add some spacing between image and text
+            const SizedBox(width: 10), // Add some spacing between image and text
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

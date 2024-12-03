@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class SheerUpDateTimePickerFields extends TextField {
@@ -6,11 +5,10 @@ class SheerUpDateTimePickerFields extends TextField {
     controller, {
     super.key,
     hintText = "",
-    onChanged,
+    super.onChanged,
   }) : super(
           readOnly: true,
           keyboardType: TextInputType.datetime,
           controller: controller,
-          onChanged: onChanged,
         );
 }

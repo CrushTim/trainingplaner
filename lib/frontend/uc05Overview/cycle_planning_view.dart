@@ -169,7 +169,6 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                               showDialog(
                                 context: context,
                                 builder: (context) {   
-                                  print(widget.cycle.getId());
                                   return ChangeNotifierProvider.value(
                                     value: sessionProvider,
                                     child: AddPlanningSessionDialog(

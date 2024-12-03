@@ -8,11 +8,9 @@ class TrainingCycleBusReport
   TrainingCycleDataReport trainingCycleDataReport = TrainingCycleDataReport();
   @override
   Stream<List<TrainingCycleBus>> getAll() {
-    print("getAll");
     return trainingCycleDataReport
         .getAll()
         .map((list) => list.map((e) { 
-          print(e.trainingCycleID);
           return TrainingCycleBus.fromData(e);
         }).toList());
   }
