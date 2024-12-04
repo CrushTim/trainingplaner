@@ -6,9 +6,6 @@ CRNT
             when offline
                 -> enable persistend updates on the exercises - make offline handling for every object (sessions, exercises exist in sessionprovider);
 
-            when returning online:
-                
-                working on existing offline exercises does not update when returning online
 
 
         trainingexercise provider:

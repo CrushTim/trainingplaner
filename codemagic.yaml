@@ -1,0 +1,42 @@
+workflows:
+    android-workflow-id:
+        name: Android Workflow
+        environment:
+          android_signing:
+            - codemagic
+          flutter: stable
+        triggering:
+          events:
+            - push
+        scripts:
+            - name: Set up local.properties
+              script: | 
+                echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+            - name: Get Flutter packages
+              script: | 
+                flutter packages pub get
+            - name: Unit tests
+              script: | 
+                mkdir -p test-results
+                flutter test --machine > test-results/flutter.json
+              test_report: test-results/flutter.json
+            - name: Build AAB with Flutter
+              script: | 
+                flutter build appbundle --release
+            - name: Build APK with Flutter
+              script: | 
+                flutter build apk --release
+        artifacts:
+            - build/**/outputs/**/*.aab
+            - build/**/outputs/**/*.apk
+            - build/**/outputs/**/mapping.txt
+            - flutter_drive.log
+            - flutter_drive.trace
+        publishing: 
+          email:
+            recipients:
+              - tgk1702@gmail.com
+            notify:
+              success: true
+              failure: true
+    
