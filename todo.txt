@@ -7,10 +7,6 @@ CRNT
                 -> enable persistend updates on the exercises - make offline handling for every object (sessions, exercises exist in sessionprovider);
 
 
-
-        trainingexercise provider:
-            -reset controller
-
         
 
     cycle planning view:
