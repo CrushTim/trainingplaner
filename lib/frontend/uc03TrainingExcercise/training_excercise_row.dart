@@ -89,97 +89,104 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                   )
                 ],
               )
-            : IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          Text(
-                              widget.plannedTrainingExercise?.exerciseName ??
-                                  widget.actualTrainingExercise!.exerciseName),
-                          Text(widget.plannedTrainingExercise?.exerciseFoundationID ??
-                              widget.actualTrainingExercise!.exerciseFoundationID),
+            : ListTile(
+              title: Column(
+                children: [
+                        Text(
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 23,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline),
+                          widget.plannedTrainingExercise?.exerciseName ??
+                              widget.actualTrainingExercise!.exerciseName,
+                        ),
+                        Text(
+                          widget.plannedTrainingExercise?.exerciseFoundationID ??
+                              widget.actualTrainingExercise!.exerciseFoundationID,
+                        ),
+                      
+                  
+                  const Divider(
+                    color: Colors.black,
+                    thickness: 1,
+                  ),]),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      
+                      const Flexible(
+                        child: VerticalDivider(
+                          color: Colors.black,
+                          thickness: 1,
+                        ),
+                      ),
+                      widget.plannedTrainingExercise != null
+                          ? Expanded(
+                              flex: 2,
+                              child: Column(
+                                children: [
+                                  const Text("Planned",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                  for (int i = 0;
+                                      i <
+                                          widget.plannedTrainingExercise!
+                                              .exerciseReps.length;
+                                      i++)
+                                    Text(
+                                        "${widget.plannedTrainingExercise!.exerciseReps[i]} x ${widget.plannedTrainingExercise!.exerciseWeights[i]}kg"),
+                                ],
+                              ))
+                          : Container(),
+                      widget.actualTrainingExercise != null
+                          ? Expanded(
+                              flex: 2,
+                              child: Column(
+                                children: [
+                                  const Text("Actual",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                  for (int i = 0;
+                                      i <
+                                          widget.actualTrainingExercise!
+                                              .exerciseReps.length;
+                                      i++)
+                                    Text(
+                                        "${widget.actualTrainingExercise!.exerciseReps[i]} x ${widget.actualTrainingExercise!.exerciseWeights[i]}kg"),
+                                ],
+                              ))
+                          : Container(),
+                      const Flexible(
+                        child: VerticalDivider(
+                          color: Colors.black,
+                          thickness: 1,
+                        ),
+                      ),
+                      
+                    ],
+                  ),
+                  trailing: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              widget.onDelete(actualExercise!);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_drop_down),
+                            onPressed: () {
+                              setState(() {
+                                isExpanded = !isExpanded;
+                              });
+                            },
+                          ),
                         ],
                       ),
-                    ),
-                    const Flexible(
-                      child: VerticalDivider(
-                        color: Colors.black,
-                        thickness: 1,
-                      ),
-                    ),
-                    widget.plannedTrainingExercise != null
-                        ? Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                const Text("Planned",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                for (int i = 0;
-                                    i <
-                                        widget.plannedTrainingExercise!
-                                            .exerciseReps.length;
-                                    i++)
-                                  Text(
-                                      "${widget.plannedTrainingExercise!.exerciseReps[i]} x ${widget.plannedTrainingExercise!.exerciseWeights[i]}kg"),
-                              ],
-                            ))
-                        : Container(),
-                    widget.actualTrainingExercise != null
-                        ? Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                const Text("Actual",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                for (int i = 0;
-                                    i <
-                                        widget.actualTrainingExercise!
-                                            .exerciseReps.length;
-                                    i++)
-                                  Text(
-                                      "${widget.actualTrainingExercise!.exerciseReps[i]} x ${widget.actualTrainingExercise!.exerciseWeights[i]}kg"),
-                              ],
-                            ))
-                        : Container(),
-                    const Flexible(
-                      child: VerticalDivider(
-                        color: Colors.black,
-                        thickness: 1,
-                      ),
-                    ),
-                    Flexible(
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                widget.onDelete(actualExercise!);
-                              },
-                            ),
-                          ),
-                          Flexible(
-                            child: IconButton(
-                              icon: const Icon(Icons.arrow_drop_down),
-                              onPressed: () {
-                                setState(() {
-                                  isExpanded = !isExpanded;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            ),
       ),
     );
   }

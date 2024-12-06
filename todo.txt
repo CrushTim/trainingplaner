@@ -13,9 +13,9 @@ CRNT
 
     test planned and actual exercise mapping and functionality
 
-       copy week sessions
        insert doesnt work check if copy is right and then bugfix insert
-                -> make insert week option disabled first and if copied sessions are not empty make it enabled and the add a copy of every session with exercises and progressive overload function
+                -> make insert week
+       copy week sessions option disabled first and if copied sessions are not empty make it enabled and the add a copy of every session with exercises and progressive overload function
     make advanced planning functionality
         -> copy session with all exercises
         
