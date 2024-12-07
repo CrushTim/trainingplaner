@@ -67,7 +67,11 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                         child: IconButton(
                             onPressed: () {
                               actualExercise!.exerciseReps.add(0);
-                              actualExercise.exerciseWeights.add(0);
+                              if(actualExercise.exerciseWeights.length > 1){
+                                actualExercise.exerciseWeights.add(actualExercise.exerciseWeights[actualExercise.exerciseWeights.length - 1]);
+                              }else{
+                                actualExercise.exerciseWeights.add(0);
+                              }
                               setState(
                                 () {},
                               );
@@ -93,7 +97,6 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
               title: Column(
                 children: [
                         Text(
-                          textAlign: TextAlign.center,
                           style: const TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.bold,

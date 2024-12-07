@@ -29,10 +29,6 @@ exercise foundation notes:
     in provider the list tile edit and delete button suck ass (something else instead of size box)
 
 workout view:
-    session
-        right mapping of emphasis
-    excercise
-        non expanded: fix button layout 
 
 selection:
     update test mit return of id 
