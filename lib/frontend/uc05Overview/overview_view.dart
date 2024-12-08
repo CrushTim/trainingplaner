@@ -5,6 +5,7 @@ import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_overvie
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_view.dart';
 
 class OverviewView extends StatefulWidget {
@@ -22,6 +23,7 @@ class _OverviewViewState extends State<OverviewView> {
     OverviewProvider overviewProvider = Provider.of<OverviewProvider>(context);
     final cycleProvider = Provider.of<TrainingCycleProvider>(context);
     final sessionProvider = Provider.of<TrainingSessionProvider>(context);
+    final planningProvider = Provider.of<PlanningProvider>(context);
     overviewProvider.initializeProviders(sessionProvider, cycleProvider);
 
     return Scaffold(
@@ -86,6 +88,7 @@ class _OverviewViewState extends State<OverviewView> {
                             ChangeNotifierProvider.value(value: cycleProvider),
                             ChangeNotifierProvider.value(value: sessionProvider),
                             ChangeNotifierProvider.value(value: overviewProvider),
+                            ChangeNotifierProvider.value(value: planningProvider),
                           ],
                           child: const PlanningView(),
                         ),

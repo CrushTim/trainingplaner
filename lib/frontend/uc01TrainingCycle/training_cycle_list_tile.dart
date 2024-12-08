@@ -7,6 +7,7 @@ import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_pro
 import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/cycle_planning_view.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class TrainingCycleListTile extends StatefulWidget {
   final TrainingCycleBus trainingCycleBus;
@@ -26,7 +27,7 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
   @override
   Widget build(BuildContext context) {
     TrainingCycleProvider trainingCycleProvider = Provider.of<TrainingCycleProvider>(context);
-    
+    PlanningProvider planningProvider = Provider.of<PlanningProvider>(context);
     return GestureDetector(
       onTap: () {
         if (widget.planningMode) {
@@ -46,6 +47,7 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
                   ChangeNotifierProvider(
                     create: (_) => OverviewProvider(),
                   ),
+                  ChangeNotifierProvider.value(value: planningProvider),
                 ],
                 child: CyclePlanningView(cycle: widget.trainingCycleBus),
               ),

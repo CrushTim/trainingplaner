@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 
 class PlanningDayFieldCalendar extends StatelessWidget {
@@ -21,7 +22,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
   Widget build(BuildContext context) {
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
     OverviewProvider overviewProvider = Provider.of<OverviewProvider>(context);
-
+    PlanningProvider planningProvider = Provider.of<PlanningProvider>(context);
     // Get planned and unplanned sessions
     Map<dynamic, dynamic> plannedSessions = overviewProvider.separatePlannedAndUnplannedSessions(workouts);
     List unplannedSessions = workouts.where((w) => !w.isPlanned).toList();
@@ -97,11 +98,13 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                   PopupMenuItem(
                                     child: const Text('Edit'),
                                     onTap: () {
+                                      planningProvider.selectedSessionDate = date;
+                                      print(planningProvider.selectedSessionDate);
                                       trainingSessionProvider.setSelectedBusinessClass(session, notify: false);
                                       showDialog(
                                           context: context,
                                         builder: (context) => ChangeNotifierProvider.value(
-                                          value: trainingSessionProvider,
+                                          value: planningProvider,
                                           child: AddPlanningSessionDialog(
                                             initialDate: date,
                                               cycleId: session.trainingCycleId,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class AddPlanningSessionDialog extends StatefulWidget {
   final DateTime initialDate;
@@ -18,22 +18,19 @@ class AddPlanningSessionDialog extends StatefulWidget {
 }
 
 class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController emphasisController = TextEditingController();
-  final TextEditingController lengthController = TextEditingController();
-  late DateTime selectedDate;
-
   @override
   void initState() {
     super.initState();
-    TrainingSessionProvider provider = Provider.of<TrainingSessionProvider>(context, listen: false);
+    PlanningProvider provider = Provider.of<PlanningProvider>(context, listen: false);
+    provider.selectedSessionDate = widget.initialDate;
     provider.initControllersForPlanningView();
+    print("xxxx");
+    print(provider.selectedSessionDate);
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<TrainingSessionProvider>(context);
+    final provider = Provider.of<PlanningProvider>(context);
 
     return Dialog(
       child: Padding(
@@ -85,7 +82,6 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                       provider.businessClassForAdd.trainingCycleId = widget.cycleId;
                     }
                     provider.saveSession(context);
-                    Navigator.pop(context);
                   },
                   child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),
                 ),

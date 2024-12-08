@@ -4,8 +4,10 @@ import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart'
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc05Overview/day_field_calendar.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
+import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_day_field_calendar.dart';
+import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class CyclePlanningView extends StatefulWidget {
   final TrainingCycleBus cycle;
@@ -58,6 +60,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
     final sessionProvider = Provider.of<TrainingSessionProvider>(context);
     final cycleProvider = Provider.of<TrainingCycleProvider>(context);
     final overviewProvider = Provider.of<OverviewProvider>(context);
+    final planningProvider = Provider.of<PlanningProvider>(context);
     
     overviewProvider.initializeProviders(sessionProvider, cycleProvider);
     
@@ -107,10 +110,24 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                       weekMap.entries.elementAt(index).value.length,
                       (dayIndex) {
                         final date = weekMap.entries.elementAt(index).value[dayIndex];
+                        planningProvider.selectedSessionDate = date;
                         return Expanded(
-                          child: DayFieldCalendar(
+                          child: PlanningDayFieldCalendar(
                             date: date,
                             workouts: sessionDateMap[date] ?? [],
+                            onAddPressed: () {
+                              print("date: $date");
+                              showDialog(
+                                context: context, 
+                                builder: (context) => ChangeNotifierProvider.value(
+                                  value: planningProvider,
+                                  child: AddPlanningSessionDialog(
+                                    initialDate: date, 
+                                    cycleId: widget.cycle.getId()
+                                  ),
+                                )
+                              );
+                            },
                           ),
                         );
                       },

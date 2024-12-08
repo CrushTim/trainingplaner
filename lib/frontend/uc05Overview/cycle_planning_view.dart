@@ -97,6 +97,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
   Widget build(BuildContext context) {
     final sessionProvider = Provider.of<TrainingSessionProvider>(context);
     final cycleProvider = Provider.of<TrainingCycleProvider>(context);
+    final planningProvider = Provider.of<PlanningProvider>(context);
     
     return Scaffold(
       appBar: AppBar(
@@ -170,7 +171,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                                 context: context,
                                 builder: (context) {   
                                   return ChangeNotifierProvider.value(
-                                    value: sessionProvider,
+                                    value: planningProvider,
                                     child: AddPlanningSessionDialog(
                                     initialDate: date,
                                     cycleId: widget.cycle.getId(),
