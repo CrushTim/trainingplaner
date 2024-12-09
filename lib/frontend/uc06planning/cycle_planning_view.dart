@@ -139,12 +139,6 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement add session functionality
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }
