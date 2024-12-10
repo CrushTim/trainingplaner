@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class CycleEditColumn extends StatelessWidget {
@@ -65,13 +64,8 @@ class CycleEditColumn extends StatelessWidget {
                   
                 ),
                 onTap: () {
-                  final sessionProvider = Provider.of<TrainingSessionProvider>(
-                    context,
-                    listen: false,
-                  );
                   planningProvider.insertWeekSessions(
                     copiedWeek,
-                    sessionProvider,
                     ScaffoldMessenger.of(context),
                   );
                 },

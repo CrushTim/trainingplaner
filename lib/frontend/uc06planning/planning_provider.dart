@@ -73,14 +73,13 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
   void storeWeekSessions(List<TrainingSessionBus> sessions, int week) {
     copiedSessions = sessions;
     copiedWeek = week;
-    notifyListeners();
   }
 
   Future<void> insertWeekSessions(
     int targetWeek,
-    TrainingSessionProvider sessionProvider,
     ScaffoldMessengerState scaffoldMessenger,
   ) async {
+  
     if (copiedSessions.isEmpty || copiedWeek == null) return;
 
     final weekDifference = targetWeek - copiedWeek!;

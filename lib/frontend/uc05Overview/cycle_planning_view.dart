@@ -185,14 +185,11 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                         },
                       ),
                       Expanded(
-                        child: ChangeNotifierProvider(
-                          create: (_) => PlanningProvider(),
-                          child: CycleEditColumn(
-                            weekSessions: weekMap.entries.elementAt(index).value
-                                .expand((date) => sessionDateMap[date] ?? [])
-                                .toList(),
-                            copiedWeek: index,
-                          ),
+                        child: CycleEditColumn(
+                          weekSessions: weekMap.entries.elementAt(index).value
+                              .expand((date) => sessionDateMap[date] ?? [])
+                              .toList(),
+                          copiedWeek: index,
                         ),
                       ),
                     ],
