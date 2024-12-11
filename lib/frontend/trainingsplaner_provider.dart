@@ -114,14 +114,15 @@ class TrainingsplanerProvider<
   /// @param scaffoldMessengerState the scaffoldMessengerState to show the snackbar
   /// @param notify if true the listeners are notified
   /// @return Future<void> with the result of the addition
-  Future<void> addForAddBusinessClass(
+  Future<String> addForAddBusinessClass(
       ScaffoldMessengerState scaffoldMessengerState,
       {bool notify = true}) async {
     String message = "Added ${businessClassForAdd.getName()}";
+    String addedId = "";
     try {
-      await businessClassForAdd
+      addedId = await businessClassForAdd
           .add()
-          .onError((error, stackTrace) => message = error.toString());
+            .onError((error, stackTrace) => message = error.toString());
     } catch (e) {
       message = e.toString();
     } finally {
@@ -136,6 +137,7 @@ class TrainingsplanerProvider<
         ),
       );
     }
+    return addedId;
   }
 
   ///update the selected business class in the database

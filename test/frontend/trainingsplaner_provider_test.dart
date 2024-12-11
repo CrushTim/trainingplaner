@@ -47,19 +47,22 @@ void main() async {
         (WidgetTester tester) async {
       //arrange
       bool listenerCalled = false;
+      String expectedId = "testId";
       provider.addListener(() {
         listenerCalled = true;
       });
+      when(mockTrainingsplanerBusInterface.add()).thenAnswer((_) async => Future.value(expectedId));
 
       provider.setBusinessClassForAdd(mockTrainingsplanerBusInterface,
           notify: false);
 
       //act
+      String result = "";
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addForAddBusinessClass(
+              result = await provider.addForAddBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -74,6 +77,7 @@ void main() async {
       expect(find.text("Added ${mockTrainingsplanerBusInterface.getName()}"),
           findsOneWidget);
       expect(listenerCalled, true);
+      expect(result, expectedId);
       verify(mockTrainingsplanerBusInterface.add()).called(1);
       verify(mockTrainingsplanerBusInterface.reset()).called(1);
     });
@@ -82,9 +86,11 @@ void main() async {
         (WidgetTester tester) async {
       //arrange
       bool listenerCalled = false;
+      String expectedId = "testId";
       provider.addListener(() {
         listenerCalled = true;
-      });
+      });   
+      when(mockTrainingsplanerBusInterface.add()).thenAnswer((_) async => Future.value(expectedId));
 
       provider.setBusinessClassForAdd(mockTrainingsplanerBusInterface,
           notify: false);
@@ -117,7 +123,7 @@ void main() async {
     testWidgets("negative - should show error when method throws error",
         (WidgetTester tester) async {
       //arrange
-      bool listenerCalled = false;
+      bool listenerCalled = false; 
       provider.addListener(() {
         listenerCalled = true;
       });
@@ -128,11 +134,12 @@ void main() async {
       when(mockTrainingsplanerBusInterface.add()).thenThrow("Error");
 
       //act
+      String result = "";
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addForAddBusinessClass(
+              result = await provider.addForAddBusinessClass(
                   ScaffoldMessenger.of(tester.element(find.byType(Scaffold))));
             },
             child: const Text("test"),
@@ -146,6 +153,7 @@ void main() async {
       //assert
       expect(find.text("Error"), findsOneWidget);
       expect(listenerCalled, true);
+      expect(result, "");
       verify(mockTrainingsplanerBusInterface.add()).called(1);
       verify(mockTrainingsplanerBusInterface.reset()).called(1);
     });
@@ -468,16 +476,20 @@ void main() async {
         (WidgetTester tester) async {
       //arrange
       bool listenerCalled = false;
+      String expectedId = "testId";
       provider.addListener(() {
         listenerCalled = true;
       });
 
+      when(mockTrainingsplanerBusInterface.add()).thenAnswer((_) async => Future.value(expectedId));
+
       //act
+      String result = "";
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addBusinessClass(
+              result = await provider.addBusinessClass(
                 mockTrainingsplanerBusInterface,
                 ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
               );
@@ -494,6 +506,7 @@ void main() async {
       expect(find.text("Added ${mockTrainingsplanerBusInterface.getName()}"),
           findsOneWidget);
       expect(listenerCalled, true);
+      expect(result, expectedId);
       verify(mockTrainingsplanerBusInterface.add()).called(1);
     });
 
@@ -501,17 +514,21 @@ void main() async {
         "positive - should add a business class without notifying listeners",
         (WidgetTester tester) async {
       //arrange
+      String expectedId = "testId";
       bool listenerCalled = false;
       provider.addListener(() {
         listenerCalled = true;
       });
 
+      when(mockTrainingsplanerBusInterface.add()).thenAnswer((_) async => Future.value(expectedId));  
+
       //act
+      String result = "";
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: ElevatedButton(
             onPressed: () async {
-              await provider.addBusinessClass(
+              result = await provider.addBusinessClass(
                 mockTrainingsplanerBusInterface,
                 ScaffoldMessenger.of(tester.element(find.byType(Scaffold))),
                 notify: false,
@@ -529,6 +546,7 @@ void main() async {
       expect(find.text("Added ${mockTrainingsplanerBusInterface.getName()}"),
           findsOneWidget);
       expect(listenerCalled, false);
+      expect(result, expectedId);
       verify(mockTrainingsplanerBusInterface.add()).called(1);
     });
 
