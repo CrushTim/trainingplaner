@@ -24,8 +24,6 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
     PlanningProvider provider = Provider.of<PlanningProvider>(context, listen: false);
     provider.selectedSessionDate = widget.initialDate;
     provider.initControllersForPlanningView();
-    print("xxxx");
-    print(provider.selectedSessionDate);
   }
 
   @override
@@ -67,6 +65,18 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
               ),
             ),
             const SizedBox(height: 16),
+            ElevatedButton(onPressed: () {
+              //TODO: add addexercisedialog 
+              //showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields()));
+              
+            }, child: const Text("Add Exercise")),
+            provider.getSelectedBusinessClass != null ?
+            ListView.builder(
+              itemBuilder: (context, index) => Text(provider.getSelectedBusinessClass!.trainingSessionExercises[index].getName()),
+              //TODO: add a widget like in workout view but adding reps and weights will add it to planned not actual logic stuff 
+              itemCount: provider.getSelectedBusinessClass!.trainingSessionExercises.length,            
+            )
+            : Container(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

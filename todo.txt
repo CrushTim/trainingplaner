@@ -1,5 +1,13 @@
 CRNT 
 
+on edit doesnt show selected controller values(dont even know if its selected)
+    add the exercise add functionality to the edit dialog
+
+
+move the logic from the cycle planning view to the add planning provider
+
+
+
     when offline
         -> enable persistend updates on the exercises - make offline handling for every object (sessions, exercises exist in sessionprovider);
             -> safe sessions in provider

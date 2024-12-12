@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_day_field_calendar.dart';
@@ -61,6 +63,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
     final cycleProvider = Provider.of<TrainingCycleProvider>(context);
     final overviewProvider = Provider.of<OverviewProvider>(context);
     final planningProvider = Provider.of<PlanningProvider>(context);
+    final exerciseProvider = Provider.of<TrainingExerciseProvider>(context);
     
     overviewProvider.initializeProviders(sessionProvider, cycleProvider);
     
@@ -68,19 +71,35 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
       appBar: AppBar(
         title: Text('Planning: ${widget.cycle.cycleName}'),
       ),
-      body: StreamBuilder(
-        stream: sessionProvider.reportTaskVar.getAll(),
+      body: StreamBuilder2(
+        streams: StreamTuple2(
+          sessionProvider.reportTaskVar.getAll(),
+          exerciseProvider.reportTaskVar.getAll(),
+        ),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
+          if (snapshot.snapshot1.hasError || snapshot.snapshot2.hasError) {
+            return Text(snapshot.snapshot1.error.toString());
           }
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.snapshot1.connectionState == ConnectionState.waiting || snapshot.snapshot2.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final sessions = snapshot.data!.where(
+          final sessions = snapshot.snapshot1.data!.where(
             (session) => session.trainingCycleId == widget.cycle.getId()
           ).toList();
+
+          final exercises = snapshot.snapshot2.data!.where(
+            (exercise) => exercise.isPlanned
+          ).toList();
+
+          //map the exercises to the sessions
+          for (var exercise in exercises){
+            for (var session in sessions){
+              if (session.trainingSessionExcercisesIds.contains(exercise.trainingExerciseID)){
+                session.trainingSessionExercises.add(exercise);
+              }
+            }
+          }
 
           Map<DateTime, List<dynamic>> sessionDateMap = generateSessionDateMap();
           for (var session in sessions) {
@@ -116,7 +135,6 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                             date: date,
                             workouts: sessionDateMap[date] ?? [],
                             onAddPressed: () {
-                              print("date: $date");
                               showDialog(
                                 context: context, 
                                 builder: (context) => ChangeNotifierProvider.value(
