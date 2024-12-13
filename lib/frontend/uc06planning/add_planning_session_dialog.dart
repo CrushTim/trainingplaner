@@ -71,10 +71,11 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
               
             }, child: const Text("Add Exercise")),
             provider.getSelectedBusinessClass != null ?
-            ListView.builder(
-              itemBuilder: (context, index) => Text(provider.getSelectedBusinessClass!.trainingSessionExercises[index].getName()),
-              //TODO: add a widget like in workout view but adding reps and weights will add it to planned not actual logic stuff 
-              itemCount: provider.getSelectedBusinessClass!.trainingSessionExercises.length,            
+            Column(
+              children: List.generate(
+                provider.getSelectedBusinessClass!.trainingSessionExercises.length,
+                (index) => Text(provider.getSelectedBusinessClass!.trainingSessionExercises[index].getName()),
+              ),
             )
             : Container(),
             Row(

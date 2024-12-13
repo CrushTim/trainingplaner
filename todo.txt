@@ -1,6 +1,10 @@
 CRNT 
 
-on edit doesnt show selected controller values(dont even know if its selected)
+    date and length when adding is wrong again
+
+    exercises do not show in ui -> check with print if mapping correct
+
+
     add the exercise add functionality to the edit dialog
 
 

@@ -129,12 +129,12 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
                       weekMap.entries.elementAt(index).value.length,
                       (dayIndex) {
                         final date = weekMap.entries.elementAt(index).value[dayIndex];
-                        planningProvider.selectedSessionDate = date;
                         return Expanded(
                           child: PlanningDayFieldCalendar(
                             date: date,
                             workouts: sessionDateMap[date] ?? [],
                             onAddPressed: () {
+                              planningProvider.selectedSessionDate = date;
                               showDialog(
                                 context: context, 
                                 builder: (context) => ChangeNotifierProvider.value(

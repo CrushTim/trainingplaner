@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 
 class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, TrainingSessionBusReport> {
   final TextEditingController sessionNameController = TextEditingController();
@@ -44,6 +43,14 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
       sessionLengthController.text = "60";
     }
   }
+
+   void resetSessionControllers() {
+    sessionNameController.clear();
+    sessionDescriptionController.clear();
+    sessionEmphasisController.clear();
+    sessionLengthController.text = "60";
+  }
+
 
   void handleSessionFieldChangeForPlanned(String field, String value) {
     final target = getSelectedBusinessClass ?? businessClassForAdd;

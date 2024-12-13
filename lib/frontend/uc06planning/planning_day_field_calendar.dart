@@ -99,8 +99,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                     child: const Text('Edit'),
                                     onTap: () {
                                       planningProvider.selectedSessionDate = date;
-                                      print(planningProvider.selectedSessionDate);
-                                      trainingSessionProvider.setSelectedBusinessClass(session, notify: false);
+                                      planningProvider.setSelectedBusinessClass(session, notify: false);
                                       showDialog(
                                           context: context,
                                         builder: (context) => ChangeNotifierProvider.value(
@@ -112,10 +111,8 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                           ),
                                           ).then((_) {
                                             // Reset everything after dialog closes
-                                            trainingSessionProvider.resetSessionControllers();
-                                            trainingSessionProvider.resetSelectedBusinessClass();
-                                            trainingSessionProvider.resetBusinessClassForAdd();
-                                            trainingSessionProvider.resetAllMapsAndLists();
+                                            planningProvider.resetSelectedBusinessClass();
+                                            planningProvider.resetSessionControllers();
                                           });
                                     },
                                   ),
