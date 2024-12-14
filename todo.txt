@@ -1,11 +1,8 @@
 CRNT 
-
-    date and length when adding is wrong again
-
-    exercises do not show in ui -> check with print if mapping correct
-
-
-    add the exercise add functionality to the edit dialog
+        when add dialog -> doesnt add to the exercises  
+            -> check if it adds at all or if it has no id
+                -> check what id is used when adding exercise
+                    -> check if the planned session is updated
 
 
 move the logic from the cycle planning view to the add planning provider

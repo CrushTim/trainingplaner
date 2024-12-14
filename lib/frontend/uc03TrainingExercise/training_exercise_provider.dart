@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
+import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 
@@ -60,9 +61,11 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
       !plannedToActualExercises.containsValue(exercise)).toList();
   }
 
+  ExerciseFoundationBusReport foundationReport = ExerciseFoundationBusReport();
+
   StreamBuilder getFoundationAutoComplete() {
     return StreamBuilder(
-      stream: reportTaskVar.getAll(),
+      stream: foundationReport.getAll(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();

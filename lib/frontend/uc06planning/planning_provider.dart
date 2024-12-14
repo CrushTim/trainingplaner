@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
+import 'package:trainingplaner/main.dart';
+import 'package:trainingplaner/services/connectivity_service.dart';
 
 class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, TrainingSessionBusReport> {
   final TextEditingController sessionNameController = TextEditingController();
@@ -13,13 +17,17 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
   List<TrainingSessionBus> copiedSessions = [];
   int? copiedWeek;
 
-  PlanningProvider() : super(
+  final ConnectivityService _connectivityService = ConnectivityService();
+  List<TrainingExerciseBus> tempExercises = [];
+  late TrainingExerciseProvider exerciseProvider;
+
+  PlanningProvider({required this.exerciseProvider}) : super(
     businessClassForAdd: TrainingSessionBus(
       trainingSessionId: "",
       trainingSessionName: "",
       trainingSessionDescription: "",
       trainingSessionStartDate: DateTime.now(),
-      trainingSessionLength: 0,
+      trainingSessionLength: 60,
       trainingSessionExcercisesIds: [],
       trainingSessionEmphasis: [""],
       isPlanned: true,
@@ -41,6 +49,8 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
       sessionDescriptionController.clear();
       sessionEmphasisController.clear();
       sessionLengthController.text = "60";
+      print(selectedSessionDate);
+      businessClassForAdd.trainingSessionStartDate = selectedSessionDate;
     }
   }
 
@@ -156,4 +166,39 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
       Navigator.pop(context);
     }
   }
+
+  Future<void> addTemporaryExercise(TrainingExerciseBus exercise) async {
+    if (_connectivityService.isConnected) {
+      // Online - add directly to database
+      final permanentId = await exerciseProvider.addBusinessClass(
+        exercise,
+        ScaffoldMessenger.of(navigatorKey.currentContext!),
+      );
+      businessClassForAdd.trainingSessionExcercisesIds.add(permanentId);
+      businessClassForAdd.trainingSessionExercises.add(exercise);
+
+      updateBusinessClass(businessClassForAdd, ScaffoldMessenger.of(navigatorKey.currentContext!));
+    } else {
+      // Offline - add to temporary storage
+      TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
+        trainingExerciseID: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+        exerciseName: exercise.exerciseName,
+        exerciseDescription: exercise.exerciseDescription,
+        exerciseFoundationID: exercise.exerciseFoundationID,
+        exerciseReps: List.from(exercise.exerciseReps),
+        exerciseWeights: List.from(exercise.exerciseWeights),
+        date: exercise.date,
+        isPlanned: true,
+        targetPercentageOf1RM: exercise.targetPercentageOf1RM,
+      );
+
+      businessClassForAdd.trainingSessionExcercisesIds.add(exerciseCopy.trainingExerciseID);
+      businessClassForAdd.trainingSessionExercises.add(exerciseCopy);
+      tempExercises.add(exerciseCopy);
+    }
+    
+    notifyListeners();
+  }
+
+  
 } 

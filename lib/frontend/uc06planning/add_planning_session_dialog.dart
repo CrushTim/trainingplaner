@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExercise/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class AddPlanningSessionDialog extends StatefulWidget {
@@ -67,7 +68,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
             const SizedBox(height: 16),
             ElevatedButton(onPressed: () {
               //TODO: add addexercisedialog 
-              //showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields()));
+              showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields(addPlanned: true)));
               
             }, child: const Text("Add Exercise")),
             provider.getSelectedBusinessClass != null ?

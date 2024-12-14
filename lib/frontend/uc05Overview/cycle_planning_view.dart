@@ -5,6 +5,7 @@ import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart'
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc06planning/cycle_edit_column.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_day_field_calendar.dart';
@@ -98,22 +99,33 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
     final sessionProvider = Provider.of<TrainingSessionProvider>(context);
     final cycleProvider = Provider.of<TrainingCycleProvider>(context);
     final planningProvider = Provider.of<PlanningProvider>(context);
+    final exerciseProvider = Provider.of<TrainingExerciseProvider>(context);
     
     return Scaffold(
       appBar: AppBar(
         title: Text('Planning: ${widget.cycle.cycleName}'),
       ),
-      body: StreamBuilder2(
-        streams: StreamTuple2(
+      body: StreamBuilder3(
+        streams: StreamTuple3(
           sessionProvider.reportTaskVar.getAll(),
           cycleProvider.reportTaskVar.getAll(),
+          exerciseProvider.reportTaskVar.getAll(),
         ),
         builder: (context, snapshots) {
-          if (snapshots.snapshot1.hasError || snapshots.snapshot2.hasError) {
-            return Text(snapshots.snapshot1.error?.toString() ?? snapshots.snapshot2.error.toString());
+          if (snapshots.snapshot1.hasError || snapshots.snapshot2.hasError || snapshots.snapshot3.hasError) {
+            if (snapshots.snapshot1.hasError) {
+              return Text(snapshots.snapshot1.error.toString());
+            }
+            if (snapshots.snapshot2.hasError) {
+              return Text(snapshots.snapshot2.error.toString());
+            }
+            if (snapshots.snapshot3.hasError) {
+              return Text(snapshots.snapshot3.error.toString());
+            }
           }
           if (snapshots.snapshot1.connectionState == ConnectionState.waiting ||
-              snapshots.snapshot2.connectionState == ConnectionState.waiting) {
+              snapshots.snapshot2.connectionState == ConnectionState.waiting ||
+              snapshots.snapshot3.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -125,6 +137,23 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
           final childCycles = cycles.where(
             (cycle) => cycle.parent == widget.cycle.getId()
           ).toList();
+
+          final exercises = snapshots.snapshot3.data!.where(
+            (exercise) => exercise.isPlanned
+          ).toList();
+
+
+
+
+          //map the exercises to the sessions
+          for (var exercise in exercises){
+            for (var session in sessions){
+              if (session.trainingSessionExcercisesIds.contains(exercise.trainingExerciseID)){
+                session.trainingSessionExercises.add(exercise);
+              }
+            }
+          }
+
 
           Map<DateTime, List<dynamic>> sessionDateMap = generateSessionDateMap();
           for (var session in sessions) {
@@ -202,7 +231,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Implement add session functionality
+          
         },
         child: const Icon(Icons.add),
       ),

@@ -74,7 +74,7 @@ class Main extends StatelessWidget {
               ChangeNotifierProvider(
                   create: (context) => ExerciseFoundationProvider()),
               ChangeNotifierProvider(create: (context) => OverviewProvider()),
-              ChangeNotifierProvider(create: (context) => PlanningProvider()),
+              ChangeNotifierProvider(create: (context) => PlanningProvider(exerciseProvider: TrainingExerciseProvider())),
             ], child: const HomePage()),
       },
     );

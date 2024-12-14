@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/add_exercise_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExercise/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/workout_selection_view.dart';
 

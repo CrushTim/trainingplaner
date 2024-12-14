@@ -28,7 +28,7 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
   Widget build(BuildContext context) {
     TrainingCycleProvider trainingCycleProvider = Provider.of<TrainingCycleProvider>(context);
     PlanningProvider planningProvider = Provider.of<PlanningProvider>(context);
-    return GestureDetector(
+   return GestureDetector(
       onTap: () {
         if (widget.planningMode) {
           Navigator.push(
@@ -48,6 +48,7 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
                     create: (_) => OverviewProvider(),
                   ),
                   ChangeNotifierProvider.value(value: planningProvider),
+                  ChangeNotifierProvider.value(value: TrainingExerciseProvider()),
                 ],
                 child: CyclePlanningView(cycle: widget.trainingCycleBus),
               ),
