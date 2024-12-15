@@ -23,6 +23,10 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
     TrainingExerciseProvider trainingExerciseProvider = widget.addPlanned == false ? Provider.of<TrainingSessionProvider>(context).exerciseProvider : Provider.of<PlanningProvider>(context).exerciseProvider;
     var target = trainingExerciseProvider.getSelectedBusinessClass ?? trainingExerciseProvider.businessClassForAdd;
 
+    if(widget.addPlanned) {
+      target.isPlanned = true;
+    }
+
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -58,25 +62,26 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Generate a temporary local ID
                     String tempId = DateTime.now().millisecondsSinceEpoch.toString();
                     target.trainingExerciseID = tempId;
                     
                     // Add to provider's collections using the appropriate provider
                     if (widget.addPlanned) {
-                      Provider.of<PlanningProvider>(context, listen: false)
-                          .addTemporaryExercise(target);
+                      target = await Provider.of<PlanningProvider>(context, listen: false)
+                          .addTemporaryExercise(target, notify: false);
                     } else {
                       Provider.of<TrainingSessionProvider>(context, listen: false)
                           .addTemporaryExercise(target);
                     }
                     
                     // Close dialog
-                    Navigator.pop(context);
+                    if(context.mounted) {
+                      Navigator.pop(context, target);
+                    }
                     
                     // Clear form fields
-                    trainingExerciseProvider.resetBusinessClassForAdd();
                     trainingExerciseProvider.exerciseNameController.clear();
                     trainingExerciseProvider.exerciseDescriptionController.clear();
                     trainingExerciseProvider.targetPercentageController.clear();

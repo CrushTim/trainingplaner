@@ -167,17 +167,22 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
     }
   }
 
-  Future<void> addTemporaryExercise(TrainingExerciseBus exercise) async {
+  Future<TrainingExerciseBus> addTemporaryExercise(TrainingExerciseBus exercise, {bool notify = true}) async {
     if (_connectivityService.isConnected) {
       // Online - add directly to database
       final permanentId = await exerciseProvider.addBusinessClass(
         exercise,
         ScaffoldMessenger.of(navigatorKey.currentContext!),
       );
-      businessClassForAdd.trainingSessionExcercisesIds.add(permanentId);
-      businessClassForAdd.trainingSessionExercises.add(exercise);
+       getSelectedBusinessClass?.trainingSessionExcercisesIds.add(permanentId);
+      print(exercise);
+      exercise.trainingExerciseID = permanentId;
+      getSelectedBusinessClass?.trainingSessionExercises.add(exercise);
 
-      updateBusinessClass(businessClassForAdd, ScaffoldMessenger.of(navigatorKey.currentContext!));
+      if(getSelectedBusinessClass != null) {
+      updateBusinessClass(getSelectedBusinessClass!, ScaffoldMessenger.of(navigatorKey.currentContext!), notify: notify);
+      }
+    
     } else {
       // Offline - add to temporary storage
       TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
@@ -192,12 +197,15 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
         targetPercentageOf1RM: exercise.targetPercentageOf1RM,
       );
 
-      businessClassForAdd.trainingSessionExcercisesIds.add(exerciseCopy.trainingExerciseID);
-      businessClassForAdd.trainingSessionExercises.add(exerciseCopy);
+      getSelectedBusinessClass?.trainingSessionExcercisesIds.add(exerciseCopy.trainingExerciseID);
+      getSelectedBusinessClass?.trainingSessionExercises.add(exerciseCopy);
+      exercise = exerciseCopy;
       tempExercises.add(exerciseCopy);
     }
-    
-    notifyListeners();
+    if(notify) {
+      notifyListeners();
+    }
+    return exercise;
   }
 
   

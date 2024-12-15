@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExercise/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
@@ -67,9 +68,19 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(onPressed: () {
-              //TODO: add addexercisedialog 
-              showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields(addPlanned: true)));
-              
+              showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields(addPlanned: true))).then((value) {
+                if(value != null) {
+                  print("value in add planning session dialog: ${value.getName()}");
+                  List<TrainingExerciseBus> exercises = List.from( provider.getSelectedBusinessClass!.trainingSessionExercises);
+                  exercises.add(value);
+                  setState(() {
+                    provider.getSelectedBusinessClass!.trainingSessionExercises.add(value);
+                    print("exercises in add planning session dialog: ${exercises.length}");
+                    print(provider.getSelectedBusinessClass!.trainingSessionExercises.last.getName());
+                  });
+                }
+                provider.exerciseProvider.resetBusinessClassForAdd();
+              });
             }, child: const Text("Add Exercise")),
             provider.getSelectedBusinessClass != null ?
             Column(

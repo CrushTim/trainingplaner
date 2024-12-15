@@ -4,6 +4,8 @@ CRNT
                 -> check what id is used when adding exercise
                     -> check if the planned session is updated
 
+        -> it adds but doubles on setstate and doesnt show the name somehow
+
 
 move the logic from the cycle planning view to the add planning provider
 

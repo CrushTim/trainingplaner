@@ -144,7 +144,6 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
 
 
 
-
           //map the exercises to the sessions
           for (var exercise in exercises){
             for (var session in sessions){
