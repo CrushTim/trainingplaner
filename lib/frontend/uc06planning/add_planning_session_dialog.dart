@@ -68,17 +68,10 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(onPressed: () {
-              showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields(addPlanned: true))).then((value) {
-                if(value != null) {
-                  print("value in add planning session dialog: ${value.getName()}");
-                  List<TrainingExerciseBus> exercises = List.from( provider.getSelectedBusinessClass!.trainingSessionExercises);
-                  exercises.add(value);
-                  setState(() {
-                    provider.getSelectedBusinessClass!.trainingSessionExercises.add(value);
-                    print("exercises in add planning session dialog: ${exercises.length}");
-                    print(provider.getSelectedBusinessClass!.trainingSessionExercises.last.getName());
-                  });
-                }
+              showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields(addPlanned: true)),).then((value) {
+                
+                setState(() {
+                });
                 provider.exerciseProvider.resetBusinessClassForAdd();
               });
             }, child: const Text("Add Exercise")),
@@ -86,7 +79,11 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
             Column(
               children: List.generate(
                 provider.getSelectedBusinessClass!.trainingSessionExercises.length,
-                (index) => Text(provider.getSelectedBusinessClass!.trainingSessionExercises[index].getName()),
+                (index) {
+                  //TODO: add Exercise in AddPlanningListTile 
+                  final name = provider.getSelectedBusinessClass!.trainingSessionExercises[index].getName();
+                  return Text(name);
+                },
               ),
             )
             : Container(),

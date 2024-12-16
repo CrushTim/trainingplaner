@@ -1,11 +1,7 @@
 CRNT 
-        when add dialog -> doesnt add to the exercises  
-            -> check if it adds at all or if it has no id
-                -> check what id is used when adding exercise
-                    -> check if the planned session is updated
 
-        -> it adds but doubles on setstate and doesnt show the name somehow
 
+make list tile for add planning session execise
 
 move the logic from the cycle planning view to the add planning provider
 

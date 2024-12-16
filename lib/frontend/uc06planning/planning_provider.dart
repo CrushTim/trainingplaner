@@ -175,9 +175,20 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
         ScaffoldMessenger.of(navigatorKey.currentContext!),
       );
        getSelectedBusinessClass?.trainingSessionExcercisesIds.add(permanentId);
-      print(exercise);
+      print("in add temporary exercise: ${exercise.getName()}");
       exercise.trainingExerciseID = permanentId;
-      getSelectedBusinessClass?.trainingSessionExercises.add(exercise);
+      TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
+        trainingExerciseID: permanentId,
+        exerciseName: exercise.exerciseName,
+        exerciseDescription: exercise.exerciseDescription,
+        exerciseFoundationID: exercise.exerciseFoundationID,
+        exerciseReps: List.from(exercise.exerciseReps),
+        exerciseWeights: List.from(exercise.exerciseWeights),
+        date: exercise.date,
+        isPlanned: true,
+        targetPercentageOf1RM: exercise.targetPercentageOf1RM,
+      );
+      getSelectedBusinessClass?.trainingSessionExercises.add(exerciseCopy);
 
       if(getSelectedBusinessClass != null) {
       updateBusinessClass(getSelectedBusinessClass!, ScaffoldMessenger.of(navigatorKey.currentContext!), notify: notify);

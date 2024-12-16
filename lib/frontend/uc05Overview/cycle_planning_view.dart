@@ -143,6 +143,7 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
           ).toList();
 
 
+          planningProvider.getSelectedBusinessClass?.trainingSessionExercises.clear();
 
           //map the exercises to the sessions
           for (var exercise in exercises){

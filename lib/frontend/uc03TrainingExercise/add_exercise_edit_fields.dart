@@ -69,7 +69,7 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                     
                     // Add to provider's collections using the appropriate provider
                     if (widget.addPlanned) {
-                      target = await Provider.of<PlanningProvider>(context, listen: false)
+                      await Provider.of<PlanningProvider>(context, listen: false)
                           .addTemporaryExercise(target, notify: false);
                     } else {
                       Provider.of<TrainingSessionProvider>(context, listen: false)
@@ -78,7 +78,7 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                     
                     // Close dialog
                     if(context.mounted) {
-                      Navigator.pop(context, target);
+                      Navigator.pop(context);
                     }
                     
                     // Clear form fields
