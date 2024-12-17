@@ -1,7 +1,11 @@
 CRNT 
 
 
-make list tile for add planning session execise
+setstate stuff in exercise makes view beneath redraw
+
+make work with when selected is null
+    ->adding exerdcise to planning session
+    -> updating the exercise via the addplanning exercise tile
 
 move the logic from the cycle planning view to the add planning provider
 
