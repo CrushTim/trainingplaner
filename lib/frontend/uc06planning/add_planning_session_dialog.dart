@@ -90,7 +90,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                         ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
                         provider.exerciseProvider.updateBusinessClass(updatedExercise, scaffoldMessenger);
                         if(provider.getSelectedBusinessClass != null){
-                          provider.updateSelectedBusinessClass(scaffoldMessenger);
+                          provider.updateSelectedBusinessClass(scaffoldMessenger, notify: false);
                         } 
                       },
                       onDelete: (exercise) {
@@ -102,7 +102,24 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                   },
                 ),
               )
-              : Container(),
+              : Column(
+                children: List.generate(
+                  provider.businessClassForAdd.trainingSessionExercises.length,
+                  (index) {
+                    final exercise = provider.businessClassForAdd.trainingSessionExercises[index];
+                    return AddPlanningExerciseTile(
+                      exercise: exercise,
+                      onUpdate: (updatedExercise) {
+                      },
+                      onDelete: (exercise) {
+                        setState(() {
+                          provider.businessClassForAdd.trainingSessionExercises.removeAt(index);
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -117,6 +134,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                       } else {
                         provider.businessClassForAdd.trainingCycleId = widget.cycleId;
                       }
+                      print("saving session - ${provider.businessClassForAdd.trainingSessionExcercisesIds}");
                       provider.saveSession(context);
                     },
                     child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),

@@ -1,12 +1,4 @@
 CRNT 
-
-
-setstate stuff in exercise makes view beneath redraw
-
-make work with when selected is null
-    ->adding exerdcise to planning session
-    -> updating the exercise via the addplanning exercise tile
-
 move the logic from the cycle planning view to the add planning provider
 
 
@@ -43,3 +35,17 @@ BUG:
     
 code dept:
     -> test of return value of add in trainingsplaner provider (tried to do it, expected "", but got dummy stuff returned)
+
+
+
+
+
+
+
+Front End ideas:
+
+    On adding 
+        -planned session -> expand the container into the dialog or expand the container and fill with edit fields 
+
+    workout view:
+        -execise tile: on expand expand the bottom part and keep the top part 

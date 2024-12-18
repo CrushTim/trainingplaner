@@ -154,6 +154,8 @@ class _CyclePlanningViewState extends State<CyclePlanningView> {
             }
           }
 
+          
+
 
           Map<DateTime, List<dynamic>> sessionDateMap = generateSessionDateMap();
           for (var session in sessions) {
