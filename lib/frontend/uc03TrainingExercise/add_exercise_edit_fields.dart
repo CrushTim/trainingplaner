@@ -63,10 +63,6 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    // Generate a temporary local ID
-                    String tempId = DateTime.now().millisecondsSinceEpoch.toString();
-                    target.trainingExerciseID = tempId;
-                    
                     // Add to provider's collections using the appropriate provider
                     if (widget.addPlanned) {
                       await Provider.of<PlanningProvider>(context, listen: false)

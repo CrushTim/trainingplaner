@@ -1,15 +1,9 @@
 CRNT 
-move the logic from the cycle planning view to the add planning provider
 
+    -make sure the exercises get deleted if the for add session is not added 
+    -make sure the exercises get removed if the session is not added
 
-
-    when offline
-        -> enable persistend updates on the exercises - make offline handling for every object (sessions, exercises exist in sessionprovider);
-            -> safe sessions in provider
-                make exercise changes  with update of session in a transaction, not update the selected session
-            ->safe the notes changes
-            ->safe the 1rm changes
-        
+     
 
     cycle planning view:
     -> add planning of exercises in a "workout view" as a dialog
@@ -24,6 +18,14 @@ move the logic from the cycle planning view to the add planning provider
 
     
     -the fucking exercise foundation performance is horrible 
+
+    when offline
+        -> enable persistend updates on the exercises - make offline handling for every object (sessions, exercises exist in sessionprovider);
+            -> safe sessions in provider
+                make exercise changes  with update of session in a transaction, not update the selected session
+            ->safe the notes changes
+            ->safe the 1rm changes
+       
 
     TEST everything
 

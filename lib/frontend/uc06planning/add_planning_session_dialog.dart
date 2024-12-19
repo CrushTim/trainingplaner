@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExercise/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
@@ -134,7 +133,6 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                       } else {
                         provider.businessClassForAdd.trainingCycleId = widget.cycleId;
                       }
-                      print("saving session - ${provider.businessClassForAdd.trainingSessionExcercisesIds}");
                       provider.saveSession(context);
                     },
                     child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),
