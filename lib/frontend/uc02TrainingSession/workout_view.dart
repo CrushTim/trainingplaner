@@ -71,21 +71,6 @@ class _WorkoutViewState extends State<WorkoutView> {
                           .updateSessionInDatabase(ScaffoldMessenger.of(context));
                     }),
               ),
-              Expanded(
-                child: ElevatedButton(
-                    child: const Text("Finish Workout"),
-                    onPressed: () {
-                      //TODO: implement provider finish of selected workout (save diary entry and move selected workout to the next workout);
-                      sessionProvider.businessClassForAdd.trainingSessionName = "NEW WORKOUT";
-                      sessionProvider.businessClassForAdd.trainingSessionDescription = "NEW WORKOUT DESCRIPTION";
-                      sessionProvider.businessClassForAdd.isPlanned = false;
-                      sessionProvider.businessClassForAdd.plannedSessionId = null;
-                      sessionProvider.businessClassForAdd.trainingSessionEmphasis = ["Hyperthrophy"];
-                      sessionProvider.businessClassForAdd.trainingSessionLength = 90;
-                      sessionProvider.businessClassForAdd.trainingSessionStartDate = DateTime.now();
-                      sessionProvider.addBusinessClass(sessionProvider.getBusinessClassForAdd, ScaffoldMessenger.of(context));
-                    }),
-              ),
             ],
           )
         ],

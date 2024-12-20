@@ -581,8 +581,8 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  void handleSessionFieldChangeForPlanned(String field, String value) {
-    final target = getSelectedBusinessClass ?? businessClassForAdd;
+  void handleSessionFieldChangeForAdd(String field, String value) {
+    final target =  businessClassForAdd;
     switch (field) {
       case 'name':
         target.trainingSessionName = value;
@@ -595,6 +595,12 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         break;
       case 'length':
         target.trainingSessionLength = int.tryParse(value) ?? 60;
+        break;
+      case 'cycle':
+        target.trainingCycleId = value;
+        break;
+      case 'date':
+        target.trainingSessionStartDate = DateTime.parse(value);
         break;
     }
   }

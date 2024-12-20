@@ -121,6 +121,7 @@ class OverviewProvider extends ChangeNotifier {
         Map<DateTime, List<dynamic>> sessionDateMap = generateSessionDateMap();
         populateSessionDateMap(sessionDateMap, sessions);
         Map<int, List<DateTime>> weekMap = mapSessionsToWeeks(sessionDateMap);
+        sessionProvider.allCycles = cycles;
 
         return ListView(
           children: List.generate(weekMap.length, (index) {

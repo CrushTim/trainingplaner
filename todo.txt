@@ -6,7 +6,6 @@ CRNT
      
 
     cycle planning view:
-    -> add planning of exercises in a "workout view" as a dialog
         -> copy all planned exercises and insert the ids into the new session, then insert the new session (can also just update the session)
     -> add the change in intensity functionality -> apply change in %of1rmto all exercises in the week
             -> ask for changes in set x reps (eg change from 4x6 at 80% to 5x4 at 90%)
@@ -39,6 +38,13 @@ code dept:
     -> test of return value of add in trainingsplaner provider (tried to do it, expected "", but got dummy stuff returned)
 
 
+    the text fields in add_session_dialog and workout view make them a widget 
+          -> the date picker in doesnt update the date in the controller
+
+
+
+
+
 
 
 
@@ -51,3 +57,4 @@ Front End ideas:
 
     workout view:
         -execise tile: on expand expand the bottom part and keep the top part 
+
