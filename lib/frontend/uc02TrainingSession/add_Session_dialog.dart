@@ -11,6 +11,8 @@ class AddWorkoutDialog extends StatefulWidget {
 }
 
 class _AddWorkoutDialogState extends State<AddWorkoutDialog> {
+
+  TextEditingController startDateController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -18,13 +20,16 @@ class _AddWorkoutDialogState extends State<AddWorkoutDialog> {
     Provider.of<TrainingSessionProvider>(context, listen: false)
       ..resetBusinessClassForAdd()
       ..resetSessionControllers();
+      startDateController.text = DateTime.now().toString();
+
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TrainingSessionProvider>(context);
+    
 
-    DateTime startDate = DateTime.now();
+    DateTime startDate = provider.selectedSessionDate;
     return Dialog(
       child: SingleChildScrollView(
         child: Padding(
@@ -79,10 +84,13 @@ class _AddWorkoutDialogState extends State<AddWorkoutDialog> {
          DatePickerSheer(
           initialDateTime: startDate,
           onDateTimeChanged: (DateTime newDateTime) {
-            startDate = newDateTime;
-            provider.handleSessionFieldChangeForAdd('date', newDateTime.toString());
+            setState(() {
+              startDate = newDateTime;
+              provider.selectedSessionDate = newDateTime;
+              startDateController.text = startDate.toString();
+            });
           },
-          dateController: TextEditingController(text: startDate.toString()),
+          dateController: startDateController,
         ),
 
 

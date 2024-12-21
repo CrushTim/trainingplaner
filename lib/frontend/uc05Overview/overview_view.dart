@@ -5,7 +5,6 @@ import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_overvie
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/add_Session_dialog.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/workout_view.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_view.dart';

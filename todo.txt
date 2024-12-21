@@ -39,7 +39,6 @@ code dept:
 
 
     the text fields in add_session_dialog and workout view make them a widget 
-          -> the date picker in doesnt update the date in the controller
 
 
 
