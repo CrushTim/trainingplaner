@@ -10,7 +10,7 @@ import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_list_tile.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc06planning/cycle_edit_column.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_day_field_calendar.dart';
@@ -285,7 +285,7 @@ class TrainingCycleProvider
   }
 
 
-  StreamBuilder3 getPlanningStreamBuilder(TrainingSessionProvider sessionProvider, TrainingExerciseProvider exerciseProvider, TrainingCycleBus cycle, PlanningProvider planningProvider) {
+  StreamBuilder3 getPlanningStreamBuilder(TrainingSessionProvider sessionProvider, TrainingExerciseProvider exerciseProvider, PlanningProvider planningProvider) {
     return StreamBuilder3(
         streams: StreamTuple3(
           sessionProvider.reportTaskVar.getAll(),
@@ -311,16 +311,16 @@ class TrainingCycleProvider
           }
 
           final sessions = snapshots.snapshot1.data!.where(
-            (session) => session.trainingCycleId == cycle.getId()
+            (session) => session.trainingCycleId == getSelectedBusinessClass!.getId()
           ).toList();
 
           final cycles = snapshots.snapshot2.data!;
           final childCycles = cycles.where(
-            (cycle) => cycle.parent == cycle.getId()
+            (cycle) => cycle.parent == getSelectedBusinessClass!.getId()
           ).toList();
 
           final exercises = snapshots.snapshot3.data!.where(
-            (exercise) => exercise.isPlanned
+            (TrainingExerciseBus exercise) => exercise.isPlanned
           ).toList();
 
 
@@ -365,7 +365,7 @@ class TrainingCycleProvider
                                     value: planningProvider,
                                     child: AddPlanningSessionDialog(
                                     initialDate: date,
-                                    cycleId: cycle.getId(),
+                                    cycleId: getSelectedBusinessClass!.getId(),
                                     ),
                                   );
                                 },

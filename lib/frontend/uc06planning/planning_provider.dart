@@ -3,7 +3,7 @@ import 'package:trainingplaner/business/businessClasses/training_exercise_bus.da
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
-import 'package:trainingplaner/frontend/uc03TrainingExercise/training_exercise_provider.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
 import 'package:trainingplaner/main.dart';
 import 'package:trainingplaner/services/connectivity_service.dart';
 
@@ -49,7 +49,6 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
       sessionDescriptionController.clear();
       sessionEmphasisController.clear();
       sessionLengthController.text = "60";
-      print(selectedSessionDate);
       businessClassForAdd.trainingSessionStartDate = selectedSessionDate;
     }
   }

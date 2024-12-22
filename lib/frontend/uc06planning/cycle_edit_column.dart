@@ -59,6 +59,7 @@ class CycleEditColumn extends StatelessWidget {
               ),
               PopupMenuItem(
                 value: 'insertWeek',
+                enabled: planningProvider.copiedSessions.isNotEmpty,
                 child: const Text(
                   'Insert Week',
                   
@@ -68,6 +69,7 @@ class CycleEditColumn extends StatelessWidget {
                     copiedWeek,
                     ScaffoldMessenger.of(context),
                   );
+                  planningProvider.copiedSessions.clear();
                 },
               ),
             ],
