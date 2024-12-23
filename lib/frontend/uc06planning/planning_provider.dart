@@ -212,5 +212,82 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
     }
   }
 
-  
+  Future<void> adjustWeekExercisesParameters(
+    List<TrainingSessionBus> sessions,
+    int percentageChange,
+    int setChange,
+    int repChange,
+    ScaffoldMessengerState scaffoldMessenger,
+  ) async {
+    List<TrainingExerciseBus> exercisesToUpdate = [];
+    
+    // Collect all exercises from all sessions
+    for (var session in sessions) {
+      exercisesToUpdate.addAll(session.trainingSessionExercises);
+    }
+
+    // Apply changes to each exercise
+    for (var exercise in exercisesToUpdate) {
+      // Apply percentage change if provided
+      if (percentageChange != 0) {
+        int newPercentage = exercise.targetPercentageOf1RM + percentageChange;
+        exercise.targetPercentageOf1RM = newPercentage.clamp(0, 100);
+      }
+
+      // Apply set changes if provided
+      if (setChange != 0) {
+        if (setChange > 0) {
+          // Add sets
+          for (int i = 0; i < setChange; i++) {
+            // Default to 1 rep if no existing sets
+            int defaultReps = exercise.exerciseReps.isEmpty ? 1 : exercise.exerciseReps.last;
+            exercise.exerciseReps.add(defaultReps);
+            
+            // Default to 0 weight or copy last weight
+            double defaultWeight = exercise.exerciseWeights.isEmpty ? 0 : exercise.exerciseWeights.last;
+            exercise.exerciseWeights.add(defaultWeight);
+          }
+        } else {
+          // Remove sets (ensure at least one set remains)
+          int setsToRemove = setChange.abs();
+          int minSets = 1;
+          while (setsToRemove > 0 && exercise.exerciseReps.length > minSets) {
+            exercise.exerciseReps.removeLast();
+            exercise.exerciseWeights.removeLast();
+            setsToRemove--;
+          }
+        }
+      }
+
+      // Apply rep changes if provided
+      if (repChange != 0) {
+        for (int i = 0; i < exercise.exerciseReps.length; i++) {
+          int newReps = exercise.exerciseReps[i] + repChange;
+          exercise.exerciseReps[i] = newReps > 0 ? newReps : 1; // Ensure reps don't go below 1
+        }
+      }
+    }
+
+    try {
+      // Update all modified exercises
+      await exerciseProvider.updateExercises(
+        exercisesToUpdate,
+        scaffoldMessenger,
+        notify: false,
+      );
+
+      // Update all affected sessions
+      for (var session in sessions) {
+        await updateBusinessClass(session, scaffoldMessenger, notify: false);
+      }
+
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(content: Text('Training parameters updated successfully')),
+      );
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text('Error updating training parameters: ${e.toString()}')),
+      );
+    }
+  }
 } 

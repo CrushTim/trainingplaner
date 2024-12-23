@@ -107,8 +107,16 @@ class _AddPlanningExerciseTileState extends State<AddPlanningExerciseTile> {
               )
             : ListTile(
                 title: Text(widget.exercise.exerciseName),
-                subtitle: Text(
-                  "${widget.exercise.exerciseReps.join('x')} reps @ ${widget.exercise.exerciseWeights.join(', ')}kg",
+                subtitle: Column(
+                  children: [
+                    for (int i = 0; i < widget.exercise.exerciseReps.length; i++)
+                      Text(
+                        "${widget.exercise.exerciseReps[i]}x${widget.exercise.exerciseWeights[i]}kg",
+                      ),
+                    Text(
+                      "${widget.exercise.targetPercentageOf1RM}%",
+                    ),
+                  ],
                 ),
                 trailing: IconButton(
                   icon: const Icon(Icons.arrow_drop_down),

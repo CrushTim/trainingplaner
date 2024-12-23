@@ -3,12 +3,13 @@ CRNT
     -make sure the exercises get deleted if the for add session is not added 
     -make sure the exercises get removed if the session is not added
 
-     
+     - add percentage duplicates the exercises in the session in the frontend 
+
+     -copy of exercise -> copy the exercise and not the id, currently it points to the same object
 
     cycle planning view:
         -> copy all planned exercises and insert the ids into the new session, then insert the new session (can also just update the session)
-    -> add the change in intensity functionality -> apply change in %of1rmto all exercises in the week
-            -> ask for changes in set x reps (eg change from 4x6 at 80% to 5x4 at 90%)
+   
     -> add deload functionality -> apply half of reps for all exercises in the week
 
 
