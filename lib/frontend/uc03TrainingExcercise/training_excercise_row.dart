@@ -67,10 +67,12 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                         child: IconButton(
                             onPressed: () {
                               actualExercise!.exerciseReps.add(0);
-                              if(actualExercise.exerciseWeights.length > 1){
+                              if(actualExercise.exerciseWeights.isNotEmpty){
                                 actualExercise.exerciseWeights.add(actualExercise.exerciseWeights[actualExercise.exerciseWeights.length - 1]);
+                                actualExercise.exerciseReps.add(actualExercise.exerciseReps[actualExercise.exerciseReps.length - 1]);
                               }else{
                                 actualExercise.exerciseWeights.add(0);
+                                actualExercise.exerciseReps.add(0);
                               }
                               setState(
                                 () {},

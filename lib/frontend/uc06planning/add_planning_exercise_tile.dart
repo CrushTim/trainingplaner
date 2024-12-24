@@ -87,8 +87,10 @@ class _AddPlanningExerciseTileState extends State<AddPlanningExerciseTile> {
                                 widget.exercise.exerciseWeights[
                                   widget.exercise.exerciseWeights.length - 1],
                               );
+                              widget.exercise.exerciseReps.add(widget.exercise.exerciseReps[widget.exercise.exerciseReps.length - 1]);
                             } else {
                               widget.exercise.exerciseWeights.add(0);
+                              widget.exercise.exerciseReps.add(1);
                             }
                             setState(() {});
                           },
