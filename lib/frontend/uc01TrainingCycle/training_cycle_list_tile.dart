@@ -27,7 +27,10 @@ class _TrainingCycleListTileState extends State<TrainingCycleListTile> {
   @override
   Widget build(BuildContext context) {
     TrainingCycleProvider trainingCycleProvider = Provider.of<TrainingCycleProvider>(context);
-    PlanningProvider planningProvider = Provider.of<PlanningProvider>(context);
+    PlanningProvider? planningProvider;
+    if(widget.planningMode){
+       planningProvider = Provider.of<PlanningProvider>(context);
+    }
    return GestureDetector(
       onTap: () {
         if (widget.planningMode) {

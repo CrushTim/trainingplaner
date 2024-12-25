@@ -125,4 +125,60 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
     }
   }
 
+  Future<List<String>> createExerciseCopies(List<TrainingExerciseBus> exercises, ScaffoldMessengerState scaffoldMessenger) async {
+    List<String> newExerciseIds = [];
+    String message = "Exercises copied successfully";
+
+    try {
+      for (var exercise in exercises) {
+        // Create a new exercise with copied properties but empty ID
+        TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
+          trainingExerciseID: "",
+          exerciseName: exercise.exerciseName,
+          exerciseDescription: exercise.exerciseDescription,
+          exerciseFoundationID: exercise.exerciseFoundationID,
+          exerciseReps: List<int>.from(exercise.exerciseReps),
+          exerciseWeights: List<double>.from(exercise.exerciseWeights),
+          date: exercise.date,
+          isPlanned: exercise.isPlanned,
+          targetPercentageOf1RM: exercise.targetPercentageOf1RM,
+        );
+
+        // Add the copy to database and get new ID
+        String newId = await addBusinessClass(exerciseCopy, scaffoldMessenger, notify: false);
+        newExerciseIds.add(newId);
+      }
+    } catch (e) {
+      message = "Error copying exercises: ${e.toString()}";
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+      rethrow;
+    }
+
+    return newExerciseIds;
+  }
+
+  Future<void> replaceSessionExerciseIds(
+    TrainingSessionBus session,
+    List<String> newExerciseIds,
+    ScaffoldMessengerState scaffoldMessenger
+  ) async {
+    try {
+      // Replace the exercise IDs in the session
+      session.trainingSessionExcercisesIds = newExerciseIds;
+      
+      // Clear the exercises list as it will be repopulated when the session is loaded
+      session.trainingSessionExercises.clear();
+      
+      // Update the session in the database
+      await session.update();
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text("Error updating session with new exercise IDs: ${e.toString()}")),
+      );
+      rethrow;
+    }
+  }
+
 } 

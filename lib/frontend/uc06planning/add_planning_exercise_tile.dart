@@ -61,6 +61,7 @@ class _AddPlanningExerciseTileState extends State<AddPlanningExerciseTile> {
                     ),
                   ),
                   for (int i = 0; i < widget.exercise.exerciseReps.length; i++)
+                    
                     RepsWeightsRow(
                       reps: widget.exercise.exerciseReps[i],
                       weight: widget.exercise.exerciseWeights[i],
@@ -81,7 +82,6 @@ class _AddPlanningExerciseTileState extends State<AddPlanningExerciseTile> {
                       Expanded(
                         child: IconButton(
                           onPressed: () {
-                            widget.exercise.exerciseReps.add(0);
                             if (widget.exercise.exerciseWeights.isNotEmpty) {
                               widget.exercise.exerciseWeights.add(
                                 widget.exercise.exerciseWeights[
@@ -90,7 +90,7 @@ class _AddPlanningExerciseTileState extends State<AddPlanningExerciseTile> {
                               widget.exercise.exerciseReps.add(widget.exercise.exerciseReps[widget.exercise.exerciseReps.length - 1]);
                             } else {
                               widget.exercise.exerciseWeights.add(0);
-                              widget.exercise.exerciseReps.add(1);
+                              widget.exercise.exerciseReps.add(0);
                             }
                             setState(() {});
                           },

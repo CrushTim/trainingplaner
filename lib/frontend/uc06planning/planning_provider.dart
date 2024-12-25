@@ -122,6 +122,13 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
     DateTime newDate,
     ScaffoldMessengerState scaffoldMessengerState,
   ) async {
+    print(plannedSession.trainingSessionExercises);
+    List<String> newExerciseIds = await exerciseProvider.createExerciseCopies(
+        plannedSession.trainingSessionExercises,
+        scaffoldMessengerState
+      );
+
+
     final newSession = TrainingSessionBus(
       trainingSessionId: "",
       trainingSessionName: plannedSession.trainingSessionName,
@@ -134,7 +141,7 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
         plannedSession.trainingSessionStartDate.minute,
       ),
       trainingSessionLength: plannedSession.trainingSessionLength,
-      trainingSessionExcercisesIds: List.from(plannedSession.trainingSessionExcercisesIds),
+      trainingSessionExcercisesIds: newExerciseIds,
       trainingSessionEmphasis: List.from(plannedSession.trainingSessionEmphasis),
       isPlanned: true,
       trainingCycleId: plannedSession.trainingCycleId,
@@ -290,4 +297,6 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
       );
     }
   }
+
+ 
 } 
