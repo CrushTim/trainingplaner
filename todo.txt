@@ -1,15 +1,8 @@
 CRNT 
 
-    -make sure the exercises get deleted if the for add session is not added 
-    -make sure the exercises get removed if the session is not added
+    -TEST THIS IF THIS WORKS make sure the exercises get deleted if the for add session is not added 
 
-     - add percentage duplicates the exercises in the session in the frontend 
 
-     -copy of exercise -> copy the exercise and not the id, currently it points to the same object (only in dragging )
-
-    cycle planning view:
-        -> copy all planned exercises and insert the ids into the new session, then insert the new session (can also just update the session)
-   
     -> add deload functionality -> apply half of reps for all exercises in the week
 
 

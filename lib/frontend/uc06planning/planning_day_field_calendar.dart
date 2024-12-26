@@ -54,7 +54,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
           final plannedSession = data['plannedSession'];
           
           try {
-            await trainingSessionProvider.copySessionToDate(
+            await planningProvider.copySessionToDate(
               plannedSession,
               date,
               ScaffoldMessenger.of(context),
@@ -97,23 +97,38 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                 items: [
                                   PopupMenuItem(
                                     child: const Text('Edit'),
-                                    onTap: () {
+                                    onTap: () async {
                                       planningProvider.selectedSessionDate = date;
                                       planningProvider.setSelectedBusinessClass(session, notify: false);
-                                      showDialog(
-                                          context: context,
+                                      
+                                      // Capture context before async gap
+                                      final BuildContext dialogContext = context;
+                                      
+                                      await showDialog(
+                                        context: dialogContext,
                                         builder: (context) => ChangeNotifierProvider.value(
                                           value: planningProvider,
                                           child: AddPlanningSessionDialog(
                                             initialDate: date,
-                                              cycleId: session.trainingCycleId,
-                                            ),
+                                            cycleId: session.trainingCycleId,
                                           ),
-                                          ).then((_) {
-                                            // Reset everything after dialog closes
-                                            planningProvider.resetSelectedBusinessClass();
-                                            planningProvider.resetSessionControllers();
-                                          });
+                                        ),
+                                      );
+
+                                      // Use captured context after async gap
+                                      if (dialogContext.mounted) {
+                                        for (var exercise in planningProvider.exercisesToDeleteIfSessionAddIsCancelled) {
+                                          trainingSessionProvider.exerciseProvider.deleteBusinessClass(
+                                            exercise, 
+                                            ScaffoldMessenger.of(dialogContext), 
+                                            notify: false
+                                          );
+                                        }
+                                      }
+
+                                      // Reset everything after dialog closes
+                                      planningProvider.resetSelectedBusinessClass();
+                                      planningProvider.resetSessionControllers();
                                     },
                                   ),
                                   PopupMenuItem(

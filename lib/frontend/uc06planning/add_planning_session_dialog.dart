@@ -32,6 +32,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
   Widget build(BuildContext context) {
     final provider = Provider.of<PlanningProvider>(context);
 
+
     return Dialog(
       child: ListView(
         children: [
@@ -71,7 +72,9 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
               const SizedBox(height: 16),
               ElevatedButton(onPressed: () {
                 showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields(addPlanned: true)),).then((value) {
-                  
+                  if (value != null) {
+                    provider.exercisesToDeleteIfSessionAddIsCancelled.add(value);
+                  }
                   setState(() {
                   });
                   provider.exerciseProvider.resetBusinessClassForAdd();

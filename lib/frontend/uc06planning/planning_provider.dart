@@ -21,6 +21,8 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
   List<TrainingExerciseBus> tempExercises = [];
   late TrainingExerciseProvider exerciseProvider;
 
+  List<TrainingExerciseBus> exercisesToDeleteIfSessionAddIsCancelled = [];
+
   PlanningProvider({required this.exerciseProvider}) : super(
     businessClassForAdd: TrainingSessionBus(
       trainingSessionId: "",
@@ -172,7 +174,7 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
     }
   }
 
-  Future<void> addTemporaryExercise(TrainingExerciseBus exercise, {bool notify = true}) async {
+  Future<TrainingExerciseBus?> addTemporaryExercise(TrainingExerciseBus exercise, {bool notify = true}) async {
     TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
         trainingExerciseID: 'temp_${DateTime.now().millisecondsSinceEpoch}',
         exerciseName: exercise.exerciseName,
@@ -217,6 +219,8 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
     if(notify) {
       notifyListeners();
     }
+
+    return exerciseCopy;
   }
 
   Future<void> adjustWeekExercisesParameters(

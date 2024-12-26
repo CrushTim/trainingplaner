@@ -530,40 +530,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
-  
-
-  Future<void> copySessionToDate(
-    TrainingSessionBus plannedSession,
-    DateTime newDate,
-    ScaffoldMessengerState scaffoldMessengerState,
-  ) async {
-    final newSession = TrainingSessionBus(
-      trainingSessionId: "",
-      trainingSessionName: plannedSession.trainingSessionName,
-      trainingSessionDescription: plannedSession.trainingSessionDescription,
-      trainingSessionStartDate: DateTime(
-        newDate.year,
-        newDate.month,
-        newDate.day,
-        plannedSession.trainingSessionStartDate.hour,
-        plannedSession.trainingSessionStartDate.minute,
-      ),
-      trainingSessionLength: plannedSession.trainingSessionLength,
-      trainingSessionExcercisesIds: List.from(plannedSession.trainingSessionExcercisesIds),
-      trainingSessionEmphasis: List.from(plannedSession.trainingSessionEmphasis),
-      isPlanned: true,
-      trainingCycleId: plannedSession.trainingCycleId,
-    );
-
-    try {
-      await addBusinessClass(newSession, scaffoldMessengerState, notify: false);
-    } catch (e) {
-      scaffoldMessengerState.showSnackBar(
-        SnackBar(content: Text('Error copying session: ${e.toString()}')),
-      );
-    }
-  }
-
   void initControllersForPlanningView() {
     final target = getSelectedBusinessClass;
     if (target != null) {
@@ -646,7 +612,18 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   }
 
-  Future<void> addTemporaryExercise(TrainingExerciseBus exercise) async {
+  Future<TrainingExerciseBus?> addTemporaryExercise(TrainingExerciseBus exercise) async {
+TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
+        trainingExerciseID: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+        exerciseName: exercise.exerciseName,
+        exerciseDescription: exercise.exerciseDescription,
+        exerciseFoundationID: exercise.exerciseFoundationID,
+        exerciseReps: List.from(exercise.exerciseReps),
+        exerciseWeights: List.from(exercise.exerciseWeights),
+        date: exercise.date,
+        isPlanned: false,
+        targetPercentageOf1RM: exercise.targetPercentageOf1RM,
+      );
     if (_connectivityService.isConnected) {
       ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(const SnackBar(content: Text('Online')));
       // Online - add directly to database
@@ -661,17 +638,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     } else {
       ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(const SnackBar(content: Text('Offline - only The Last Session with its exercises will be saved')));
       // Offline - add to temporary storage
-      TrainingExerciseBus exerciseCopy = TrainingExerciseBus(
-        trainingExerciseID: 'temp_${DateTime.now().millisecondsSinceEpoch}',
-        exerciseName: exercise.exerciseName,
-        exerciseDescription: exercise.exerciseDescription,
-        exerciseFoundationID: exercise.exerciseFoundationID,
-        exerciseReps: List.from(exercise.exerciseReps),
-        exerciseWeights: List.from(exercise.exerciseWeights),
-        date: exercise.date,
-        isPlanned: false,
-        targetPercentageOf1RM: exercise.targetPercentageOf1RM,
-      );
+      
 
       selectedActualSession?.trainingSessionExcercisesIds.add(exerciseCopy.trainingExerciseID);
       selectedActualSession?.trainingSessionExercises.add(exerciseCopy);
@@ -681,6 +648,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
     
       notifyListeners();
+      return exerciseCopy;
   }
 
   Future<void> _syncTemporaryExercises() async {

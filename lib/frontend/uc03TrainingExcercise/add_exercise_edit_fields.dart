@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
@@ -63,18 +64,20 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    TrainingExerciseBus? exercise;
                     // Add to provider's collections using the appropriate provider
                     if (widget.addPlanned) {
-                      await Provider.of<PlanningProvider>(context, listen: false)
+                      exercise = await Provider.of<PlanningProvider>(context, listen: false)
                           .addTemporaryExercise(target, notify: false);
+                      
                     } else {
-                      Provider.of<TrainingSessionProvider>(context, listen: false)
+                      exercise = await Provider.of<TrainingSessionProvider>(context, listen: false)
                           .addTemporaryExercise(target);
                     }
                     
                     // Close dialog
                     if(context.mounted) {
-                      Navigator.pop(context);
+                      Navigator.pop(context, exercise);
                     }
                     
                     // Clear form fields

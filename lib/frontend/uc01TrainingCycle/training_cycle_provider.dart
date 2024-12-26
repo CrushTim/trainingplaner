@@ -325,7 +325,10 @@ class TrainingCycleProvider
 
 
           planningProvider.getSelectedBusinessClass?.trainingSessionExercises.clear();
-
+          
+          for (var session in sessions) {
+            session.trainingSessionExercises.clear();
+          }
           //map the exercises to the sessions
           mapExercisesToSessions(exercises, sessions);
           Map<DateTime, List<dynamic>> sessionDateMap = mapSessionsToDateMap(sessions);
