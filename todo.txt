@@ -6,9 +6,6 @@ CRNT
     -> add deload functionality -> apply half of reps for all exercises in the week
 
 
-    -> copy week sessions add a copy of every session with exercises and progressive overload function
-   
-
     
     -the fucking exercise foundation performance is horrible 
 

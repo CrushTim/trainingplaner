@@ -302,5 +302,14 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
     }
   }
 
- 
+ Future<void> deloadWeekSessions(List<TrainingSessionBus> sessions, int week, BuildContext context)async {
+  for (var session in sessions) {
+    for (var exercise in session.trainingSessionExercises) {
+      for (var rep in exercise.exerciseReps) {
+        exercise.exerciseReps[exercise.exerciseReps.indexOf(rep)] = (rep * 0.5).round();
+      }
+      await exerciseProvider.updateBusinessClass(exercise, ScaffoldMessenger.of(context), notify: false);
+    }
+  }
+ }
 } 

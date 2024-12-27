@@ -104,7 +104,7 @@ class CycleEditColumn extends StatelessWidget {
             icon: const Icon(Icons.arrow_downward),
             tooltip: 'Deload',
             onPressed: () {
-              // TODO: Implement deload functionality
+              planningProvider.deloadWeekSessions(weekSessions.cast<TrainingSessionBus>(), copiedWeek, context);
             },
           ),
           PopupMenuButton(
