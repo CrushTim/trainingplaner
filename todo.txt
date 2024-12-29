@@ -1,11 +1,7 @@
 CRNT 
-
     -TEST THIS IF THIS WORKS make sure the exercises get deleted if the for add session is not added 
 
-
-    -> add deload functionality -> apply half of reps for all exercises in the week
-
-
+    after hitting the end at the foundations load the new ones into the list 
     
     -the fucking exercise foundation performance is horrible 
 

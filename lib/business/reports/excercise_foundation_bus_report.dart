@@ -12,4 +12,9 @@ class ExerciseFoundationBusReport
     return exerciseFoundationDataReport.getAll().map(
         (list) => list.map((e) => ExerciseFoundationBus.fromData(e)).toList());
   }
+
+  Stream<List<ExerciseFoundationBus>> getPaginated(int lastIndex) {
+    return exerciseFoundationDataReport.getPaginated(lastIndex).map(
+        (list) => list.map((e) => ExerciseFoundationBus.fromData(e)).toList());
+  }
 }

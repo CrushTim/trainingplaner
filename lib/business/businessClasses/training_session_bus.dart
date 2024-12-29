@@ -98,7 +98,7 @@ class TrainingSessionBus
     trainingSessionLength = 1;
     trainingSessionExcercisesIds = [];
     trainingSessionEmphasis = [];
-    isPlanned = true;
+    isPlanned = false;
     trainingCycleId = "";
   }
 

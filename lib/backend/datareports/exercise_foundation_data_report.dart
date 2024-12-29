@@ -13,4 +13,20 @@ class ExerciseFoundationDataReport
         .map((doc) => ExerciseFoundationData.fromSnapshot(doc))
         .toList());
   }
+
+  final int pageSize = 10;  // Number of items per page
+
+  Stream<List<ExerciseFoundationData>> getPaginated(int lastIndex) {
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('exerciseFoundations');
+        
+    return collectionReference
+      .orderBy('name')  // Order by name or any other field
+      .limit(pageSize)
+      .startAfter([lastIndex])
+      .snapshots()
+      .map((querySnapshot) => querySnapshot.docs
+          .map((doc) => ExerciseFoundationData.fromSnapshot(doc))
+          .toList());
+  }
 }

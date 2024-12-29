@@ -12,28 +12,40 @@ class ExerciseFoundationOverviewView extends StatefulWidget {
 
 class _ExerciseFoundationOverviewViewState extends State<ExerciseFoundationOverviewView> {
   @override
-  Widget build(BuildContext context) {
-    ExerciseFoundationProvider exerciseFoundationProvider = Provider.of<ExerciseFoundationProvider>(context);
-    return ListView(
+  void initState() {
+    super.initState();
+    // Load initial data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ExerciseFoundationProvider>(context, listen: false)
+        .loadMoreFoundations();
+    });
+  }
 
-      children: [
-        exerciseFoundationProvider.getAllExerciseFoundationsWithUserLinks(),
-        ElevatedButton(
-          onPressed: () {
-            exerciseFoundationProvider.setSelectedBusinessClass(null);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider.value(
-                  value: exerciseFoundationProvider,
-                  child: const ExerciseFoundationEditFields(),
-                ),
+  @override
+  Widget build(BuildContext context) {
+    ExerciseFoundationProvider exerciseFoundationProvider = 
+      Provider.of<ExerciseFoundationProvider>(context);
+      
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Exercise Foundations'),
+      ),
+      body: exerciseFoundationProvider.getAllExerciseFoundationsWithUserLinks(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          exerciseFoundationProvider.setSelectedBusinessClass(null);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider.value(
+                value: exerciseFoundationProvider,
+                child: const ExerciseFoundationEditFields(),
               ),
-            );
-          },
-          child: const Text("Add Exercise Foundation"),
-        ),
-      ],
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

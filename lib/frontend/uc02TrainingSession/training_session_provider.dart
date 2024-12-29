@@ -26,7 +26,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       : super(
             businessClassForAdd: TrainingSessionBus(
                 trainingSessionId: "",
-                isPlanned: true,
+                isPlanned: false,
                 trainingSessionName: "",
                 trainingSessionDescription: "",
                 trainingSessionEmphasis: [],
