@@ -22,6 +22,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   List<TrainingExerciseBus> tempExercisesToDelete = [];
 
+
   TrainingSessionProvider({required this.exerciseProvider})
       : super(
             businessClassForAdd: TrainingSessionBus(
@@ -57,12 +58,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   final TextEditingController sessionEmphasisController = TextEditingController();
   final TextEditingController sessionLengthController = TextEditingController();
   List<TrainingExerciseBus> tempExercises = [];
-  void updateSessionDate(DateTime date) {
-    selectedSessionDate = date;
-    final target = getSelectedBusinessClass ?? businessClassForAdd;
-    target.trainingSessionStartDate = date;
-    notifyListeners();
-  }
 
 
   // /////////////////////////////////////////////////////////////////////
@@ -565,11 +560,19 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
       case 'cycle':
         target.trainingCycleId = value;
         break;
-      case 'date':
-        target.trainingSessionStartDate = DateTime.parse(value);
-        break;
     }
   }
+
+  void updateSessionDate(DateTime date) {
+    selectedSessionDate = date;
+    final target = selectedActualSession ?? businessClassForAdd;
+    target.trainingSessionStartDate = date;
+    print(target.trainingSessionStartDate);
+    print("selectedSessionDate: $selectedSessionDate");
+    notifyListeners();
+  }
+
+
 
   void handleSessionFieldChangeForActual(String field, String value) {
     final target = selectedActualSession ?? businessClassForAdd;
@@ -591,6 +594,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
         break;
       case 'date':
         target.trainingSessionStartDate = DateTime.parse(value);
+        selectedSessionDate = target.trainingSessionStartDate;
         break;
     }
   } 

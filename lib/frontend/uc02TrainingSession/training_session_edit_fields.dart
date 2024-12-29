@@ -15,8 +15,6 @@ class TrainingSessionEditFields extends StatefulWidget {
 
 class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
 
-  DateTime startDate = DateTime.now();
-  TextEditingController startDateController = TextEditingController();
 
   @override
   void initState() {
@@ -25,8 +23,7 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context, listen: false);
     if(trainingSessionProvider.selectedActualSession != null) {
           final session = trainingSessionProvider.selectedActualSession!;
-    startDate = session.trainingSessionStartDate;
-    startDateController.text = startDate.toString();
+    trainingSessionProvider.selectedSessionDate = session.trainingSessionStartDate;
     }
   }
   @override
@@ -49,8 +46,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
         TextEditingController(text: session.trainingSessionDescription);
     final TextEditingController sessionEmphasisController =
         TextEditingController(text: session.trainingSessionEmphasis.join(','));
-        startDate = trainingSessionProvider.selectedSessionDate;
-        startDateController.text = startDate.toString();
 
     return Column(
       children: <Widget>[
@@ -99,15 +94,9 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
           },
         ),
         DatePickerSheer(
-          initialDateTime: startDate,
-          onDateTimeChanged: (DateTime newDateTime) {
-            startDate = newDateTime;
-            trainingSessionProvider.selectedSessionDate = newDateTime;
-            setState(() {
-              startDateController.text = startDate.toString();
-            });
-          },
-          dateController: startDateController,
+          initialDateTime: trainingSessionProvider.selectedSessionDate,
+          onDateTimeChanged: trainingSessionProvider.updateSessionDate,
+          dateController: TextEditingController(text: trainingSessionProvider.selectedSessionDate.toString()),
         ),
         // show all the exercises in the session
         for (TrainingExerciseBus exercise in trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises ?? [])
