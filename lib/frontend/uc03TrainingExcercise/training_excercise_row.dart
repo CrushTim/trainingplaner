@@ -34,163 +34,155 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
         ),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 500),
-        child: isExpanded
-            ? Column(
-                children: [
-                  //Add rows for each set and rep that are in the actualTrainingExercise
-                  for (int i = 0; i < actualExercise.exerciseReps.length; i++)
-                    RepsWeightsRow(
-                      reps: actualExercise.exerciseReps[i],
-                      weight: i >= actualExercise.exerciseReps.length
-                          ? 0
-                          : actualExercise.exerciseWeights[i],
-                      onUpdate: (reps, weight) {
-                        actualExercise!.exerciseReps[i] = reps;
-                        actualExercise.exerciseWeights[i] = weight;
-                        setState(
-                          () {},
-                        );
-                      },
-                      onDelete: () {
-                        actualExercise!.exerciseReps.removeAt(i);
-                        actualExercise.exerciseWeights.removeAt(i);
-                        setState(
-                          () {},
-                        );
-                      },
-                    ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: IconButton(
-                            onPressed: () {
-                              if(actualExercise!.exerciseWeights.isNotEmpty){
-                                actualExercise.exerciseWeights.add(actualExercise.exerciseWeights[actualExercise.exerciseWeights.length - 1]);
-                                actualExercise.exerciseReps.add(actualExercise.exerciseReps[actualExercise.exerciseReps.length - 1]);
-                              }else{
-                                actualExercise.exerciseWeights.add(0);
-                                actualExercise.exerciseReps.add(0);
-                              }
-                              setState(
-                                () {},
-                              );
-                            },
-                            icon: const Icon(Icons.add)),
-                      ),
-                      Expanded(
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_drop_up),
-                          onPressed: () {
-                            widget.onUpdate(actualExercise!);
-                            setState(() {
-                              isExpanded = false;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              )
-            : ListTile(
-              title: Column(
-                children: [
-                        Text(
-                          style: const TextStyle(
-                              fontSize: 23,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline),
-                          widget.plannedTrainingExercise?.exerciseName ??
-                              widget.actualTrainingExercise!.exerciseName,
-                        ),
-                        Text(
-                          widget.plannedTrainingExercise?.exerciseFoundationID ??
-                              widget.actualTrainingExercise!.exerciseFoundationID,
-                        ),
-                      
-                  
-                  const Divider(
+      child: Column(
+        children: [
+          // Title section that's always visible
+          ListTile(
+            title: Column(
+              children: [
+                Text(
+                  style: const TextStyle(
+                    fontSize: 23,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                  widget.plannedTrainingExercise?.exerciseName ??
+                      widget.actualTrainingExercise!.exerciseName,
+                ),
+                Text(
+                  widget.plannedTrainingExercise?.exerciseFoundationID ??
+                      widget.actualTrainingExercise!.exerciseFoundationID,
+                ),
+              ],
+            ),
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Flexible(
+                  child: VerticalDivider(
                     color: Colors.black,
                     thickness: 1,
-                  ),]),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      
-                      const Flexible(
-                        child: VerticalDivider(
-                          color: Colors.black,
-                          thickness: 1,
-                        ),
-                      ),
-                      widget.plannedTrainingExercise != null
-                          ? Expanded(
-                              flex: 2,
-                              child: Column(
-                                children: [
-                                  const Text("Planned",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
-                                  for (int i = 0;
-                                      i <
-                                          widget.plannedTrainingExercise!
-                                              .exerciseReps.length;
-                                      i++)
-                                    Text(
-                                        "${widget.plannedTrainingExercise!.exerciseReps[i]} x ${widget.plannedTrainingExercise!.exerciseWeights[i]}kg"),
-                                ],
-                              ))
-                          : Container(),
-                      widget.actualTrainingExercise != null
-                          ? Expanded(
-                              flex: 2,
-                              child: Column(
-                                children: [
-                                  const Text("Actual",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
-                                  for (int i = 0;
-                                      i <
-                                          widget.actualTrainingExercise!
-                                              .exerciseReps.length;
-                                      i++)
-                                    Text(
-                                        "${widget.actualTrainingExercise!.exerciseReps[i]} x ${widget.actualTrainingExercise!.exerciseWeights[i]}kg"),
-                                ],
-                              ))
-                          : Container(),
-                      const Flexible(
-                        child: VerticalDivider(
-                          color: Colors.black,
-                          thickness: 1,
-                        ),
-                      ),
-                      
-                    ],
                   ),
-                  trailing: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              widget.onDelete(actualExercise!);
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_drop_down),
-                            onPressed: () {
-                              setState(() {
-                                isExpanded = !isExpanded;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                ),
+                if (widget.plannedTrainingExercise != null)
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        const Text("Planned",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        for (int i = 0;
+                            i < widget.plannedTrainingExercise!.exerciseReps.length;
+                            i++)
+                          Text(
+                              "${widget.plannedTrainingExercise!.exerciseReps[i]} x ${widget.plannedTrainingExercise!.exerciseWeights[i]}kg"),
+                      ],
+                    ),
+                  ),
+                if (widget.actualTrainingExercise != null)
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        const Text("Actual",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        for (int i = 0;
+                            i < widget.actualTrainingExercise!.exerciseReps.length;
+                            i++)
+                          Text(
+                              "${widget.actualTrainingExercise!.exerciseReps[i]} x ${widget.actualTrainingExercise!.exerciseWeights[i]}kg"),
+                      ],
+                    ),
+                  ),
+                const Flexible(
+                  child: VerticalDivider(
+                    color: Colors.black,
+                    thickness: 1,
+                  ),
+                ),
+              ],
             ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    widget.onDelete(actualExercise!);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down),
+                  onPressed: () {
+                    setState(() {
+                      isExpanded = !isExpanded;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          // Expandable section
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 300),
+            crossFadeState:
+                isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            firstChild: Container(),
+            secondChild: Column(
+              children: [
+                for (int i = 0; i < actualExercise.exerciseReps.length; i++)
+                  RepsWeightsRow(
+                    reps: actualExercise.exerciseReps[i],
+                    weight: actualExercise.exerciseWeights[i],
+                    onUpdate: (reps, weight) {
+                      actualExercise!.exerciseReps[i] = reps;
+                      actualExercise.exerciseWeights[i] = weight;
+                      setState(() {});
+                    },
+                    onDelete: () {
+                      actualExercise!.exerciseReps.removeAt(i);
+                      actualExercise.exerciseWeights.removeAt(i);
+                      setState(() {});
+                    },
+                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: IconButton(
+                        onPressed: () {
+                          if (actualExercise!.exerciseWeights.isNotEmpty) {
+                            actualExercise.exerciseWeights.add(
+                                actualExercise.exerciseWeights[
+                                    actualExercise.exerciseWeights.length - 1]);
+                            actualExercise.exerciseReps.add(
+                                actualExercise.exerciseReps[
+                                    actualExercise.exerciseReps.length - 1]);
+                          } else {
+                            actualExercise.exerciseWeights.add(0);
+                            actualExercise.exerciseReps.add(0);
+                          }
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    ),
+                    Expanded(
+                      child: IconButton(
+                        icon: const Icon(Icons.check),
+                        onPressed: () {
+                          widget.onUpdate(actualExercise!);
+                          setState(() {
+                            isExpanded = false;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
