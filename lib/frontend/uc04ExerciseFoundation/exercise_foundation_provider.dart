@@ -137,7 +137,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   StreamBuilder3 getAllExerciseFoundationsWithUserLinks() {
     return StreamBuilder3(
       streams: StreamTuple3(
-        reportTaskVar.getPaginated(currentIndex),
+        reportTaskVar.getInitialBatch(),
         userSpecificExerciseDataReport.getAll(),
         exerciseFoundationNotesBusReport.getAll()
       ),
@@ -146,16 +146,17 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
             snapshots.snapshot2.connectionState == ConnectionState.waiting || 
             snapshots.snapshot3.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
-        } else if (snapshots.snapshot1.hasError || 
-                   snapshots.snapshot2.hasError || 
-                   snapshots.snapshot3.hasError) {
+        }
+        
+        if (snapshots.snapshot1.hasError || 
+            snapshots.snapshot2.hasError || 
+            snapshots.snapshot3.hasError) {
           return Text(snapshots.snapshot1.error.toString() + 
                      snapshots.snapshot2.error.toString() + 
                      snapshots.snapshot3.error.toString());
         }
 
-        // Get the paginated foundations and other data
-        final newFoundations = snapshots.snapshot1.data!;
+        final initialFoundations = snapshots.snapshot1.data!;
         final userSpecificExercises = snapshots.snapshot2.data!;
         final exerciseFoundationNotes = snapshots.snapshot3.data!;
         
@@ -171,39 +172,12 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
           notesMap[note.exerciseFoundationId] = note;
         }
 
-        // Update loaded foundations without duplicates
-        if (newFoundations.isNotEmpty) {
-          for (var foundation in newFoundations) {
-            if (!loadedFoundations.any((f) => f.getId() == foundation.getId())) {
-              loadedFoundations.add(foundation);
-            }
-          }
-          hasMoreData = newFoundations.length >= pageSize;
-        } else {
-          hasMoreData = false;
-        }
+        loadedFoundations = initialFoundations;
 
-        return NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification scrollInfo) {
-            if (!isLoading && 
-                hasMoreData && 
-                scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
-              loadMoreFoundations();
-            }
-            return true;
-          },
-          child: ListView.builder(
-            itemCount: loadedFoundations.length + (hasMoreData ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index >= loadedFoundations.length) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-
+        return ListView.builder(
+          itemCount: loadedFoundations.length + 1, // +1 for the remaining data StreamBuilder
+          itemBuilder: (context, index) {
+            if (index < loadedFoundations.length) {
               ExerciseFoundationBus exerciseFoundation = loadedFoundations[index];
               String id = exerciseFoundation.getId();
               
@@ -213,8 +187,46 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
               return ExerciseFoundationListTile(
                 exerciseFoundation: exerciseFoundation
               );
-            },
-          ),
+            } else {
+              // Nested StreamBuilder for remaining data
+              return StreamBuilder<List<ExerciseFoundationBus>>(
+                stream: reportTaskVar.getRemainingData(),
+                builder: (context, remainingSnapshot) {
+                  if (remainingSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  
+                  if (remainingSnapshot.hasError) {
+                    return Text(remainingSnapshot.error.toString());
+                  }
+
+                  final remainingFoundations = remainingSnapshot.data ?? [];
+                  
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: remainingFoundations.length,
+                    itemBuilder: (context, remainingIndex) {
+                      ExerciseFoundationBus exerciseFoundation = remainingFoundations[remainingIndex];
+                      String id = exerciseFoundation.getId();
+                      
+                      exerciseFoundation.userSpecific1RepMaxes = userSpecificMap[id] ?? [];
+                      exerciseFoundation.exerciseFoundationNotes = notesMap[id];
+                      
+                      return ExerciseFoundationListTile(
+                        exerciseFoundation: exerciseFoundation
+                      );
+                    },
+                  );
+                },
+              );
+            }
+          },
         );
       },
     );
@@ -436,7 +448,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     notifyListeners();
 
     try {
-      final newFoundations = await reportTaskVar.getPaginated(currentIndex).first;
+      final newFoundations = await reportTaskVar.getRemainingData().first;
       
       if (newFoundations.isEmpty) {
         hasMoreData = false;
@@ -446,8 +458,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
             loadedFoundations.add(foundation);
           }
         }
-        currentIndex += newFoundations.length;
-        hasMoreData = newFoundations.length >= pageSize;
+        hasMoreData = false;
       }
     } finally {
       isLoading = false;

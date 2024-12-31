@@ -4,8 +4,11 @@ import 'package:trainingplaner/backend/trainingsplaner_data_report_interface.dar
 
 class ExerciseFoundationDataReport
     implements TrainingsplanerDataReportInterface<ExerciseFoundationData> {
-  @override
-  Stream<List<ExerciseFoundationData>> getAll() {
+  final CollectionReference collection =
+      FirebaseFirestore.instance.collection('exerciseFoundations');
+
+      @override
+        Stream<List<ExerciseFoundationData>> getAll() {
     CollectionReference collectionReference =
         FirebaseFirestore.instance.collection('exerciseFoundations');
     Stream<QuerySnapshot> stream = collectionReference.snapshots();
@@ -14,16 +17,25 @@ class ExerciseFoundationDataReport
         .toList());
   }
 
-  final int pageSize = 10;  // Number of items per page
+  ExerciseFoundationData fromSnapshot(QueryDocumentSnapshot doc) {
+    return ExerciseFoundationData.fromSnapshot(doc);
+  }
 
-  Stream<List<ExerciseFoundationData>> getPaginated(int lastIndex) {
-    CollectionReference collectionReference =
-        FirebaseFirestore.instance.collection('exerciseFoundations');
-        
-    return collectionReference
-      .orderBy('name')  // Order by name or any other field
-      .limit(pageSize)
-      .startAfter([lastIndex])
+  Stream<List<ExerciseFoundationData>> getInitialBatch() {
+    return collection
+      .orderBy('name')
+      .limit(50)
+      .snapshots()
+      .map((querySnapshot) => querySnapshot.docs
+          .map((doc) => ExerciseFoundationData.fromSnapshot(doc))
+          .toList());
+  }
+
+  Stream<List<ExerciseFoundationData>> getRemainingData() {
+    return collection
+      .orderBy('name')
+      .limit(1000)
+      .startAfter([50])
       .snapshots()
       .map((querySnapshot) => querySnapshot.docs
           .map((doc) => ExerciseFoundationData.fromSnapshot(doc))
