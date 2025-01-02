@@ -37,29 +37,47 @@ class OverviewProvider extends ChangeNotifier {
       Map<DateTime, List<dynamic>> sessionDateMap) {
     Map<int, List<DateTime>> weekMap = {};
 
-    sessionDateMap.forEach((date, sessions) {
-      // Get the ISO week number
-      int dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
-      int woy = ((dayOfYear - date.weekday + 10) / 7).floor();
-
-      // Skip dates that belong to previous/next year's weeks
-      if (woy < 1 || woy > getWeeksInYear(date.year)) {
-        return; // Skip this date
+    // Helper function to get ISO week number
+    int getISOWeekNumber(DateTime date) {
+      // Find Thursday of the current week
+      DateTime thursday = date.subtract(Duration(days: date.weekday - DateTime.thursday));
+      
+      // Find the first Thursday of the year
+      DateTime firstThursday = DateTime(thursday.year, 1, 1);
+      while (firstThursday.weekday != DateTime.thursday) {
+        firstThursday = firstThursday.add(const Duration(days: 1));
       }
+      
+      // Calculate the week number
+      int weekNumber = 1 + thursday.difference(firstThursday).inDays ~/ 7;
+      return weekNumber;
+    }
 
-      if (!weekMap.containsKey(woy)) {
-        weekMap[woy] = [];
+    // Helper function to get the Monday of a given week
+    DateTime getMondayOfWeek(DateTime date) {
+      return date.subtract(Duration(days: date.weekday - DateTime.monday));
+    }
+
+    // Group dates by ISO week
+    for (DateTime date in sessionDateMap.keys) {
+      int weekNumber = getISOWeekNumber(date);
+      
+      if (!weekMap.containsKey(weekNumber)) {
+        // Initialize the week with all 7 days
+        DateTime monday = getMondayOfWeek(date);
+        weekMap[weekNumber] = List.generate(
+          7,
+          (index) => monday.add(Duration(days: index)),
+        );
       }
+    }
 
-      weekMap[woy]!.add(date);
-    });
+    // Sort weeks
+    var sortedWeeks = Map.fromEntries(
+      weekMap.entries.toList()..sort((a, b) => a.key.compareTo(b.key))
+    );
 
-    // Sort dates within each week
-    weekMap.forEach((week, dates) {
-      dates.sort();
-    });
-
-    return weekMap;
+    return sortedWeeks;
   }
 
   // Helper function to calculate weeks in a year
@@ -129,7 +147,7 @@ class OverviewProvider extends ChangeNotifier {
               children: <Widget>[
                 CycleBarCalendar(
                   cycle: null,
-                  title: weekMap.keys.elementAt(index).toString(),
+                  title: 'Week ${weekMap.keys.elementAt(index)}',
                   color: Colors.grey,
                 ),
                 for (var cycle in cycles)
