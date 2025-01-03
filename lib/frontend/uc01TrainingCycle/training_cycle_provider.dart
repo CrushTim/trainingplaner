@@ -275,12 +275,25 @@ class TrainingCycleProvider
   }
 
   void mapExercisesToSessions(List<TrainingExerciseBus> exercises, List<TrainingSessionBus> sessions) {
-    for (var exercise in exercises){
-      for (var session in sessions){
-        if (session.trainingSessionExcercisesIds.contains(exercise.trainingExerciseID)){
-          session.trainingSessionExercises.add(exercise);
+    for (var session in sessions) {
+      // Create a list to hold exercises in the correct order
+      final List<TrainingExerciseBus?> orderedExercises = 
+        List.filled(session.trainingSessionExcercisesIds.length, null);
+      
+      // Place each exercise in its correct position
+      for (int i = 0; i < session.trainingSessionExcercisesIds.length; i++) {
+        final id = session.trainingSessionExcercisesIds[i];
+        try {
+          final exercise = exercises.firstWhere((e) => e.trainingExerciseID == id);
+          orderedExercises[i] = exercise;
+        } catch (e) {
+          continue;
         }
       }
+      
+      // Filter out nulls and assign to session
+      session.trainingSessionExercises = 
+        orderedExercises.whereType<TrainingExerciseBus>().toList();
     }
   }
 

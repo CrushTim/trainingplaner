@@ -102,27 +102,58 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
         ),
         ReorderableListView(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           onReorder: (oldIndex, newIndex) async {
             if (newIndex > oldIndex) {
               newIndex -= 1;
             }
             
-            // Reorder the exercises list
-            if(trainingSessionProvider.getSelectedBusinessClass != null){
-              final exercise = trainingSessionProvider.getSelectedBusinessClass!.trainingSessionExercises.removeAt(oldIndex);
-              trainingSessionProvider.getSelectedBusinessClass!.trainingSessionExercises.insert(newIndex, exercise);
-            }
-            // Reorder the exercise IDs list to match
-            final exerciseId = session.trainingSessionExcercisesIds.removeAt(oldIndex);
-            session.trainingSessionExcercisesIds.insert(newIndex, exerciseId);
-            final actualexercise = session.trainingSessionExercises.removeAt(oldIndex);
-            session.trainingSessionExercises.insert(newIndex, actualexercise);
-            
-            if(isOnlinee){
-              await trainingSessionProvider.updateBusinessClass(session, ScaffoldMessenger.of(context), notify: false);
+            setState(() {
+              // Get all exercises in their current order
+              final allExercises = [
+                ...getOrderedExercises(trainingSessionProvider, true),
+                ...getOrderedExercises(trainingSessionProvider, false)
+              ];
+              final exerciseToMove = allExercises[oldIndex];
+              
+              // Update the IDs list
+              final exerciseId = session.trainingSessionExcercisesIds.removeAt(oldIndex);
+              session.trainingSessionExcercisesIds.insert(newIndex, exerciseId);
+
+              // Update the actual session's exercises list
+              final actualExercise = session.trainingSessionExercises.removeAt(oldIndex);
+              session.trainingSessionExercises.insert(newIndex, actualExercise);
+
+              // Update the planned exercises list if it exists and the exercise is planned
+              if (trainingSessionProvider.getSelectedBusinessClass != null && 
+                  trainingSessionProvider.getSelectedBusinessClass!.trainingSessionExercises.contains(exerciseToMove)) {
+                final plannedIndex = trainingSessionProvider.getSelectedBusinessClass!.trainingSessionExercises
+                    .indexOf(exerciseToMove);
+                final exercise = trainingSessionProvider.getSelectedBusinessClass!.trainingSessionExercises
+                    .removeAt(plannedIndex);
+                trainingSessionProvider.getSelectedBusinessClass!.trainingSessionExercises
+                    .insert(newIndex, exercise);
+              }
+              
+              // Update unplanned exercises list if necessary
+              if (trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.contains(exerciseToMove)) {
+                final unplannedIndex = trainingSessionProvider.exerciseProvider.unplannedExercisesForSession
+                    .indexOf(exerciseToMove);
+                final exercise = trainingSessionProvider.exerciseProvider.unplannedExercisesForSession
+                    .removeAt(unplannedIndex);
+                trainingSessionProvider.exerciseProvider.unplannedExercisesForSession
+                    .insert(newIndex, exercise);
+              }
+            });
+
+            if (isOnlinee) {
+              await trainingSessionProvider.updateBusinessClass(
+                session, 
+                ScaffoldMessenger.of(context), 
+                notify: false
+              );
             } else {
-              trainingSessionProvider.tempExercises.add(actualexercise);
+              trainingSessionProvider.tempExercises.add(session.trainingSessionExercises[newIndex]);
             }
           },
           children: [
@@ -244,35 +275,40 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
       TrainingSessionProvider provider,
       bool planned) {
     final session = provider.selectedActualSession!;
-    final List<TrainingExerciseBus> orderedExercises = [];
+    final List<TrainingExerciseBus?> orderedExercises = List.filled(
+      session.trainingSessionExcercisesIds.length,
+      null
+    );
     
-    // Iterate through the ordered IDs
-    for (String id in session.trainingSessionExcercisesIds) {
-      if (planned) {
-        // For planned exercises
-        try {
-          if (provider.getSelectedBusinessClass?.trainingSessionExercises != null) {
-            final plannedExercise = provider.getSelectedBusinessClass!.trainingSessionExercises
-                .firstWhere((e) => e.trainingExerciseID == id);
-            orderedExercises.add(plannedExercise);
+    if (planned) {
+      // For planned exercises
+      if (provider.getSelectedBusinessClass?.trainingSessionExercises != null) {
+        final exercises = provider.getSelectedBusinessClass!.trainingSessionExercises;
+        for (int i = 0; i < session.trainingSessionExcercisesIds.length; i++) {
+          final id = session.trainingSessionExcercisesIds[i];
+          try {
+            final exercise = exercises.firstWhere((e) => e.trainingExerciseID == id);
+            orderedExercises[i] = exercise;
+          } catch (e) {
+            continue;
           }
-        } catch (e) {
-          // Skip if exercise not found
-          continue;
         }
-      } else {
-        // For unplanned exercises
+      }
+    } else {
+      // For unplanned exercises
+      final exercises = provider.exerciseProvider.unplannedExercisesForSession;
+      for (int i = 0; i < session.trainingSessionExcercisesIds.length; i++) {
+        final id = session.trainingSessionExcercisesIds[i];
         try {
-          final unplannedExercise = provider.exerciseProvider.unplannedExercisesForSession
-              .firstWhere((e) => e.trainingExerciseID == id);
-          orderedExercises.add(unplannedExercise);
+          final exercise = exercises.firstWhere((e) => e.trainingExerciseID == id);
+          orderedExercises[i] = exercise;
         } catch (e) {
-          // Skip if exercise not found
           continue;
         }
       }
     }
-    
-    return orderedExercises;
+
+    // Remove any null entries (exercises that weren't found)
+    return orderedExercises.whereType<TrainingExerciseBus>().toList();
   }
 }

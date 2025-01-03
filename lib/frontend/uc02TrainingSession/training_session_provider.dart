@@ -263,17 +263,40 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
   /// Assigns exercises to their corresponding sessions
   void assignExercisesToSessions(List<TrainingExerciseBus> allExercises) {
-    for (TrainingExerciseBus exercise in allExercises) {
-      if (selectedActualSession != null &&
-          selectedActualSession!.trainingSessionExcercisesIds
-              .contains(exercise.trainingExerciseID)) {
-        selectedActualSession!.trainingSessionExercises.add(exercise);
+    if (selectedActualSession != null) {
+      final List<TrainingExerciseBus?> orderedExercises = 
+        List.filled(selectedActualSession!.trainingSessionExcercisesIds.length, null);
+      
+      for (int i = 0; i < selectedActualSession!.trainingSessionExcercisesIds.length; i++) {
+        final id = selectedActualSession!.trainingSessionExcercisesIds[i];
+        try {
+          final exercise = allExercises.firstWhere((e) => e.trainingExerciseID == id);
+          orderedExercises[i] = exercise;
+        } catch (e) {
+          continue;
+        }
       }
-      if (getSelectedBusinessClass != null &&
-          getSelectedBusinessClass!.trainingSessionExcercisesIds
-              .contains(exercise.trainingExerciseID)) {
-        getSelectedBusinessClass!.trainingSessionExercises.add(exercise);
+      
+      selectedActualSession!.trainingSessionExercises = 
+        orderedExercises.whereType<TrainingExerciseBus>().toList();
+    }
+
+    if (getSelectedBusinessClass != null) {
+      final List<TrainingExerciseBus?> orderedExercises = 
+        List.filled(getSelectedBusinessClass!.trainingSessionExcercisesIds.length, null);
+      
+      for (int i = 0; i < getSelectedBusinessClass!.trainingSessionExcercisesIds.length; i++) {
+        final id = getSelectedBusinessClass!.trainingSessionExcercisesIds[i];
+        try {
+          final exercise = allExercises.firstWhere((e) => e.trainingExerciseID == id);
+          orderedExercises[i] = exercise;
+        } catch (e) {
+          continue;
+        }
       }
+      
+      getSelectedBusinessClass!.trainingSessionExercises = 
+        orderedExercises.whereType<TrainingExerciseBus>().toList();
     }
   }
 
