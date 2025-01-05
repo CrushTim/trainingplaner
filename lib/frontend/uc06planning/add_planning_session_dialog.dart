@@ -126,7 +126,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(context, false),
                     child: const Text('Cancel'),
                   ),
                   ElevatedButton(
@@ -137,6 +137,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                         provider.businessClassForAdd.trainingCycleId = widget.cycleId;
                       }
                       provider.saveSession(context);
+                      Navigator.pop(context, true);
                     },
                     child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),
                   ),

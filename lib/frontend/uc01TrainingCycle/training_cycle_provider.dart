@@ -207,22 +207,31 @@ class TrainingCycleProvider
     
     // Helper function to get ISO week number
     int getISOWeekNumber(DateTime date) {
-      // Shift to Monday being first day of week (ISO standard)
-      int dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
-      int woy = ((dayOfYear - date.weekday + 10) / 7).floor();
+      // Find Thursday of the current week
+      DateTime thursday = date.subtract(Duration(days: date.weekday - DateTime.thursday));
       
-      // Handle edge cases at year boundaries
-      if (woy < 1) {
-        // If week < 1, it belongs to the last week of previous year
+      // Find the first Thursday of the year
+      DateTime firstThursday = DateTime(thursday.year, 1, 1);
+      while (firstThursday.weekday != DateTime.thursday) {
+        firstThursday = firstThursday.add(const Duration(days: 1));
+      }
+      
+      // Calculate the week number
+      int weekNumber = 1 + thursday.difference(firstThursday).inDays ~/ 7;
+      
+      // Handle year boundary cases
+      if (weekNumber < 1) {
+        // Get the last week of previous year
         return getISOWeekNumber(DateTime(date.year - 1, 12, 31));
-      } else if (woy > 52) {
-        // Check if this is actually week 1 of next year
+      } else if (weekNumber > 52) {
+        // Check if this belongs to week 1 of next year
         DateTime lastDayOfYear = DateTime(date.year, 12, 31);
         if (getISOWeekNumber(lastDayOfYear) == 1) {
           return 1;
         }
       }
-      return woy;
+      
+      return weekNumber;
     }
 
     // Group dates by ISO week
@@ -373,8 +382,8 @@ class TrainingCycleProvider
                           return Expanded(
                             child: PlanningDayFieldCalendar(
                               date: date,
-                              workouts: sessionDateMap[date] ?? [], onAddPressed: () {
-                              showDialog(
+                              workouts: sessionDateMap[date] ?? [], onAddPressed: () async {
+                              await showDialog(
                                 context: context,
                                 builder: (context) {   
                                   return ChangeNotifierProvider.value(
@@ -385,7 +394,13 @@ class TrainingCycleProvider
                                     ),
                                   );
                                 },
-                              );
+                              ).then((value) {
+                                if (value == null || value != true) {
+                                  for (var exercise in planningProvider.exercisesToDeleteIfSessionAddIsCancelled) {
+                                    exerciseProvider.deleteBusinessClass(exercise, ScaffoldMessenger.of(context), notify: false);
+                                  }
+                                }
+                              });
                             },
                             ),
                           );

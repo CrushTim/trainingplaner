@@ -103,7 +103,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                       
                                       // Capture context before async gap
                                       final BuildContext dialogContext = context;
-                                      
+                                      print('dialogContext: $dialogContext');
                                       await showDialog(
                                         context: dialogContext,
                                         builder: (context) => ChangeNotifierProvider.value(
@@ -113,18 +113,19 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                             cycleId: session.trainingCycleId,
                                           ),
                                         ),
-                                      );
-
-                                      // Use captured context after async gap
-                                      if (dialogContext.mounted) {
-                                        for (var exercise in planningProvider.exercisesToDeleteIfSessionAddIsCancelled) {
-                                          trainingSessionProvider.exerciseProvider.deleteBusinessClass(
-                                            exercise, 
-                                            ScaffoldMessenger.of(dialogContext), 
-                                            notify: false
-                                          );
+                                      ).then((value) {
+                                        print('value: ${value ?? 'null'}');
+                                        if (value == null || value != true) {
+                                          print('cancelled');
+                                          for (var exercise in planningProvider.exercisesToDeleteIfSessionAddIsCancelled) {
+                                            trainingSessionProvider.exerciseProvider.deleteBusinessClass(
+                                              exercise, 
+                                              ScaffoldMessenger.of(dialogContext), 
+                                              notify: false
+                                            );
+                                          }
                                         }
-                                      }
+                                      });
 
                                       // Reset everything after dialog closes
                                       planningProvider.resetSelectedBusinessClass();

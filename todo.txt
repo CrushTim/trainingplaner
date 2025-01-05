@@ -1,8 +1,9 @@
 CRNT 
 
-    richtige reihenfolge der exercises in der session anzeigen (wahrscheinlich irgendwo in den mapping funktionen)
+    planning view:
+        - text in controller on edit is wrong 
+        - list of exercises in edit is wrong
 
-    -TEST THIS IF THIS WORKS make sure the exercises get deleted if the for add session is not added 
 
     after hitting the end at the foundations load the new ones into the list 
     
