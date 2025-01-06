@@ -5,6 +5,8 @@ CRNT
         - list of exercises in edit is wrong
 
 
+    delete in workout view needs a refresh after doing one
+
     after hitting the end at the foundations load the new ones into the list 
     
     -the fucking exercise foundation performance is horrible 

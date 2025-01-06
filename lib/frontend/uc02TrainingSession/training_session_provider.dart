@@ -171,11 +171,14 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     // Store temporary exercises before reset
     resetAllMapsAndLists();
     
-    // Restore temporary exercises to session
+    // Restore temporary exercises to session only if they're not already there
     if (selectedActualSession != null && tempExercises.isNotEmpty) {
-      selectedActualSession!.trainingSessionExercises.addAll(tempExercises);
-      selectedActualSession!.trainingSessionExcercisesIds
-          .addAll(tempExercises.map((e) => e.trainingExerciseID));
+      for (var tempExercise in tempExercises) {
+        if (!selectedActualSession!.trainingSessionExcercisesIds.contains(tempExercise.trainingExerciseID)) {
+          selectedActualSession!.trainingSessionExercises.add(tempExercise);
+          selectedActualSession!.trainingSessionExcercisesIds.add(tempExercise.trainingExerciseID);
+        }
+      }
     }
     
     //initialize the session maps 
@@ -189,7 +192,11 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     if(selectedActualSession != null){
     }
     if(tempExercises.isNotEmpty){
-      exerciseProvider.unplannedExercisesForSession.addAll(tempExercises);
+      for (var tempExercise in tempExercises) {
+        if (!exerciseProvider.unplannedExercisesForSession.contains(tempExercise)) {
+          exerciseProvider.unplannedExercisesForSession.add(tempExercise);
+        }
+      }
     }
   }
 
@@ -622,22 +629,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     }
   } 
 
-  Future<void> saveSession(BuildContext context) async {
-    if (getSelectedBusinessClass != null) {
-      await updateSelectedBusinessClass(
-        ScaffoldMessenger.of(context),
-      );
-    } else {
-      await addBusinessClass(
-        businessClassForAdd,
-        ScaffoldMessenger.of(context),
-      );
-    }
-    
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
-  }
 
   Future<TrainingExerciseBus?> addTemporaryExercise(TrainingExerciseBus exercise) async {
 TrainingExerciseBus exerciseCopy = TrainingExerciseBus(

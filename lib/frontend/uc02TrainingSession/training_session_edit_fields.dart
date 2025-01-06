@@ -103,7 +103,7 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
         ReorderableListView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          buildDefaultDragHandles: false,
+          buildDefaultDragHandles: true,
           onReorder: (oldIndex, newIndex) async {
             if (newIndex > oldIndex) {
               newIndex -= 1;
@@ -118,12 +118,27 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
               final exerciseToMove = allExercises[oldIndex];
               
               // Update the IDs list
-              final exerciseId = session.trainingSessionExcercisesIds.removeAt(oldIndex);
-              session.trainingSessionExcercisesIds.insert(newIndex, exerciseId);
+              if (oldIndex < session.trainingSessionExcercisesIds.length) {
+                final exerciseId = session.trainingSessionExcercisesIds.removeAt(oldIndex);
+                session.trainingSessionExcercisesIds.insert(
+                  newIndex < session.trainingSessionExcercisesIds.length ? newIndex : session.trainingSessionExcercisesIds.length,
+                  exerciseId
+                );
+              }
 
               // Update the actual session's exercises list
-              final actualExercise = session.trainingSessionExercises.removeAt(oldIndex);
-              session.trainingSessionExercises.insert(newIndex, actualExercise);
+              if (oldIndex < session.trainingSessionExercises.length) {
+                final actualExercise = session.trainingSessionExercises.removeAt(oldIndex);
+                session.trainingSessionExercises.insert(
+                  newIndex < session.trainingSessionExercises.length ? newIndex : session.trainingSessionExercises.length,
+                  actualExercise
+                );
+
+                // If offline, ensure the moved exercise is in tempExercises
+                if (!isOnlinee && !trainingSessionProvider.tempExercises.contains(actualExercise)) {
+                  trainingSessionProvider.tempExercises.add(actualExercise);
+                }
+              }
 
               // Update the planned exercises list if it exists and the exercise is planned
               if (trainingSessionProvider.getSelectedBusinessClass != null && 
@@ -153,125 +168,114 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
                 ScaffoldMessenger.of(context), 
                 notify: false
               );
-            } else {
-              trainingSessionProvider.tempExercises.add(session.trainingSessionExercises[newIndex]);
             }
           },
           children: [
             // Get ordered planned exercises
             ...getOrderedExercises(trainingSessionProvider, true).map((exercise) =>
-              ReorderableDragStartListener(
+              KeyedSubtree(
                 key: ValueKey(exercise.trainingExerciseID),
-                index: getOrderedExercises(trainingSessionProvider, true).indexOf(exercise),
-                child: KeyedSubtree(
-                  key: ValueKey(exercise.trainingExerciseID),
-                  child: TrainingExcerciseRow(
-                    actualTrainingExercise: trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise],
-                    plannedTrainingExercise: exercise,
-                    onUpdate: (actualExercise) async {
-                      ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
-                      if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] == null) {
-                        if(isOnlinee) {
-                          String addId = await trainingSessionProvider.exerciseProvider.addBusinessClass(
-                              actualExercise, 
-                              scaffoldMessenger,
-                              notify: false);
-                          session.trainingSessionExcercisesIds.add(addId);
-                          actualExercise.trainingExerciseID = addId;
-                          trainingSessionProvider.updateBusinessClass(
-                              trainingSessionProvider.selectedActualSession!, 
-                              scaffoldMessenger,
-                              notify: false);
-                        }
-                      } else {
-                        if (isOnlinee) {
-                          trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
-                        } else {
-                          trainingSessionProvider.tempExercises.add(actualExercise);
-                        }
-                      }
-                    },
-                    onDelete: (actualExercise) async {
-                      ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
-                      if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null) {
-                        setState(() {
-                          trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
-                            .remove(actualExercise.trainingExerciseID);
-                          trainingSessionProvider.selectedActualSession!.trainingSessionExercises
-                            .remove(actualExercise);
-                          trainingSessionProvider.exerciseProvider.plannedToActualExercises.remove(exercise);
-                          trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
-                          trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
-                        });
-                        
-                        if (isOnlinee) {
-                          await trainingSessionProvider.exerciseProvider.deleteBusinessClass(
+                child: TrainingExcerciseRow(
+                  actualTrainingExercise: trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise],
+                  plannedTrainingExercise: exercise,
+                  onUpdate: (actualExercise) async {
+                    ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+                    if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] == null) {
+                      if(isOnlinee) {
+                        String addId = await trainingSessionProvider.exerciseProvider.addBusinessClass(
                             actualExercise, 
                             scaffoldMessenger,
-                            notify: false
-                          );
-                          await trainingSessionProvider.updateBusinessClass(
+                            notify: false);
+                        session.trainingSessionExcercisesIds.add(addId);
+                        actualExercise.trainingExerciseID = addId;
+                        trainingSessionProvider.updateBusinessClass(
                             trainingSessionProvider.selectedActualSession!, 
                             scaffoldMessenger,
-                            notify: false
-                          );
-                        } else {
-                          trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
-                        }
+                            notify: false);
                       }
-                    },
-                  ),
+                    } else {
+                      if (isOnlinee) {
+                        trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
+                      } else {
+                        trainingSessionProvider.tempExercises.add(actualExercise);
+                      }
+                    }
+                  },
+                  onDelete: (actualExercise) async {
+                    ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+                    if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null) {
+                      setState(() {
+                        trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
+                          .remove(actualExercise.trainingExerciseID);
+                        trainingSessionProvider.selectedActualSession!.trainingSessionExercises
+                          .remove(actualExercise);
+                        trainingSessionProvider.exerciseProvider.plannedToActualExercises.remove(exercise);
+                        trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
+                        trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
+                      });
+                      
+                      if (isOnlinee) {
+                        await trainingSessionProvider.exerciseProvider.deleteBusinessClass(
+                          actualExercise, 
+                          scaffoldMessenger,
+                          notify: false
+                        );
+                        await trainingSessionProvider.updateBusinessClass(
+                          trainingSessionProvider.selectedActualSession!, 
+                          scaffoldMessenger,
+                          notify: false
+                        );
+                      } else {
+                        trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
+                      }
+                    }
+                  },
                 ),
               ),
             ),
             
             // Get ordered unplanned exercises
             ...getOrderedExercises(trainingSessionProvider, false).map((exercise) =>
-              ReorderableDragStartListener(
+              KeyedSubtree(
                 key: ValueKey(exercise.trainingExerciseID),
-                index: getOrderedExercises(trainingSessionProvider, true).length + 
-                       getOrderedExercises(trainingSessionProvider, false).indexOf(exercise),
-                child: KeyedSubtree(
-                  key: ValueKey(exercise.trainingExerciseID),
-                  child: TrainingExcerciseRow(
-                    actualTrainingExercise: exercise,
-                    plannedTrainingExercise: null,
-                    onUpdate: (actualExercise) async {
-                      ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
-                      if (isOnlinee) {
-                        await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
-                      } else {
-                        trainingSessionProvider.tempExercises.add(actualExercise);
-                      }
-                    },
-                    onDelete: (actualExercise) async {
-                      if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ||
-                          trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.contains(exercise)) {
-                          ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+                child: TrainingExcerciseRow(
+                  actualTrainingExercise: exercise,
+                  plannedTrainingExercise: null,
+                  onUpdate: (actualExercise) async {
+                    ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+                    if (isOnlinee) {
+                      await trainingSessionProvider.exerciseProvider.updateBusinessClass(actualExercise, scaffoldMessenger);
+                    } else {
+                      trainingSessionProvider.tempExercises.add(actualExercise);
+                    }
+                  },
+                  onDelete: (actualExercise) async {
+                    if (trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise] != null ||
+                        trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.contains(exercise)) {
+                        ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
 
-                          setState(() {
-                          trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
-                            .remove(actualExercise.trainingExerciseID);
-                        trainingSessionProvider.selectedActualSession!.trainingSessionExercises
-                            .remove(actualExercise);
-                            trainingSessionProvider.exerciseProvider.plannedToActualExercises.remove(exercise);
-                            trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
-                            trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
-                          });
+                        setState(() {
+                        trainingSessionProvider.selectedActualSession!.trainingSessionExcercisesIds
+                          .remove(actualExercise.trainingExerciseID);
+                      trainingSessionProvider.selectedActualSession!.trainingSessionExercises
+                          .remove(actualExercise);
+                          trainingSessionProvider.exerciseProvider.plannedToActualExercises.remove(exercise);
+                          trainingSessionProvider.getSelectedBusinessClass?.trainingSessionExercises.remove(exercise);
+                          trainingSessionProvider.exerciseProvider.unplannedExercisesForSession.remove(exercise);
+                        });
 
-                          if (isOnlinee) {
-                          await trainingSessionProvider.exerciseProvider.deleteBusinessClass(actualExercise, scaffoldMessenger,
-                            notify: false);
-                        await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
-                            notify: false);
-                          } else {
-                            trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
-                          }
+                        if (isOnlinee) {
+                        await trainingSessionProvider.exerciseProvider.deleteBusinessClass(actualExercise, scaffoldMessenger,
+                          notify: false);
+                      await trainingSessionProvider.updateBusinessClass(trainingSessionProvider.selectedActualSession!, scaffoldMessenger,
+                          notify: false);
+                        } else {
+                          trainingSessionProvider.tempExercisesToDelete.add(actualExercise);
+                        }
 
-                        
-                      }
-                    },
-                  ),
+                      
+                    }
+                  },
                 ),
               ),
             ),
@@ -305,11 +309,16 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
         }
       }
     } else {
-      // For unplanned exercises
-      final exercises = provider.exerciseProvider.unplannedExercisesForSession;
+      // For unplanned exercises and temp exercises
+      final exercises = [
+        ...provider.exerciseProvider.unplannedExercisesForSession,
+        ...provider.tempExercises
+      ];
+      
       for (int i = 0; i < session.trainingSessionExcercisesIds.length; i++) {
         final id = session.trainingSessionExcercisesIds[i];
         try {
+          // First try to find in unplanned exercises
           final exercise = exercises.firstWhere((e) => e.trainingExerciseID == id);
           orderedExercises[i] = exercise;
         } catch (e) {
