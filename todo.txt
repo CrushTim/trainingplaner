@@ -1,8 +1,8 @@
 CRNT 
 
     planning view:
-        - text in controller on edit is wrong 
-        - list of exercises in edit is wrong
+        when adding in edit it only shows last exercise
+        when canceling the add dialog in any session the added exercises get deleted (seems to be a list issue)
 
 
     delete in workout view needs a refresh after doing one

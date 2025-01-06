@@ -70,16 +70,25 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: () {
-                showDialog(context: context, builder: (context) => ChangeNotifierProvider.value(value: provider, child: const AddExerciseEditFields(addPlanned: true)),).then((value) {
-                  if (value != null) {
-                    provider.exercisesToDeleteIfSessionAddIsCancelled.add(value);
-                  }
-                  setState(() {
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context, 
+                    builder: (context) => ChangeNotifierProvider.value(
+                      value: provider, 
+                      child: const AddExerciseEditFields(addPlanned: true)
+                    ),
+                  ).then((value) {
+                    if (value != null) {
+                      provider.exercisesToDeleteIfSessionAddIsCancelled.add(value);
+                    }
+                    // Force rebuild regardless of value to refresh the exercise list
+                    setState(() {});
+                    provider.exerciseProvider.resetBusinessClassForAdd();
                   });
-                  provider.exerciseProvider.resetBusinessClassForAdd();
-                });
-              }, child: const Text("Add Exercise")),
+                }, 
+                child: const Text("Add Exercise")
+              ),
               provider.getSelectedBusinessClass != null ?
               Column(
                 children: List.generate(
@@ -137,7 +146,6 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                         provider.businessClassForAdd.trainingCycleId = widget.cycleId;
                       }
                       provider.saveSession(context);
-                      Navigator.pop(context, true);
                     },
                     child: Text(provider.getSelectedBusinessClass != null ? 'Update' : 'Save'),
                   ),

@@ -47,8 +47,6 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
     final TextEditingController sessionEmphasisController =
         TextEditingController(text: session.trainingSessionEmphasis.join(','));
 
-        print("session ${session.trainingSessionExcercisesIds}");
-
     return Column(
       children: <Widget>[
         TextField(
