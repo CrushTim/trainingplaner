@@ -103,7 +103,6 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                       
                                       // Capture context before async gap
                                       final BuildContext dialogContext = context;
-                                      print('dialogContext: $dialogContext');
                                       await showDialog(
                                         context: dialogContext,
                                         builder: (context) => ChangeNotifierProvider.value(
@@ -114,9 +113,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                           ),
                                         ),
                                       ).then((value) {
-                                        print('value: ${value ?? 'null'}');
                                         if (value == null || value != true) {
-                                          print('cancelled');
                                           for (var exercise in planningProvider.exercisesToDeleteIfSessionAddIsCancelled) {
                                             trainingSessionProvider.exerciseProvider.deleteBusinessClass(
                                               exercise, 
@@ -125,6 +122,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                                             );
                                           }
                                         }
+                                        planningProvider.exercisesToDeleteIfSessionAddIsCancelled.clear();
                                       });
 
                                       // Reset everything after dialog closes

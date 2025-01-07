@@ -31,6 +31,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<PlanningProvider>(context);
+    print('provider.getSelectedBusinessClass: ${provider.getSelectedBusinessClass?.trainingSessionExercises}');
 
 
     return Dialog(
@@ -70,66 +71,68 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context, 
-                    builder: (context) => ChangeNotifierProvider.value(
-                      value: provider, 
-                      child: const AddExerciseEditFields(addPlanned: true)
-                    ),
-                  ).then((value) {
-                    if (value != null) {
-                      provider.exercisesToDeleteIfSessionAddIsCancelled.add(value);
-                    }
-                    // Force rebuild regardless of value to refresh the exercise list
-                    setState(() {});
-                    provider.exerciseProvider.resetBusinessClassForAdd();
-                  });
-                }, 
-                child: const Text("Add Exercise")
-              ),
-              provider.getSelectedBusinessClass != null ?
               Column(
-                children: List.generate(
-                  provider.getSelectedBusinessClass!.trainingSessionExercises.length,
-                  (index) {
-                    final exercise = provider.getSelectedBusinessClass!.trainingSessionExercises[index];
-                    return AddPlanningExerciseTile(
-                      exercise: exercise,
-                      onUpdate: (updatedExercise) {
-                        ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
-                        provider.exerciseProvider.updateBusinessClass(updatedExercise, scaffoldMessenger);
-                        if(provider.getSelectedBusinessClass != null){
-                          provider.updateSelectedBusinessClass(scaffoldMessenger, notify: false);
-                        } 
-                      },
-                      onDelete: (exercise) {
-                        setState(() {
-                          provider.getSelectedBusinessClass!.trainingSessionExercises.removeAt(index);
-                        });
-                      },
-                    );
-                  },
-                ),
-              )
-              : Column(
-                children: List.generate(
-                  provider.businessClassForAdd.trainingSessionExercises.length,
-                  (index) {
-                    final exercise = provider.businessClassForAdd.trainingSessionExercises[index];
-                    return AddPlanningExerciseTile(
-                      exercise: exercise,
-                      onUpdate: (updatedExercise) {
-                      },
-                      onDelete: (exercise) {
-                        setState(() {
-                          provider.businessClassForAdd.trainingSessionExercises.removeAt(index);
-                        });
-                      },
-                    );
-                  },
-                ),
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context, 
+                        builder: (context) => ChangeNotifierProvider.value(
+                          value: provider, 
+                          child: const AddExerciseEditFields(addPlanned: true)
+                        ),
+                      ).then((value) {
+                        if (value != null) {
+                          provider.exercisesToDeleteIfSessionAddIsCancelled.add(value);
+                        }
+                        setState(() {});
+                        provider.exerciseProvider.resetBusinessClassForAdd();
+                      });
+                    }, 
+                    child: const Text("Add Exercise")
+                  ),
+                  if (provider.getSelectedBusinessClass != null)
+                    ...provider.getSelectedBusinessClass!.trainingSessionExercises.map(
+                      (exercise) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: AddPlanningExerciseTile(
+                          exercise: exercise,
+                          onUpdate: (updatedExercise) {
+                            ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+                            provider.exerciseProvider.updateBusinessClass(updatedExercise, scaffoldMessenger);
+                            if(provider.getSelectedBusinessClass != null){
+                              provider.updateSelectedBusinessClass(scaffoldMessenger, notify: false);
+                            } 
+                          },
+                          onDelete: (exercise) {
+                            setState(() {
+                              provider.getSelectedBusinessClass!.trainingSessionExercises.remove(exercise);
+                              provider.getSelectedBusinessClass!.trainingSessionExcercisesIds.remove(exercise.trainingExerciseID);
+                            });
+                          },
+                        ),
+                      ),
+                    )
+                  else
+                    ...provider.businessClassForAdd.trainingSessionExercises.map(
+                      (exercise) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: AddPlanningExerciseTile(
+                          exercise: exercise,
+                          onUpdate: (updatedExercise) {
+                            ScaffoldMessengerState scaffoldMessenger = ScaffoldMessenger.of(context);
+                            provider.exerciseProvider.updateBusinessClass(updatedExercise, scaffoldMessenger);
+                          },
+                          onDelete: (exercise) {
+                            setState(() {
+                              provider.businessClassForAdd.trainingSessionExercises.remove(exercise);
+                              provider.businessClassForAdd.trainingSessionExcercisesIds.remove(exercise.trainingExerciseID);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

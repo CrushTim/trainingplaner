@@ -344,9 +344,6 @@ class TrainingCycleProvider
           final exercises = snapshots.snapshot3.data!.where(
             (TrainingExerciseBus exercise) => exercise.isPlanned
           ).toList();
-
-
-          planningProvider.getSelectedBusinessClass?.trainingSessionExercises.clear();
           
           for (var session in sessions) {
             session.trainingSessionExercises.clear();
@@ -400,6 +397,7 @@ class TrainingCycleProvider
                                     exerciseProvider.deleteBusinessClass(exercise, ScaffoldMessenger.of(context), notify: false);
                                   }
                                 }
+                                planningProvider.exercisesToDeleteIfSessionAddIsCancelled.clear();
                               });
                             },
                             ),

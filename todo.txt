@@ -1,10 +1,5 @@
 CRNT 
 
-    planning view:
-        when adding in edit it only shows last exercise
-        when canceling the add dialog in any session the added exercises get deleted (seems to be a list issue)
-
-
     delete in workout view needs a refresh after doing one
 
     after hitting the end at the foundations load the new ones into the list 

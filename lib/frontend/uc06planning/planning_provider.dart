@@ -161,13 +161,21 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
   Future<void> saveSession(BuildContext context) async {
     if (getSelectedBusinessClass != null) {
       await updateSelectedBusinessClass(
-        ScaffoldMessenger.of(context), notify: false,
+        ScaffoldMessenger.of(context), 
+        notify: false,
       );
     } else {
       await addForAddBusinessClass(
-        ScaffoldMessenger.of(context), notify: false,
+        ScaffoldMessenger.of(context), 
+        notify: false,
       );
+      resetBusinessClassForAdd();
+      businessClassForAdd.trainingSessionExercises.clear();
+      businessClassForAdd.trainingSessionExcercisesIds.clear();
     }
+    
+    // Clear the list of exercises to delete since we successfully saved
+    exercisesToDeleteIfSessionAddIsCancelled.clear();
     
     if (context.mounted) {
       Navigator.pop(context);
