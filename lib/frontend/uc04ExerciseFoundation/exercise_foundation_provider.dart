@@ -41,6 +41,9 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
 
   ///exerciseFoundationNotesBusReport is used to get the exercise foundation notes
   ExerciseFoundationNotesBusReport exerciseFoundationNotesBusReport = ExerciseFoundationNotesBusReport();
+
+  //one rep max related variables
+
   ///userSpecificOneRepMaxMap is used to store the user specific exercises-OneRepMax for each foundation
   ///the key is the foundation id and the value is a list of user specific exercises
   Map<String, List<UserSpecificExerciseBus>> userSpecificOneRepMaxMap = {};
@@ -48,7 +51,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   ///the key is the foundation id and the value is the notes for that foundation
   Map<String, ExerciseFoundationNotesBus> notesMap = {};
 
-
+  DateTime initialDateTimeOneRepMax = DateTime.now();
 
 
   ExerciseFoundationProvider() : super(
@@ -74,7 +77,6 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     newInstance.userSpecificExercise = userSpecificExercise;
     newInstance.selectedUserSpecificExercise = selectedUserSpecificExercise;
     newInstance.userSpecificExerciseBusForAdd = userSpecificExerciseBusForAdd;
-    newInstance.oneRepMaxController = oneRepMaxController;
     return newInstance;
   }
 
@@ -84,7 +86,8 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   //                         View Methods
   // /////////////////////////////////////////////////////////////////////
 
-
+  /// Get all exercise foundations with user dependent one rep maxes and notes
+  /// @return: StreamBuilder3 - the stream builder with the three streams
   StreamBuilder3 getAllExerciseFoundationsWithUserLinks() {
     return StreamBuilder3(
       streams: StreamTuple3(
@@ -197,14 +200,21 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     date: DateTime.now(),
   );
 
+  /// Sets the selected user specific exercise
+  /// @param userSpecificExercise: The exercise to set as selected
+  /// @return: void
   void setSelectedUserSpecificExercise(UserSpecificExerciseBus userSpecificExercise) {
     selectedUserSpecificExercise = userSpecificExercise;
   }
 
+  /// Resets the selected user specific exercise to null
+  /// @return: void
   void resetSelectedUserSpecificExercise() {
     selectedUserSpecificExercise = null;
   }
 
+  /// Resets the user specific exercise for add to default values
+  /// @return: void
   void resetUserSpecificExerciseForAdd() {
     userSpecificExerciseBusForAdd = UserSpecificExerciseBus(
       exerciseLinkID: "",
@@ -214,45 +224,10 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     );
   }
 
-  TextEditingController oneRepMaxController = TextEditingController();
-  DateTime initialDateTime = DateTime.now();
-
-
-  void initStateUserSpecificExercise() {
-    if (selectedUserSpecificExercise != null) {
-      oneRepMaxController.text = selectedUserSpecificExercise!.oneRepMax.toString();
-      initialDateTime = selectedUserSpecificExercise!.date;
-    }
-    else {
-      oneRepMaxController.text = "";
-    }
-  }
-
-  void handleTextFieldChangeUserSpecificExercise(String field, String value) {
-    UserSpecificExerciseBus target = selectedUserSpecificExercise ?? userSpecificExerciseBusForAdd;
-    switch (field) {
-      case 'oneRepMax':
-        target.oneRepMax = double.parse(value);
-        break;
-    }
-  }
-
-  void onDateTimeChangedUserSpecificExercise(DateTime dateTime) {
-    UserSpecificExerciseBus target = selectedUserSpecificExercise ?? userSpecificExerciseBusForAdd;
-    target.date = dateTime;
-  }
-
-  Future<void> saveUserSpecificExercise(ScaffoldMessengerState scaffoldMessengerState) async {
-    if (selectedUserSpecificExercise != null) {
-      await updateUserSpecificExercise(selectedUserSpecificExercise!, scaffoldMessengerState);
-    } else {
-      await addUserSpecificExercise(userSpecificExerciseBusForAdd, scaffoldMessengerState);
-    }
-  }
 
 
   // /////////////////////////////////////////////////////////////////////
-  //                 User Specific Exercise CRUD-Methods
+  //                 User Specific Exercise (ONE REP MAX) CRUD-Methods
   // /////////////////////////////////////////////////////////////////////
 
   Future<void> addUserSpecificExercise(
@@ -321,11 +296,6 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   }
 
   // /////////////////////////////////////////////////////////////////////
-  //                 Notes Methods
-  // /////////////////////////////////////////////////////////////////////
-
-
-  // /////////////////////////////////////////////////////////////////////
   //                 NOTES CRUD-Methods
   // /////////////////////////////////////////////////////////////////////
 
@@ -391,6 +361,10 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
       );
     }
   }
+
+  // /////////////////////////////////////////////////////////////////////
+  //                 Search Methods
+  // /////////////////////////////////////////////////////////////////////
   
   Future<void> loadMoreFoundations() async {
     if (isLoading || !hasMoreData) return;
@@ -455,6 +429,24 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     searchResults.clear();
     isSearching = false;
     notifyListeners();
+  }
+
+  /// Resets the date time for one rep max to current time
+  /// @return: void
+  void resetDateTimeOneRepMax() {
+    initialDateTimeOneRepMax = DateTime.now();
+  }
+
+  /// Deletes a user specific exercise and updates the list
+  /// @param exercise: The exercise to delete
+  /// @param scaffoldMessengerState: The scaffold messenger state
+  /// @return: void
+  void deleteUserSpecificExerciseAndUpdateList(
+    UserSpecificExerciseBus exercise, 
+    ScaffoldMessengerState scaffoldMessengerState
+  ) {
+    deleteUserSpecificExercise(exercise, scaffoldMessengerState);
+    userSpecificExercise.remove(exercise);
   }
 
 }

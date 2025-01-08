@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_notes.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/oneRepMax/user_specific_one_rep_max_list_tile.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/oneRepMax/listTile/user_specific_one_rep_max_list_tile.dart';
 
 class ExerciseFoundationEditFieldsController {
   final ExerciseFoundationProvider provider;
@@ -137,7 +137,7 @@ class ExerciseFoundationEditFieldsController {
   /// @return: void
   void resetAfterSave() {   
     reset();
-    provider.initialDateTime = DateTime.now();
+    provider.initialDateTimeOneRepMax = DateTime.now();
     provider.resetUserSpecificExerciseForAdd();
     provider.resetSelectedUserSpecificExercise();
   }
@@ -159,7 +159,7 @@ class ExerciseFoundationEditFieldsController {
   /// @return: void
   void prepareForAddOneRepMaxDialog() {
     provider.userSpecificExerciseBusForAdd.foundationId = provider.getSelectedBusinessClass!.getId();
-    provider.initialDateTime = provider.userSpecificExerciseBusForAdd.date;
+    provider.initialDateTimeOneRepMax = provider.userSpecificExerciseBusForAdd.date;
   }
 
   /// shows the userspecific exercises depending on if the list is not empty

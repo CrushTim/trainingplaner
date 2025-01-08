@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/editFields/exercise_foundation_edit_fields_controller.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/oneRepMax/user_specific_one_rep_max_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/oneRepMax/editFields/user_specific_one_rep_max_edit_fields.dart';
 
 class ExerciseFoundationEditFields extends StatefulWidget {
   const ExerciseFoundationEditFields({super.key});
