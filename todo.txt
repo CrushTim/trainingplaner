@@ -1,10 +1,11 @@
 CRNT 
 
-    delete in workout view needs a refresh after doing one
 
-    after hitting the end at the foundations load the new ones into the list 
-    
-    -the fucking exercise foundation performance is horrible 
+Make better structure in the project
+
+add ExerciseFounation
+
+Connectivity Service
 
     when offline
         -> enable persistend updates on the exercises - make offline handling for every object (sessions, exercises exist in sessionprovider);
@@ -14,17 +15,13 @@ CRNT
             ->safe the 1rm changes
        
 
-    TEST everything
 
-
-BUG: 
-    -> isNew in session: will eigentlich über map prüfen, kann ich aber nicht, da die objektreferenz sich irgendwo ändert
-        -> prompt look through the whole provider class and explain to me how the hashcode is different. following my logic i get all the sessions from the stream, map the planned ones to the keys in the map, add the unplanned ones into unplanned sessions and then map every unplanned session which has a plannedsession id to the according key value. where do i change the pointer so the hash code changes 
-
+TEST everything
     
 code dept:
     -> test of return value of add in trainingsplaner provider (tried to do it, expected "", but got dummy stuff returned)
 
+    delete in workout view needs a refresh after doing one
 
     the text fields in add_session_dialog and workout view make them a widget 
 

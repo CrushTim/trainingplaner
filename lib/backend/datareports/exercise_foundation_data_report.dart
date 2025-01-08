@@ -24,18 +24,18 @@ class ExerciseFoundationDataReport
   Stream<List<ExerciseFoundationData>> getInitialBatch() {
     return collection
       .orderBy('name')
-      .limit(50)
+      .limit(20)
       .snapshots()
       .map((querySnapshot) => querySnapshot.docs
           .map((doc) => ExerciseFoundationData.fromSnapshot(doc))
           .toList());
   }
 
-  Stream<List<ExerciseFoundationData>> getRemainingData() {
+  Stream<List<ExerciseFoundationData>> getRemainingData(String lastExerciseFoundationName) {
     return collection
       .orderBy('name')
-      .limit(1000)
-      .startAfter([50])
+      .limit(20)
+      .startAfter([lastExerciseFoundationName])
       .snapshots()
       .map((querySnapshot) => querySnapshot.docs
           .map((doc) => ExerciseFoundationData.fromSnapshot(doc))

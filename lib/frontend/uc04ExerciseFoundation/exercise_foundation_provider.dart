@@ -15,6 +15,9 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
   bool hasMoreData = true;
   int currentIndex = 0;
   int pageSize = 10;
+  String searchQuery = '';
+  List<ExerciseFoundationBus> searchResults = [];
+  bool isSearching = false;
 
   ExerciseFoundationProvider() : super(
     businessClassForAdd: ExerciseFoundationBus(
@@ -190,7 +193,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
             } else {
               // Nested StreamBuilder for remaining data
               return StreamBuilder<List<ExerciseFoundationBus>>(
-                stream: reportTaskVar.getRemainingData(),
+                stream: reportTaskVar.getRemainingData(loadedFoundations.last.exerciseFoundationName),
                 builder: (context, remainingSnapshot) {
                   if (remainingSnapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -448,22 +451,62 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     notifyListeners();
 
     try {
-      final newFoundations = await reportTaskVar.getRemainingData().first;
-      
-      if (newFoundations.isEmpty) {
-        hasMoreData = false;
+      if (loadedFoundations.isEmpty) {
+        // Load initial batch
+        final initialFoundations = await reportTaskVar.getInitialBatch().first;
+        loadedFoundations.addAll(initialFoundations);
       } else {
-        for (var foundation in newFoundations) {
-          if (!loadedFoundations.any((f) => f.getId() == foundation.getId())) {
-            loadedFoundations.add(foundation);
+        // Load next batch using the last item's name as cursor
+        final newFoundations = await reportTaskVar.getRemainingData(
+          loadedFoundations.last.exerciseFoundationName
+        ).first;
+        
+        if (newFoundations.isEmpty) {
+          hasMoreData = false;
+        } else {
+          for (var foundation in newFoundations) {
+            if (!loadedFoundations.any((f) => f.getId() == foundation.getId())) {
+              loadedFoundations.add(foundation);
+            }
           }
+          hasMoreData = newFoundations.length >= 20;
         }
-        hasMoreData = false;
       }
     } finally {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  void updateSearchQuery(String query) async {
+    searchQuery = query.toLowerCase();
+    isSearching = searchQuery.isNotEmpty;
+    
+    if (isSearching) {
+      // Start loading state
+      isLoading = true;
+      notifyListeners();
+      
+      // Get all foundations and filter
+      final allFoundations = await reportTaskVar.getAll().first;
+      searchResults = allFoundations.where((foundation) {
+        return foundation.exerciseFoundationName.toLowerCase().contains(searchQuery);
+      }).toList();
+      
+      // End loading state
+      isLoading = false;
+    } else {
+      searchResults.clear();
+    }
+    
+    notifyListeners();
+  }
+
+  void clearSearch() {
+    searchQuery = '';
+    searchResults.clear();
+    isSearching = false;
+    notifyListeners();
   }
 
 }

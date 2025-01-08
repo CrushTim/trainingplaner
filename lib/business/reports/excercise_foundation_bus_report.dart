@@ -18,8 +18,8 @@ class ExerciseFoundationBusReport
         (list) => list.map((e) => ExerciseFoundationBus.fromData(e)).toList());
   }
 
-  Stream<List<ExerciseFoundationBus>> getRemainingData() {
-    return exerciseFoundationDataReport.getRemainingData().map(
+  Stream<List<ExerciseFoundationBus>> getRemainingData(String lastExerciseFoundationName) {
+    return exerciseFoundationDataReport.getRemainingData(lastExerciseFoundationName).map(
         (list) => list.map((e) => ExerciseFoundationBus.fromData(e)).toList());
   }
 }

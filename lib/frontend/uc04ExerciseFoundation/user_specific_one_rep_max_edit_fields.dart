@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/user_specific_exercise_data.dart';
-import 'package:trainingplaner/frontend/date_time_picker.dart';
+import 'package:trainingplaner/frontend/costum_widgets/date_time_picker.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 class UserSpecificOneRepMaxEditFields extends StatefulWidget {
