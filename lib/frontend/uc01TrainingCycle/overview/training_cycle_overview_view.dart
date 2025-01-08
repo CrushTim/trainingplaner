@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc01TrainingCycle/add_training_cycle_view.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/editFields/training_cycle_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 
 class TrainingCycleOverviewView extends StatefulWidget {
@@ -22,9 +22,20 @@ class _TrainingCycleOverviewViewState extends State<TrainingCycleOverviewView> {
       ),
       body: ListView(children: [
         trainingCycleProvider.getTrainingCycles(),
-        ElevatedButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeNotifierProvider.value(value: trainingCycleProvider, child: const AddTrainingCycleView())));
-        }, child: const Text("Add Cycle"))
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChangeNotifierProvider.value(
+                  value: trainingCycleProvider,
+                  child: const TrainingCycleEditFields(),
+                ),
+              ),
+            );
+          },
+          child: const Text("Add Cycle"),
+        )
       ],)
     );
 

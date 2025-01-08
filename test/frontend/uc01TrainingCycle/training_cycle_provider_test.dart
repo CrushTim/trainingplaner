@@ -4,7 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
-import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_list_tile.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/listTile/training_cycle_list_tile.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:flutter/material.dart';
 

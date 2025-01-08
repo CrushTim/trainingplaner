@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_cycle_bus.dart';
-import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/editFields/training_cycle_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 class CycleBarCalendar extends StatelessWidget {
   final String title;

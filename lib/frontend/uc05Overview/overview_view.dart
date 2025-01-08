@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_overview_view.dart';
+import 'package:trainingplaner/frontend/uc01TrainingCycle/overview/training_cycle_overview_view.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/add_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
