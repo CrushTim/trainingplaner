@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/exercise_foundation_bus.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/editFields/exercise_foundation_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 class ExerciseFoundationListTile extends StatefulWidget {

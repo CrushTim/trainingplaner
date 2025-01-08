@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_paginated_list.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/overview/exercise_foundation_paginated_list.dart';
 
 class ExerciseFoundationOverviewView extends StatefulWidget {
   const ExerciseFoundationOverviewView({super.key});

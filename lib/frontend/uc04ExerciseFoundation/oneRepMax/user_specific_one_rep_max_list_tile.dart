@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/user_specific_exercise_data.dart';
 import 'package:trainingplaner/frontend/functions/functions_trainingsplaner.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/user_specific_one_rep_max_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/oneRepMax/user_specific_one_rep_max_edit_fields.dart';
 
 class UserSpecificOneRepMaxListTile extends StatefulWidget {
   final UserSpecificExerciseBus userSpecificExercise;

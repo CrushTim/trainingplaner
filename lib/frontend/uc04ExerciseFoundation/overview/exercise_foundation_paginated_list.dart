@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_list_tile.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/listTile/exercise_foundation_list_tile.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 
 class ExerciseFoundationPaginatedList extends StatefulWidget {

@@ -7,17 +7,49 @@ import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.
 import 'package:trainingplaner/business/reports/exercise_foundation_notes_bus_report.dart';
 import 'package:trainingplaner/business/reports/user_specific_exercise_data_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
-import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_list_tile.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/listTile/exercise_foundation_list_tile.dart';
 
 class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundationBus, ExerciseFoundationBusReport> {
+  ///represent the currently loaded foundations that are shown in the list
+  ///are updated by the user scrolling down to the bottom of the page,
+  ///which triggers the loadMoreFoundations method
   List<ExerciseFoundationBus> loadedFoundations = [];
+  ///isLoading is used to indicate if the foundations are currently being loaded
   bool isLoading = false;
+  ///hasMoreData is used to indicate if there are more foundations to load
+  ///if its false, the user can't scroll down to load more foundations and the complete database is loaded
   bool hasMoreData = true;
-  int currentIndex = 0;
-  int pageSize = 10;
+
+  //SEARCH RELATED VARIABLES
+
+  ///searchQuery is used to store the current search query
   String searchQuery = '';
+  ///searchResults is used to store the search results
   List<ExerciseFoundationBus> searchResults = [];
+  ///isSearching is used to indicate if the search is currently active
   bool isSearching = false;
+
+
+  //USER SPECIFIC EXERCISE RELATED VARIABLES
+
+  ///userSpecificExerciseDataReport is used to get the user specific exercise data
+  UserSpecificExerciseDataBusReport userSpecificExerciseDataReport = UserSpecificExerciseDataBusReport();
+  ///userSpecificExercise is used to store the user specific exercises
+  List<UserSpecificExerciseBus> userSpecificExercise = [];
+
+  //NOTES RELATED VARIABLES
+
+  ///exerciseFoundationNotesBusReport is used to get the exercise foundation notes
+  ExerciseFoundationNotesBusReport exerciseFoundationNotesBusReport = ExerciseFoundationNotesBusReport();
+  ///userSpecificOneRepMaxMap is used to store the user specific exercises-OneRepMax for each foundation
+  ///the key is the foundation id and the value is a list of user specific exercises
+  Map<String, List<UserSpecificExerciseBus>> userSpecificOneRepMaxMap = {};
+  ///notesMap is used to store the notes for each foundation
+  ///the key is the foundation id and the value is the notes for that foundation
+  Map<String, ExerciseFoundationNotesBus> notesMap = {};
+
+
+
 
   ExerciseFoundationProvider() : super(
     businessClassForAdd: ExerciseFoundationBus(
@@ -32,6 +64,9 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     reportTaskVar: ExerciseFoundationBusReport(),
   );
 
+  ///mapToNewInstance is used to create a new instance of the provider
+  ///this is used to create a new instance of the provider when the user navigates to a different page
+  ///@return: ExerciseFoundationProvider new Instance of the provider with the same state as the current instance
   ExerciseFoundationProvider mapToNewInstance() {
     ExerciseFoundationProvider newInstance = ExerciseFoundationProvider();
     newInstance.businessClassForAdd = businessClassForAdd;
@@ -43,99 +78,12 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
     return newInstance;
   }
 
-  UserSpecificExerciseDataBusReport userSpecificExerciseDataReport = UserSpecificExerciseDataBusReport();
 
-  List<UserSpecificExerciseBus> userSpecificExercise = [];
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController picturePathController = TextEditingController();
-  final TextEditingController categoriesController = TextEditingController();
-  final TextEditingController muscleGroupsController = TextEditingController();
-  final TextEditingController amountOfPeopleController = TextEditingController();
-  final TextEditingController notesController = TextEditingController();
-
-
-  void initState() {
-    if (getSelectedBusinessClass != null) {
-      nameController.text = getSelectedBusinessClass!.exerciseFoundationName;
-      descriptionController.text = getSelectedBusinessClass!.exerciseFoundationDescription;
-      picturePathController.text = getSelectedBusinessClass!.exerciseFoundationPicturePath;
-      categoriesController.text = getSelectedBusinessClass!.exerciseFoundationCategories.join(', ');
-      muscleGroupsController.text = getSelectedBusinessClass!.exerciseFoundationMuscleGroups.join(', ');
-      amountOfPeopleController.text = getSelectedBusinessClass!.exerciseFoundationAmountOfPeople.toString();
-      notesController.text = getSelectedBusinessClass!.exerciseFoundationNotes?.exerciseFoundationNotes.join(', ') ?? "";
-    } else {
-      nameController.text = businessClassForAdd.exerciseFoundationName;
-      descriptionController.text = businessClassForAdd.exerciseFoundationDescription;
-      picturePathController.text = businessClassForAdd.exerciseFoundationPicturePath;
-      categoriesController.text = businessClassForAdd.exerciseFoundationCategories.join(', ');
-      muscleGroupsController.text = businessClassForAdd.exerciseFoundationMuscleGroups.join(', ');
-      amountOfPeopleController.text = businessClassForAdd.exerciseFoundationAmountOfPeople.toString();
-      notesController.text = businessClassForAdd.exerciseFoundationNotes?.exerciseFoundationNotes.join(', ') ?? "";
-    }
-  }
-
-  void handleTextFieldChange(String field, String value) {
-    ExerciseFoundationBus target = getSelectedBusinessClass ?? businessClassForAdd;
-    switch (field) {
-      case 'name':
-        target.exerciseFoundationName = value;
-        break;
-      case 'description':
-        target.exerciseFoundationDescription = value;
-        break;
-      case 'picturePath':
-        target.exerciseFoundationPicturePath = value;
-        break;
-      case 'categories':
-        target.exerciseFoundationCategories = value.split(',').map((e) => e.trim()).toList();
-        break;
-      case 'muscleGroups':
-        target.exerciseFoundationMuscleGroups = value.split(',').map((e) => e.trim()).toList();
-        break;
-      case 'amountOfPeople':
-        target.exerciseFoundationAmountOfPeople = int.tryParse(value) ?? 1;
-        break;
-      case 'notes':
-        String id = target.exerciseFoundationNotes?.exerciseFoundationNotesId ?? "";
-        target.exerciseFoundationNotes = ExerciseFoundationNotesBus(exerciseFoundationNotesId: id, exerciseFoundationNotes: value.split(',').map((e) => e.trim()).toList(), exerciseFoundationId: target.getId());
-        break;
-    }
-  }
-
-  Future<void> saveExerciseFoundation(ScaffoldMessengerState scaffoldMessengerState) async {
-    ExerciseFoundationNotesBus? targetNotes;
-    ExerciseFoundationBus target = getSelectedBusinessClass ?? businessClassForAdd;
-    String addId = "";
-    if (getSelectedBusinessClass != null) {
-      targetNotes = getSelectedBusinessClass!.exerciseFoundationNotes;
-      await updateBusinessClass(getSelectedBusinessClass!, scaffoldMessengerState);
-    } else {
-      targetNotes = businessClassForAdd.exerciseFoundationNotes;
-      addId = await addBusinessClass(businessClassForAdd, scaffoldMessengerState);
-    }
-
-
-    if(targetNotes != null) {
-      targetNotes.exerciseFoundationId = getSelectedBusinessClass == null ? addId : getSelectedBusinessClass!.getId();
-      
-      if(notesMap[target.getId()] == null) {
-        await addExerciseFoundationNotes(targetNotes, scaffoldMessengerState);
-      } else {
-        await updateExerciseFoundationNotes(targetNotes, scaffoldMessengerState);
-      }
-    }
-  }
 
   // /////////////////////////////////////////////////////////////////////
   //                         View Methods
   // /////////////////////////////////////////////////////////////////////
 
-  ExerciseFoundationNotesBusReport exerciseFoundationNotesBusReport = ExerciseFoundationNotesBusReport();
-
-  Map<String, List<UserSpecificExerciseBus>> userSpecificMap = {};
-  Map<String, ExerciseFoundationNotesBus> notesMap = {};
 
   StreamBuilder3 getAllExerciseFoundationsWithUserLinks() {
     return StreamBuilder3(
@@ -164,11 +112,11 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
         final exerciseFoundationNotes = snapshots.snapshot3.data!;
         
         // Clear and rebuild maps for user data
-        userSpecificMap.clear();
+        userSpecificOneRepMaxMap.clear();
         notesMap.clear();
         
         for (var exercise in userSpecificExercises) {
-          userSpecificMap.putIfAbsent(exercise.foundationId, () => []).add(exercise);
+          userSpecificOneRepMaxMap.putIfAbsent(exercise.foundationId, () => []).add(exercise);
         }
         
         for (var note in exerciseFoundationNotes) {
@@ -184,7 +132,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
               ExerciseFoundationBus exerciseFoundation = loadedFoundations[index];
               String id = exerciseFoundation.getId();
               
-              exerciseFoundation.userSpecific1RepMaxes = userSpecificMap[id] ?? [];
+              exerciseFoundation.userSpecific1RepMaxes = userSpecificOneRepMaxMap[id] ?? [];
               exerciseFoundation.exerciseFoundationNotes = notesMap[id];
               
               return ExerciseFoundationListTile(
@@ -218,7 +166,7 @@ class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundat
                       ExerciseFoundationBus exerciseFoundation = remainingFoundations[remainingIndex];
                       String id = exerciseFoundation.getId();
                       
-                      exerciseFoundation.userSpecific1RepMaxes = userSpecificMap[id] ?? [];
+                      exerciseFoundation.userSpecific1RepMaxes = userSpecificOneRepMaxMap[id] ?? [];
                       exerciseFoundation.exerciseFoundationNotes = notesMap[id];
                       
                       return ExerciseFoundationListTile(
