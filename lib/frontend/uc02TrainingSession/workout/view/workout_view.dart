@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/add_exercise_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/workout_selection_view.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/workout/selection/workout_selection_view.dart';
 
 ///
 /// This class represents the view of a workout.

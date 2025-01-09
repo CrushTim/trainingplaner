@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/overview/training_cycle_overview_view.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/add_session_dialog.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/dialog/add_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
@@ -108,7 +108,7 @@ class _OverviewViewState extends State<OverviewView> {
                       context: context,
                       builder: (context) => ChangeNotifierProvider.value(
                         value: sessionProvider,
-                        child: const AddWorkoutDialog(),
+                        child: const AddSessionDialog(),
                       ),
                     );
                     }

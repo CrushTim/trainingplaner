@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/overview/exercise_foundation_overview_view.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_view.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/workout_view.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/workout/view/workout_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

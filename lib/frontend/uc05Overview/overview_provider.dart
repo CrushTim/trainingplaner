@@ -3,7 +3,7 @@ import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/workout_view.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/workout/view/workout_view.dart';
 import 'package:trainingplaner/frontend/uc05Overview/day_field_calendar.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';

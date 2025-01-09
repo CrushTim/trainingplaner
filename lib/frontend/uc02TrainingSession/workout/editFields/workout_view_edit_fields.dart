@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
-import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/controllers/training_session_edit_fields_controller.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/widgets/training_session_edit_fields_column.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
 import 'package:trainingplaner/services/connectivity_service.dart';
 
-class TrainingSessionEditFields extends StatefulWidget {
-  const TrainingSessionEditFields({super.key});
+class WorkoutViewEditFields extends StatefulWidget {
+  const WorkoutViewEditFields({super.key});
 
   @override
-  State<TrainingSessionEditFields> createState() => _TrainingSessionEditFieldsState();
+  State<WorkoutViewEditFields> createState() => _WorkoutViewEditFieldsState();
 }
 
-class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
+class _WorkoutViewEditFieldsState extends State<WorkoutViewEditFields> {
 
-
+  late TrainingSessionEditFieldsController controller;
   @override
   void initState() {
     super.initState();
@@ -25,7 +26,15 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
           final session = trainingSessionProvider.selectedActualSession!;
     trainingSessionProvider.selectedSessionDate = session.trainingSessionStartDate;
     }
+    controller = TrainingSessionEditFieldsController(trainingSessionProvider, worksOnActual: true);
   }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -38,66 +47,9 @@ class _TrainingSessionEditFieldsState extends State<TrainingSessionEditFields> {
 
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
     final session = trainingSessionProvider.selectedActualSession!;
-    final TextEditingController workoutNameController =
-        TextEditingController(text: session.trainingSessionName);
-    final TextEditingController workoutLengthController =
-        TextEditingController(text: session.trainingSessionLength.toString());
-    final TextEditingController sessionDescriptionController =
-        TextEditingController(text: session.trainingSessionDescription);
-    final TextEditingController sessionEmphasisController =
-        TextEditingController(text: session.trainingSessionEmphasis.join(','));
-
     return Column(
       children: <Widget>[
-        TextField(
-          controller: workoutNameController,
-          decoration: const InputDecoration(labelText: "Workout Name"),
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('name', _),
-        ),
-        TextField(
-          controller: sessionDescriptionController,
-          decoration: const InputDecoration(labelText: "Session Description"),
-          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('description', _),
-        ),
-        TextField(
-          controller: sessionEmphasisController,
-          decoration: const InputDecoration(labelText: "Session Emphasis"),
-          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('emphasis', _),
-        ),
-        TextField(
-          controller: workoutLengthController,
-          decoration:
-              const InputDecoration(labelText: "Workout Length in minutes"),
-          keyboardType: TextInputType.number,
-          onChanged: (_) => trainingSessionProvider.handleSessionFieldChangeForActual('length', _),
-        ),
-        DropdownButtonFormField<String>(
-          value: session.trainingCycleId.isEmpty ? null : session.trainingCycleId,
-          decoration: const InputDecoration(labelText: 'Parent Cycle'),
-          items: [
-            const DropdownMenuItem<String>(
-              value: null,
-              child: Text('No Parent'),
-            ),
-            ...trainingSessionProvider.allCycles.map((cycle) => DropdownMenuItem<String>(
-              value: cycle.getId(),
-              child: Text(cycle.cycleName),
-            )),
-          ],
-          onChanged: (value) {
-            setState(() {
-              session.trainingCycleId = value ?? '';
-              trainingSessionProvider.handleSessionFieldChangeForActual('cycle', value ?? '');
-            });
-          },
-        ),
-        DatePickerSheer(
-          initialDateTime: trainingSessionProvider.selectedSessionDate,
-          onDateTimeChanged: trainingSessionProvider.updateSessionDate,
-          dateController: TextEditingController(text: trainingSessionProvider.selectedSessionDate.toString()),
-        ),
+        const TrainingSessionEditFields(worksOnActual: true),
         ReorderableListView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

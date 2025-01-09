@@ -1,10 +1,10 @@
 CRNT 
 
+training session keep refactoring in the workout stuff
 
 Make better structure in the project
     -foundation
         -onerepmax
-            -move logic to controller
             -make onerepmax ordered by date 
             -implment connectivity service
 

@@ -8,8 +8,8 @@ import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_edit_fields.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_tile.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/workout/editFields/workout_view_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/listTile/training_session_tile.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
 import 'package:trainingplaner/main.dart';
 import 'package:trainingplaner/services/connectivity_service.dart';
@@ -53,10 +53,6 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   List<TrainingCycleBus> allCycles = [];
   DateTime selectedSessionDate = DateTime.now();
 
-  final TextEditingController sessionNameController = TextEditingController();
-  final TextEditingController sessionDescriptionController = TextEditingController();
-  final TextEditingController sessionEmphasisController = TextEditingController();
-  final TextEditingController sessionLengthController = TextEditingController();
   List<TrainingExerciseBus> tempExercises = [];
 
 
@@ -105,7 +101,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   // /////////////////////////////////////////////////////////////////////
   ///method to clear all the maps and lists
   ///is used to clear the maps and lists after a new selection of a session or exercise
-  void resetAllMapsAndLists(){
+  void _resetAllMapsAndLists(){
           plannedToActualSessions.clear();
           exerciseProvider.plannedToActualExercises.clear();
           unplannedSessions.clear();
@@ -115,18 +111,10 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
           getSelectedBusinessClass?.trainingSessionExercises.clear();
   }
 
-  ///method to reset the session controllers
-  ///is used to reset the session controllers after a new selection of a session or exercise
-  void resetSessionControllers() {
-    sessionNameController.clear();
-    sessionDescriptionController.clear();
-    sessionEmphasisController.clear();
-    sessionLengthController.text = "60";
-    selectedSessionDate = DateTime.now();
-  }
+  
 
   void resetAllListsAndBusinessClasses() {
-    resetAllMapsAndLists();
+    _resetAllMapsAndLists();
     exerciseProvider.resetBusinessClassForAdd();
     exerciseProvider.resetSelectedBusinessClass(); 
     resetSelectedBusinessClass();
@@ -169,7 +157,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
   /// is used to map the sessions and exercises to the lists after a new selection of a session or exercise
   void mapSessionsAndExercisesInCurrentBuilder(List<TrainingSessionBus> allSessions, List<TrainingExerciseBus> allExercises) {
     // Store temporary exercises before reset
-    resetAllMapsAndLists();
+    _resetAllMapsAndLists();
     
     // Restore temporary exercises to session only if they're not already there
     if (selectedActualSession != null && tempExercises.isNotEmpty) {
@@ -397,7 +385,7 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
 
 
           if(selectedActualSession != null || getSelectedBusinessClass != null){
-            return const TrainingSessionEditFields();
+            return const WorkoutViewEditFields();
           } else {
             return const Text("No session to select");
           }
@@ -555,79 +543,9 @@ class TrainingSessionProvider extends TrainingsplanerProvider<
     );
   }
 
-  void initControllersForPlanningView() {
-    final target = getSelectedBusinessClass;
-    if (target != null) {
-      sessionNameController.text = target.trainingSessionName;
-      sessionDescriptionController.text = target.trainingSessionDescription;
-      sessionEmphasisController.text = target.trainingSessionEmphasis.join(', ');
-      sessionLengthController.text = target.trainingSessionLength.toString();
-      selectedSessionDate = target.trainingSessionStartDate;
-    } else {
-      sessionNameController.clear();
-      sessionDescriptionController.clear();
-      sessionEmphasisController.clear();
-      sessionLengthController.text = "60";
-      selectedSessionDate = DateTime.now();
-    }
-  }
-
-  void handleSessionFieldChangeForAdd(String field, String value) {
-    final target =  businessClassForAdd;
-    switch (field) {
-      case 'name':
-        target.trainingSessionName = value;
-        break;
-      case 'description':
-        target.trainingSessionDescription = value;
-        break;
-      case 'emphasis':
-        target.trainingSessionEmphasis = value.split(',').map((e) => e.trim()).toList();
-        break;
-      case 'length':
-        target.trainingSessionLength = int.tryParse(value) ?? 60;
-        break;
-      case 'cycle':
-        target.trainingCycleId = value;
-        break;
-    }
-  }
-
-  void updateSessionDate(DateTime date) {
-    selectedSessionDate = date;
-    final target = selectedActualSession ?? businessClassForAdd;
-    target.trainingSessionStartDate = date;
-    print(target.trainingSessionStartDate);
-    print("selectedSessionDate: $selectedSessionDate");
-    notifyListeners();
-  }
+ 
 
 
-
-  void handleSessionFieldChangeForActual(String field, String value) {
-    final target = selectedActualSession ?? businessClassForAdd;
-    switch (field) {
-      case 'name':
-        target.trainingSessionName = value;
-        break;
-      case 'description':
-        target.trainingSessionDescription = value;
-        break;
-      case 'emphasis':
-        target.trainingSessionEmphasis = value.split(',').map((e) => e.trim()).toList();
-        break;
-      case 'length':
-        target.trainingSessionLength = int.tryParse(value) ?? 60;
-        break;
-      case 'cycle':
-        target.trainingCycleId = value;
-        break;
-      case 'date':
-        target.trainingSessionStartDate = DateTime.parse(value);
-        selectedSessionDate = target.trainingSessionStartDate;
-        break;
-    }
-  } 
 
 
   Future<TrainingExerciseBus?> addTemporaryExercise(TrainingExerciseBus exercise) async {
