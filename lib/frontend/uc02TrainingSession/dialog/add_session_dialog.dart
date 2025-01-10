@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/dialog/controllers/add_session_dialog_controller.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/dialog/add_session_dialog_controller.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/editFields/training_session_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 

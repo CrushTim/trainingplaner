@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/frontend/uc02TrainingSession/controllers/training_session_edit_fields_controller.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/editFields/training_session_edit_fields_controller.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 
 class AddSessionDialogController {
