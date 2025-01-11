@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
-import 'package:trainingplaner/frontend/uc03TrainingExcercise/reps_weights_row.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/repsWeightsRow/reps_weights_row.dart';
 
 class AddPlanningExerciseTile extends StatefulWidget {
   final TrainingExerciseBus exercise;

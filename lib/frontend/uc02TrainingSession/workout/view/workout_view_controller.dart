@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc03TrainingExcercise/add_exercise_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/editFields/add_exercise_edit_fields.dart';
 
 class WorkoutViewController {
   final TrainingSessionProvider sessionProvider;
