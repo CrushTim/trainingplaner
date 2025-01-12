@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/editFields/training_session_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_excercise_row.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/listTile/training_excercise_list_tile.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/workout/editFields/workout_view_edit_fields_controller.dart';
 
 class WorkoutViewEditFields extends StatefulWidget {
@@ -54,7 +54,7 @@ class _WorkoutViewEditFieldsState extends State<WorkoutViewEditFields> {
   Widget _buildExerciseRow(exercise, TrainingSessionProvider trainingSessionProvider) {
     return KeyedSubtree(
       key: ValueKey(exercise.trainingExerciseID),
-      child: TrainingExcerciseRow(
+      child: TrainingExerciseListTile(
         actualTrainingExercise: trainingSessionProvider.exerciseProvider.plannedToActualExercises[exercise],
         plannedTrainingExercise: exercise,
         onUpdate: (actualExercise) async {
@@ -80,7 +80,7 @@ class _WorkoutViewEditFieldsState extends State<WorkoutViewEditFields> {
   Widget _buildUnplannedExerciseRow(exercise, TrainingSessionProvider trainingSessionProvider) {
     return KeyedSubtree(
       key: ValueKey(exercise.trainingExerciseID),
-      child: TrainingExcerciseRow(
+      child: TrainingExerciseListTile(
         actualTrainingExercise: exercise,
         plannedTrainingExercise: null,
         onUpdate: (actualExercise) async {

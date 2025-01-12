@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/repsWeightsrow/reps_weights_row_controller.dart';
 
 class RepsWeightsRow extends StatefulWidget {
   final int reps;
@@ -19,16 +20,22 @@ class RepsWeightsRow extends StatefulWidget {
 }
 
 class _RepsWeightsRowState extends State<RepsWeightsRow> {
-  late TextEditingController repsController;
-  late TextEditingController weightController;
-  late bool isFailure;
+  late RepsWeightsRowController controller;
 
   @override
   void initState() {
     super.initState();
-    repsController = TextEditingController(text: widget.reps.toString());
-    weightController = TextEditingController(text: widget.weight.toString());
-    isFailure = false;
+    controller = RepsWeightsRowController(
+      initialReps: widget.reps,
+      initialWeight: widget.weight,
+      onUpdate: widget.onUpdate,
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,39 +46,29 @@ class _RepsWeightsRowState extends State<RepsWeightsRow> {
         Expanded(
           flex: 4,
           child: TextField(
-            controller: repsController,
+            controller: controller.repsController,
             decoration: const InputDecoration(
               labelText: "Reps",
             ),
-            onChanged: (value) {
-              int? reps = int.tryParse(value);
-              if (reps != null) {
-                widget.onUpdate(reps, widget.weight);
-              }
-            },
+            onChanged: controller.handleRepsChange,
           ),
         ),
         Expanded(
           flex: 4,
           child: TextField(
-            controller: weightController,
+            controller: controller.weightController,
             decoration: const InputDecoration(
               labelText: "Weight",
             ),
-            onChanged: (value) {
-              double? weight = double.tryParse(value);
-              if (weight != null) {
-                widget.onUpdate(widget.reps, weight);
-              }
-            },
+            onChanged: controller.handleWeightChange,
           ),
         ),
         Flexible(
           child: Checkbox(
-            value: isFailure,
+            value: controller.isFailure,
             onChanged: (value) {
               setState(() {
-                isFailure = value ?? false;
+                controller.toggleFailure();
               });
             },
           ),

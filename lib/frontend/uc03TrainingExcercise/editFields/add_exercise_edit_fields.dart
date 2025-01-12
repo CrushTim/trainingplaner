@@ -42,17 +42,17 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
           children: [
             Text(controller.getTitleText()),
             TextField(
-              controller: controller.provider.exerciseNameController,
+              controller: controller.exerciseNameController,
               decoration: const InputDecoration(labelText: 'Exercise Name'),
               onChanged: (value) => controller.handleFieldChange('name', value),
             ),
             TextField(
-              controller: controller.provider.exerciseDescriptionController,
+              controller: controller.exerciseDescriptionController,
               decoration: const InputDecoration(labelText: 'Description'),
               onChanged: (value) => controller.handleFieldChange('description', value),
             ),
             TextField(
-              controller: controller.provider.targetPercentageController,
+              controller: controller.targetPercentageController,
               decoration: const InputDecoration(labelText: 'Target Percentage of 1RM'),
               keyboardType: TextInputType.number,
               onChanged: (value) => controller.handleFieldChange('targetPercentage', value),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
+import 'package:trainingplaner/frontend/uc02TrainingSession/workout/selection/workout_selection_view.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/workout/view/workout_view_controller.dart';
 
 ///
@@ -51,6 +52,20 @@ class _WorkoutViewState extends State<WorkoutView> {
             icon: const Icon(Icons.add),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider.value(
+                value: sessionProvider,
+                child: const WorkoutSelectionView(),
+              ),
+            ),
+          );
+        },
+        child: const Icon(Icons.list),
       ),
     );
   }

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:trainingplaner/business/businessClasses/training_exercise_bus.dart';
+import 'package:trainingplaner/frontend/uc03TrainingExcercise/listTile/training_exercise_list_tile_controller.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/repsWeightsRow/reps_weights_row.dart';
 
-class TrainingExcerciseRow extends StatefulWidget {
+class TrainingExerciseListTile extends StatefulWidget {
   final TrainingExerciseBus? actualTrainingExercise;
   final TrainingExerciseBus? plannedTrainingExercise;
   final Function(TrainingExerciseBus) onUpdate;
   final Function(TrainingExerciseBus) onDelete;
-  const TrainingExcerciseRow({
+  const TrainingExerciseListTile({
     super.key,
     required this.actualTrainingExercise,
     required this.plannedTrainingExercise,
@@ -16,16 +17,21 @@ class TrainingExcerciseRow extends StatefulWidget {
   });
 
   @override
-  State<TrainingExcerciseRow> createState() => _TrainingExcerciseRowState();
+  State<TrainingExerciseListTile> createState() => _TrainingExerciseListTileState();
 }
 
-class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
-  bool isExpanded = false;
+class _TrainingExerciseListTileState extends State<TrainingExerciseListTile> {
+  late TrainingExerciseListTileController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TrainingExerciseListTileController(plannedExercise: widget.plannedTrainingExercise, actualExercise: widget.actualTrainingExercise);
+  }
 
   @override
   Widget build(BuildContext context) {
-    TrainingExerciseBus? actualExercise = widget.actualTrainingExercise;
-    actualExercise ??= widget.plannedTrainingExercise!.createActualExercise();
+    controller.setActualExercise();
 
     return Container(
       decoration: BoxDecoration(
@@ -41,17 +47,15 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
             title: Column(
               children: [
                 Text(
+                  controller.getExerciseDisplayText(),
                   style: const TextStyle(
                     fontSize: 23,
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,
                   ),
-                  widget.plannedTrainingExercise?.exerciseName ??
-                      widget.actualTrainingExercise!.exerciseName,
                 ),
                 Text(
-                  widget.plannedTrainingExercise?.exerciseFoundationID ??
-                      widget.actualTrainingExercise!.exerciseFoundationID,
+                  controller.getExerciseFoundationID(),
                 ),
               ],
             ),
@@ -64,33 +68,25 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                     thickness: 1,
                   ),
                 ),
-                if (widget.plannedTrainingExercise != null)
+                if (controller.plannedExercise != null)
                   Expanded(
                     flex: 2,
                     child: Column(
                       children: [
                         const Text("Planned",
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        for (int i = 0;
-                            i < widget.plannedTrainingExercise!.exerciseReps.length;
-                            i++)
-                          Text(
-                              "${widget.plannedTrainingExercise!.exerciseReps[i]} x ${widget.plannedTrainingExercise!.exerciseWeights[i]}kg"),
+                        ...controller.getAllTextsForPlannedExercise(),
                       ],
                     ),
                   ),
-                if (widget.actualTrainingExercise != null)
+                if (controller.actualExercise != null)
                   Expanded(
                     flex: 2,
                     child: Column(
                       children: [
                         const Text("Actual",
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        for (int i = 0;
-                            i < widget.actualTrainingExercise!.exerciseReps.length;
-                            i++)
-                          Text(
-                              "${widget.actualTrainingExercise!.exerciseReps[i]} x ${widget.actualTrainingExercise!.exerciseWeights[i]}kg"),
+                        ...controller.getAllTextsForActualExercise(),
                       ],
                     ),
                   ),
@@ -108,14 +104,14 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                 IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    widget.onDelete(actualExercise!);
+                    widget.onDelete(controller.actualExercise!);
                   },
                 ),
                 IconButton(
-                  icon: Icon(isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down),
+                  icon: Icon(controller.getArrowIcon()),
                   onPressed: () {
                     setState(() {
-                      isExpanded = !isExpanded;
+                      controller.toggleExpanded();
                     });
                   },
                 ),
@@ -126,22 +122,20 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 300),
             crossFadeState:
-                isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                controller.isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
             firstChild: Container(),
             secondChild: Column(
               children: [
-                for (int i = 0; i < actualExercise.exerciseReps.length; i++)
+                for (int i = 0; i < controller.actualExercise!.exerciseReps.length; i++)
                   RepsWeightsRow(
-                    reps: actualExercise.exerciseReps[i],
-                    weight: actualExercise.exerciseWeights[i],
+                    reps: controller.actualExercise!.exerciseReps[i],
+                    weight: controller.actualExercise!.exerciseWeights[i],
                     onUpdate: (reps, weight) {
-                      actualExercise!.exerciseReps[i] = reps;
-                      actualExercise.exerciseWeights[i] = weight;
-                      setState(() {});
-                    },
+                       controller.updateRepsAndWeight(i, reps, weight);
+                       setState(() {});
+                      },
                     onDelete: () {
-                      actualExercise!.exerciseReps.removeAt(i);
-                      actualExercise.exerciseWeights.removeAt(i);
+                      controller.deleteRepsAndWeight(i);
                       setState(() {});
                     },
                   ),
@@ -150,17 +144,7 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                     Expanded(
                       child: IconButton(
                         onPressed: () {
-                          if (actualExercise!.exerciseWeights.isNotEmpty) {
-                            actualExercise.exerciseWeights.add(
-                                actualExercise.exerciseWeights[
-                                    actualExercise.exerciseWeights.length - 1]);
-                            actualExercise.exerciseReps.add(
-                                actualExercise.exerciseReps[
-                                    actualExercise.exerciseReps.length - 1]);
-                          } else {
-                            actualExercise.exerciseWeights.add(0);
-                            actualExercise.exerciseReps.add(0);
-                          }
+                          controller.addNewSet();
                           setState(() {});
                         },
                         icon: const Icon(Icons.add),
@@ -170,10 +154,9 @@ class _TrainingExcerciseRowState extends State<TrainingExcerciseRow> {
                       child: IconButton(
                         icon: const Icon(Icons.check),
                         onPressed: () {
-                          widget.onUpdate(actualExercise!);
-                          setState(() {
-                            isExpanded = false;
-                          });
+                          widget.onUpdate(controller.actualExercise!);
+                          controller.toggleExpanded();
+                          setState(() {});
                         },
                       ),
                     ),

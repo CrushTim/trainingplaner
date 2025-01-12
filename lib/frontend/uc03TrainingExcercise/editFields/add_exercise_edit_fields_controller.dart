@@ -5,6 +5,10 @@ import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_
 class AddExerciseEditFieldsController {
   final TrainingExerciseProvider provider;
   final bool addPlanned;
+  
+  final TextEditingController exerciseNameController = TextEditingController();
+  final TextEditingController exerciseDescriptionController = TextEditingController();
+  final TextEditingController targetPercentageController = TextEditingController();
 
   AddExerciseEditFieldsController(this.provider, {this.addPlanned = false});
 
@@ -14,6 +18,11 @@ class AddExerciseEditFieldsController {
     TrainingExerciseBus target = provider.getSelectedBusinessClass ?? provider.businessClassForAdd;
     if (addPlanned) {
       target.isPlanned = true;
+    }
+    if (provider.getSelectedBusinessClass != null) {
+      exerciseNameController.text = target.exerciseName;
+      exerciseDescriptionController.text = target.exerciseDescription;
+      targetPercentageController.text = target.targetPercentageOf1RM.toString();
     }
   }
 
@@ -28,7 +37,14 @@ class AddExerciseEditFieldsController {
   /// @param value: The new value
   /// @return: void
   void handleFieldChange(String field, String value) {
-    provider.handleExerciseFieldChange(field, value);
+    TrainingExerciseBus target = provider.getSelectedBusinessClass ?? provider.businessClassForAdd;
+    if (field == 'name') {
+      target.exerciseName = value;
+    } else if (field == 'description') {
+      target.exerciseDescription = value;
+    } else if (field == 'targetPercentage') {
+      target.targetPercentageOf1RM = int.tryParse(value) ?? 100;
+    }
   }
 
   /// Save the exercise

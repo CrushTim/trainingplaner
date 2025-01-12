@@ -7,6 +7,10 @@ import 'package:trainingplaner/business/reports/training_exercise_bus_report.dar
 import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
 
 class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseBus, TrainingExerciseBusReport> {
+
+  /// The report for the exercise foundations
+  ExerciseFoundationBusReport foundationReport = ExerciseFoundationBusReport();
+
   TrainingExerciseProvider()
       : super(
           businessClassForAdd: TrainingExerciseBus(
@@ -23,17 +27,17 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
           ),
           reportTaskVar: TrainingExerciseBusReport(),
         );
-
+  /// map of planned exercises to actual exercises
   Map<TrainingExerciseBus, TrainingExerciseBus?> plannedToActualExercises = {};
+  /// list of unplanned exercises for the session
   List<TrainingExerciseBus> unplannedExercisesForSession = [];
+  /// list of unplanned exercises
   List<TrainingExerciseBus> unplannedExercises = [];
+  /// list of available foundations
   List<ExerciseFoundationBus> availableFoundations = [];
 
-  final TextEditingController exerciseNameController = TextEditingController();
-  final TextEditingController exerciseDescriptionController = TextEditingController();
-  final TextEditingController targetPercentageController = TextEditingController();
 
-
+  /// Resets all lists and notifies listeners
   void resetAllExerciseLists() {
     plannedToActualExercises.clear();
     unplannedExercisesForSession.clear();
@@ -41,28 +45,18 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
     notifyListeners();
   }
 
-  void handleExerciseFieldChange(String field, String value) {
-    TrainingExerciseBus target = getSelectedBusinessClass ?? businessClassForAdd;
-    switch (field) {
-      case 'name':
-        target.exerciseName = value;
-        break;
-      case 'description':
-        target.exerciseDescription = value;
-        break;
-      case 'targetPercentage':
-        target.targetPercentageOf1RM = int.tryParse(value) ?? 100;
-        break;
-    }
-  }
-
+ 
+  /// Returns all unplanned exercises for a session
+  /// @param session The session to get the unplanned exercises for
+  /// @return A list of unplanned exercises for the session
   List<TrainingExerciseBus> getUnplannedExercisesForSession(TrainingSessionBus session) {
     return session.trainingSessionExercises.where((exercise) => 
       !plannedToActualExercises.containsValue(exercise)).toList();
   }
 
-  ExerciseFoundationBusReport foundationReport = ExerciseFoundationBusReport();
-
+  /// creates the widget for the foundation autocomplete
+  /// it is a textfield with an autocomplete widget that is filled by the foundationReport stream
+  /// @return A streambuilder that returns the autocomplete widget
   StreamBuilder getFoundationAutoComplete() {
     return StreamBuilder(
       stream: foundationReport.getAll(),
@@ -100,6 +94,11 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
     );
   }
 
+  /// Updates the exercises in the database
+  /// @param exercises The exercises to update
+  /// @param scaffoldMessengerState The scaffold messenger state to show the snackbar
+  /// @param notify Whether to notify listeners
+  /// @return A future that returns void
   Future<void> updateExercises(
     List<TrainingExerciseBus> exercises,
     ScaffoldMessengerState scaffoldMessengerState, {
@@ -124,7 +123,11 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
       );
     }
   }
-
+  
+  /// Creates copies of the exercises and adds them to the database
+  /// @param exercises The exercises to copy
+  /// @param scaffoldMessenger The scaffold messenger state to show the snackbar
+  /// @return A list of the new exercise IDs
   Future<List<String>> createExerciseCopies(List<TrainingExerciseBus> exercises, ScaffoldMessengerState scaffoldMessenger) async {
     List<String> newExerciseIds = [];
     String message = "Exercises copied successfully";
@@ -159,6 +162,11 @@ class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseB
     return newExerciseIds;
   }
 
+  /// Replaces the exercise IDs in the session with the new exercise IDs
+  /// @param session The session to replace the exercise IDs in
+  /// @param newExerciseIds The new exercise IDs
+  /// @param scaffoldMessenger The scaffold messenger state to show the snackbar
+  /// @return A future that returns void
   Future<void> replaceSessionExerciseIds(
     TrainingSessionBus session,
     List<String> newExerciseIds,
