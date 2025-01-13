@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
+import 'package:trainingplaner/frontend/uc06planning/planningDayField/planning_day_field_controller.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 
@@ -21,21 +21,9 @@ class PlanningDayFieldCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
-    OverviewProvider overviewProvider = Provider.of<OverviewProvider>(context);
     PlanningProvider planningProvider = Provider.of<PlanningProvider>(context);
-    // Get planned and unplanned sessions
-    Map<dynamic, dynamic> plannedSessions = overviewProvider.separatePlannedAndUnplannedSessions(workouts);
-    List unplannedSessions = workouts.where((w) => !w.isPlanned).toList();
-    List unpaired = overviewProvider.getUnpairedSessions(unplannedSessions, plannedSessions);
-
-    // Build session rows
-    List<Widget> sessionRows = overviewProvider.buildPlanningSessionRows(
-      context,
-      plannedSessions,
-      unpaired,
-      trainingSessionProvider,
-      date,
-    );
+    PlanningDayFieldController controller = PlanningDayFieldController(trainingSessionProvider);
+    
 
     return Container(
       constraints: const BoxConstraints(
@@ -74,7 +62,11 @@ class PlanningDayFieldCalendar extends StatelessWidget {
                   fontWeight: FontWeight.bold
                 ),
               ),
-              ...sessionRows.map((row) {
+              ...controller.buildPlanningSessionRows(
+                context,
+                workouts,
+                date,
+              ).map((row) {
                 if (row is Row) {
                   return Row(
                     children: row.children.map((child) {

@@ -4,7 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_interface.dart';
 import 'package:trainingplaner/business/trainingsplaner_bus_report_interface.dart';
-import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/ParentClasses/trainingsplaner_provider.dart';
 
 import 'tester.dart';
 import 'trainingsplaner_provider_test.mocks.dart';

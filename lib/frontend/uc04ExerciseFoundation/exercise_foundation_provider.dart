@@ -6,7 +6,7 @@ import 'package:trainingplaner/business/businessClasses/user_specific_exercise_d
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
 import 'package:trainingplaner/business/reports/exercise_foundation_notes_bus_report.dart';
 import 'package:trainingplaner/business/reports/user_specific_exercise_data_bus_report.dart';
-import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/ParentClasses/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/listTile/exercise_foundation_list_tile.dart';
 
 class ExerciseFoundationProvider extends TrainingsplanerProvider<ExerciseFoundationBus, ExerciseFoundationBusReport> {

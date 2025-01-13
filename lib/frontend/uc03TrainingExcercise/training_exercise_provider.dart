@@ -4,7 +4,7 @@ import 'package:trainingplaner/business/businessClasses/training_exercise_bus.da
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_exercise_bus_report.dart';
-import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/ParentClasses/trainingsplaner_provider.dart';
 
 class TrainingExerciseProvider extends TrainingsplanerProvider<TrainingExerciseBus, TrainingExerciseBusReport> {
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
+import 'package:trainingplaner/frontend/uc05Overview/dayField/day_field_controller.dart';
 
 class DayFieldCalendar extends StatelessWidget {
   final DateTime date;
@@ -15,21 +15,8 @@ class DayFieldCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TrainingSessionProvider trainingSessionProvider = Provider.of<TrainingSessionProvider>(context);
-    OverviewProvider overviewProvider = Provider.of<OverviewProvider>(context);
-
-    // Get planned and unplanned sessions
-    Map<dynamic, dynamic> plannedSessions = overviewProvider.separatePlannedAndUnplannedSessions(workouts);
-    List unplannedSessions = workouts.where((w) => !w.isPlanned).toList();
-    List unpaired = overviewProvider.getUnpairedSessions(unplannedSessions, plannedSessions);
-
+    DayFieldController controller = DayFieldController(Provider.of<TrainingSessionProvider>(context));
     // Build session rows
-    List<Widget> sessionRows = overviewProvider.buildSessionRows(
-      context,
-      plannedSessions,
-      unpaired,
-      trainingSessionProvider
-    );
 
     return Container(
       constraints: const BoxConstraints(
@@ -52,7 +39,10 @@ class DayFieldCalendar extends StatelessWidget {
               fontWeight: FontWeight.bold
             ),
           ),
-          ...sessionRows,
+          ...controller.buildSessionRows(
+            context,
+            workouts,
+          ),
         ],
       ),
     );

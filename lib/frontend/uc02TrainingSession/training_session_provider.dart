@@ -7,7 +7,7 @@ import 'package:trainingplaner/business/businessClasses/training_session_bus.dar
 import 'package:trainingplaner/business/reports/excercise_foundation_bus_report.dart';
 import 'package:trainingplaner/business/reports/training_session_bus_report.dart';
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
-import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/ParentClasses/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/workout/editFields/workout_view_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/listTile/training_session_tile.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';

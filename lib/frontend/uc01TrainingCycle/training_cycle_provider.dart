@@ -6,13 +6,13 @@ import 'package:trainingplaner/business/businessClasses/training_exercise_bus.da
 import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/business/reports/trainings_cycle_bus_report.dart';
 import 'package:trainingplaner/frontend/costum_widgets/cycle_bar_calendar.dart';
-import 'package:trainingplaner/frontend/trainingsplaner_provider.dart';
+import 'package:trainingplaner/frontend/ParentClasses/trainingsplaner_provider.dart';
 import 'package:trainingplaner/frontend/uc01TrainingCycle/listTile/training_cycle_list_tile.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc06planning/cycle_edit_column.dart';
-import 'package:trainingplaner/frontend/uc06planning/planning_day_field_calendar.dart';
+import 'package:trainingplaner/frontend/uc06planning/planningDayField/planning_day_field_calendar.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class TrainingCycleProvider
