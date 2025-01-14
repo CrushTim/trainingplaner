@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/add_planning_session_dialog.dart';
+import 'package:trainingplaner/frontend/uc06planning/exercise/addexerciseDialog/add_planning_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc06planning/planningDayField/planning_day_field_controller.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 

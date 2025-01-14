@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/costum_widgets/date_picker_sheer.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/editFields/add_exercise_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc06planning/exercise/addPlanningExerciseTile/add_planning_exercise_tile.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/add_planning_exercise_tile.dart';
 
 class AddPlanningSessionDialog extends StatefulWidget {
   final DateTime initialDate;
