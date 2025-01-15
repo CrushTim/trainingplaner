@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/exercise/addexerciseDialog/add_planning_exercise_edit_fields_controller.dart';
+import 'package:trainingplaner/frontend/uc06planning/exercise/editFields/add_planning_exercise_edit_fields_controller.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class AddPlanningExerciseEditFields extends StatefulWidget {

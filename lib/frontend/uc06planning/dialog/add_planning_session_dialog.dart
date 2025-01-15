@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/dialog/add_planning_session_dialog_controller.dart';
-import 'package:trainingplaner/frontend/uc06planning/editFields/planning_session_edit_fields.dart';
+import 'package:trainingplaner/frontend/uc06planning/exercise/addPlanningSessionTile/add_planning_session_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class AddPlanningSessionDialog extends StatefulWidget {
@@ -49,7 +49,7 @@ class _AddPlanningSessionDialogState extends State<AddPlanningSessionDialog> {
             children: [
               Text(controller.getTitleText()),
               const SizedBox(height: 16),
-              const PlanningSessionEditFields(),
+              const AddPlanningSessionEditFields(),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

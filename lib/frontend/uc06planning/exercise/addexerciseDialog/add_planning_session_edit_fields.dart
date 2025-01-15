@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/editFields/planning_session_edit_fields_controller.dart';
+import 'package:trainingplaner/frontend/uc06planning/exercise/addPlanningSessionTile/add_planning_session_edit_fields_controller.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
-class PlanningSessionEditFields extends StatelessWidget {
-  const PlanningSessionEditFields({super.key});
+class AddPlanningSessionEditFields extends StatefulWidget {
+  const AddPlanningSessionEditFields({super.key});
+
+  @override
+  State<AddPlanningSessionEditFields> createState() => _AddPlanningSessionEditFieldsState();
+}
+
+class _AddPlanningSessionEditFieldsState extends State<AddPlanningSessionEditFields> {
+  late AddPlanningSessionEditFieldsController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AddPlanningSessionEditFieldsController(
+      Provider.of<PlanningProvider>(context, listen: false)
+    );
+    controller.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<PlanningProvider>(context);
-    final controller = PlanningSessionEditFieldsController(provider);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -35,12 +54,6 @@ class PlanningSessionEditFields extends StatelessWidget {
           keyboardType: TextInputType.number,
           onChanged: (value) => controller.handleFieldChange('length', value),
         ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () => controller.openAddExerciseDialog(context),
-          child: const Text("Add Exercise")
-        ),
-        ...controller.buildExerciseList(context),
       ],
     );
   }

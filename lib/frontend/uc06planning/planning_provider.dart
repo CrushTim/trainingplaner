@@ -38,55 +38,12 @@ class PlanningProvider extends TrainingsplanerProvider<TrainingSessionBus, Train
     reportTaskVar: TrainingSessionBusReport(),
   );
 
-  void initControllersForPlanningView() {
-    final target = getSelectedBusinessClass;
-    if (target != null) {
-      sessionNameController.text = target.trainingSessionName;
-      sessionDescriptionController.text = target.trainingSessionDescription;
-      sessionEmphasisController.text = target.trainingSessionEmphasis.join(', ');
-      sessionLengthController.text = target.trainingSessionLength.toString();
-      selectedSessionDate = target.trainingSessionStartDate;
-    } else {
-      sessionNameController.clear();
-      sessionDescriptionController.clear();
-      sessionEmphasisController.clear();
-      sessionLengthController.text = "60";
-      businessClassForAdd.trainingSessionStartDate = selectedSessionDate;
-    }
-  }
-
-   void resetSessionControllers() {
-    sessionNameController.clear();
-    sessionDescriptionController.clear();
-    sessionEmphasisController.clear();
-    sessionLengthController.text = "60";
-  }
 
 
-  void handleSessionFieldChangeForPlanned(String field, String value) {
-    final target = getSelectedBusinessClass ?? businessClassForAdd;
-    switch (field) {
-      case 'name':
-        target.trainingSessionName = value;
-        break;
-      case 'description':
-        target.trainingSessionDescription = value;
-        break;
-      case 'emphasis':
-        target.trainingSessionEmphasis = value.split(',').map((e) => e.trim()).toList();
-        break;
-      case 'length':
-        target.trainingSessionLength = int.tryParse(value) ?? 60;
-        break;
-    }
-  }
 
-  void updateSessionDate(DateTime date) {
-    selectedSessionDate = date;
-    final target = getSelectedBusinessClass ?? businessClassForAdd;
-    target.trainingSessionStartDate = date;
-    notifyListeners();
-  }
+  
+
+  
 
   void storeWeekSessions(List<TrainingSessionBus> sessions, int week) {
     copiedSessions = sessions;

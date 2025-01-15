@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/exercise/addexerciseDialog/add_planning_session_dialog.dart';
+import 'package:trainingplaner/frontend/uc06planning/dialog/add_planning_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc06planning/planningDayField/planning_day_field_controller.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
@@ -119,7 +119,7 @@ class PlanningDayFieldCalendar extends StatelessWidget {
 
                                       // Reset everything after dialog closes
                                       planningProvider.resetSelectedBusinessClass();
-                                      planningProvider.resetSessionControllers();
+                                      //TODO: mazbe i removed wrong code mista
                                     },
                                   ),
                                   PopupMenuItem(

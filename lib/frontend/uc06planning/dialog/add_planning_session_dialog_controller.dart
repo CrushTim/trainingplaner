@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:trainingplaner/frontend/uc06planning/editFields/planning_session_edit_fields_controller.dart';
+import 'package:trainingplaner/frontend/uc06planning/exercise/addPlanningSessionTile/add_planning_session_edit_fields_controller.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
 class AddPlanningSessionDialogController {
   final PlanningProvider provider;
   final String cycleId;
   final DateTime initialDate;
-  late PlanningSessionEditFieldsController editFieldsController;
+  late AddPlanningSessionEditFieldsController editFieldsController;
 
   AddPlanningSessionDialogController(this.provider, this.cycleId, this.initialDate) {
-    editFieldsController = PlanningSessionEditFieldsController(provider);
+    editFieldsController = AddPlanningSessionEditFieldsController(provider);
   }
 
   void initState() {
