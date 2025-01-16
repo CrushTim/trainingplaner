@@ -21,17 +21,11 @@ class AddSessionDialogController {
   /// @param scaffoldMessengerState: The scaffold messenger state
   /// @return: Future<void>
   Future<void> saveSession(BuildContext context, ScaffoldMessengerState scaffoldMessengerState) async {
-    if (provider.getSelectedBusinessClass != null) {
-      await provider.updateBusinessClass(
-        provider.getSelectedBusinessClass!, 
-        scaffoldMessengerState
-      );
-    } else {
+    
       await provider.addBusinessClass(
         provider.businessClassForAdd, 
         scaffoldMessengerState
       );
-    }
     if (context.mounted) {
       Navigator.of(context).pop(true);
     }

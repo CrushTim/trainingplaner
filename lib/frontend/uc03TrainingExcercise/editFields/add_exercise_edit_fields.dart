@@ -58,11 +58,9 @@ class _AddExerciseEditFieldsState extends State<AddExerciseEditFields> {
               onChanged: (value) => controller.handleFieldChange('targetPercentage', value),
             ),
             ElevatedButton(
-              onPressed: () async {
-                await controller.saveExercise(ScaffoldMessenger.of(context));
-                if (context.mounted) {
-                  Navigator.of(context).pop(controller.getTargetExercise());
-                }
+              onPressed: () {
+                Provider.of<TrainingSessionProvider>(context, listen: false).addTemporaryExercise(controller.getTargetExercise());
+                Navigator.of(context).pop(true);
               },
               child: const Text('Save'),
             ),

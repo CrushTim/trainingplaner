@@ -21,6 +21,7 @@ class _AddSessionDialogState extends State<AddSessionDialog> {
       Provider.of<TrainingSessionProvider>(context, listen: false)
     );
     controller.initState();
+    Provider.of<TrainingSessionProvider>(context, listen: false).resetSelectedBusinessClass();
   }
 
   @override

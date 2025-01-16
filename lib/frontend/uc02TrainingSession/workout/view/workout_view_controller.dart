@@ -34,6 +34,8 @@ class WorkoutViewController {
         value: sessionProvider,
         child: const AddExerciseEditFields(),
       ),
-    );
+    ).then((value) {
+        sessionProvider.exerciseProvider.resetBusinessClassForAdd();
+      });
   }
 } 
