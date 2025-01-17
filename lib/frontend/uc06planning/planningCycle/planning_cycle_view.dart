@@ -6,19 +6,19 @@ import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_pro
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
-class CyclePlanningView extends StatefulWidget {
+class PlanningCycleView extends StatefulWidget {
   final TrainingCycleBus cycle;
   
-  const CyclePlanningView({
+  const PlanningCycleView({
     super.key,
     required this.cycle,
   });
 
   @override
-  State<CyclePlanningView> createState() => _CyclePlanningViewState();
+  State<PlanningCycleView> createState() => _PlanningCycleViewState();
 }
 
-class _CyclePlanningViewState extends State<CyclePlanningView> {
+class _PlanningCycleViewState extends State<PlanningCycleView> {
 
   @override
   Widget build(BuildContext context) {

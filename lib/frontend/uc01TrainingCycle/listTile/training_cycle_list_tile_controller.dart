@@ -5,7 +5,7 @@ import 'package:trainingplaner/frontend/uc01TrainingCycle/editFields/training_cy
 import 'package:trainingplaner/frontend/uc01TrainingCycle/training_cycle_provider.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/cycle_planning_view.dart';
+import 'package:trainingplaner/frontend/uc06planning/planningCycle/planning_cycle_view.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
 
@@ -78,7 +78,7 @@ class TrainingCycleListTileController {
                   ChangeNotifierProvider.value(value: planningProvider),
                   ChangeNotifierProvider.value(value: TrainingExerciseProvider()),
                 ],
-          child: CyclePlanningView(cycle: cycle),
+          child: PlanningCycleView(cycle: cycle),
         ),
       ),
     );

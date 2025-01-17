@@ -10,7 +10,7 @@ import 'package:trainingplaner/frontend/ParentClasses/trainingsplaner_provider.d
 import 'package:trainingplaner/frontend/uc01TrainingCycle/listTile/training_cycle_list_tile.dart';
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc03TrainingExcercise/training_exercise_provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/cycle_edit_column.dart';
+import 'package:trainingplaner/frontend/uc06planning/planningWeekColumn/planning_week_edit_column.dart';
 import 'package:trainingplaner/frontend/uc06planning/dialog/add_planning_session_dialog.dart';
 import 'package:trainingplaner/frontend/uc06planning/planningDayField/planning_day_field_calendar.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
@@ -280,7 +280,7 @@ class TrainingCycleProvider
                         },
                       ),
                       Expanded(
-                        child: CycleEditColumn(
+                        child: PlanningWeekEditColumn(
                           weekSessions: weekMap.entries.elementAt(index).value
                               .expand((date) => sessionDateMap[date] ?? [])
                               .toList(),

@@ -7,7 +7,7 @@ import 'package:trainingplaner/frontend/uc02TrainingSession/dialog/add_session_d
 import 'package:trainingplaner/frontend/uc02TrainingSession/training_session_provider.dart';
 import 'package:trainingplaner/frontend/uc05Overview/overview_provider.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
-import 'package:trainingplaner/frontend/uc06planning/planning_view.dart';
+import 'package:trainingplaner/frontend/uc06planning/view/planning_view.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({super.key});

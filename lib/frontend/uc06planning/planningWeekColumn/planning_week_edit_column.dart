@@ -1,21 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trainingplaner/business/businessClasses/training_session_bus.dart';
 import 'package:trainingplaner/frontend/uc06planning/planning_provider.dart';
+import 'package:trainingplaner/frontend/uc06planning/planningWeekColumn/planning_week_edit_column_controller.dart';
 
-class CycleEditColumn extends StatelessWidget {
+class PlanningWeekEditColumn extends StatefulWidget {
   final List<dynamic> weekSessions;
   final int copiedWeek;
-  const CycleEditColumn({
+  
+  const PlanningWeekEditColumn({
     super.key,
     required this.weekSessions,
     required this.copiedWeek,
   });
 
   @override
+  State<PlanningWeekEditColumn> createState() => _PlanningWeekEditColumnState();
+}
+
+class _PlanningWeekEditColumnState extends State<PlanningWeekEditColumn> {
+  late PlanningWeekEditColumnController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = PlanningWeekEditColumnController(
+      planningProvider: Provider.of<PlanningProvider>(context, listen: false),
+      weekSessions: widget.weekSessions,
+      copiedWeek: widget.copiedWeek,
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final planningProvider = Provider.of<PlanningProvider>(context);
-    
     return Container(
       constraints: const BoxConstraints(
         minHeight: 100,
@@ -34,10 +56,6 @@ class CycleEditColumn extends StatelessWidget {
             icon: const Icon(Icons.fitness_center),
             tooltip: 'Target 1RM',
             onPressed: () async {
-              final TextEditingController percentageController = TextEditingController();
-              final TextEditingController setsController = TextEditingController();
-              final TextEditingController repsController = TextEditingController();
-              
               await showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -47,7 +65,7 @@ class CycleEditColumn extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextField(
-                          controller: percentageController,
+                          controller: controller.percentageController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Percentage Change (+/-)',
@@ -55,7 +73,7 @@ class CycleEditColumn extends StatelessWidget {
                           ),
                         ),
                         TextField(
-                          controller: setsController,
+                          controller: controller.setsController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Set Adjustment (+/-)',
@@ -63,7 +81,7 @@ class CycleEditColumn extends StatelessWidget {
                           ),
                         ),
                         TextField(
-                          controller: repsController,
+                          controller: controller.repsController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: 'Reps Adjustment (+/-)',
@@ -79,17 +97,7 @@ class CycleEditColumn extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          int percentageChange = int.tryParse(percentageController.text) ?? 0;
-                          int setChange = int.tryParse(setsController.text) ?? 0;
-                          int repChange = int.tryParse(repsController.text) ?? 0;
-                          
-                          planningProvider.adjustWeekExercisesParameters(
-                            weekSessions.cast<TrainingSessionBus>(),
-                            percentageChange,
-                            setChange,
-                            repChange,
-                            ScaffoldMessenger.of(context),
-                          );
+                          controller.handleParameterAdjustment(context);
                           Navigator.pop(context);
                         },
                         child: const Text('Apply'),
@@ -103,9 +111,7 @@ class CycleEditColumn extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.arrow_downward),
             tooltip: 'Deload',
-            onPressed: () {
-              planningProvider.deloadWeekSessions(weekSessions.cast<TrainingSessionBus>(), copiedWeek, context);
-            },
+            onPressed: () => controller.handleDeload(context),
           ),
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
@@ -113,27 +119,13 @@ class CycleEditColumn extends StatelessWidget {
               PopupMenuItem(
                 value: 'copyWeek',
                 child: const Text('Copy Week'),
-                onTap: () {
-                  planningProvider.storeWeekSessions(weekSessions.cast<TrainingSessionBus>(), copiedWeek);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Week copied')),
-                  );
-                },
+                onTap: () => controller.handleCopyWeek(context),
               ),
               PopupMenuItem(
                 value: 'insertWeek',
-                enabled: planningProvider.copiedSessions.isNotEmpty,
-                child: const Text(
-                  'Insert Week',
-                  
-                ),
-                onTap: () {
-                  planningProvider.insertWeekSessions(
-                    copiedWeek,
-                    ScaffoldMessenger.of(context),
-                  );
-                  planningProvider.copiedSessions.clear();
-                },
+                enabled: controller.canInsertWeek,
+                child: const Text('Insert Week'),
+                onTap: () => controller.handleInsertWeek(context),
               ),
             ],
           ),
