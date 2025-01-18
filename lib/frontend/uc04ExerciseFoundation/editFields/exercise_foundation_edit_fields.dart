@@ -5,7 +5,8 @@ import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundati
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/oneRepMax/editFields/user_specific_one_rep_max_edit_fields.dart';
 
 class ExerciseFoundationEditFields extends StatefulWidget {
-  const ExerciseFoundationEditFields({super.key});
+  final bool enableAllFields; 
+  const ExerciseFoundationEditFields({super.key, this.enableAllFields = false});
 
   @override
   State<ExerciseFoundationEditFields> createState() => _ExerciseFoundationEditFieldsState();
@@ -44,37 +45,37 @@ class _ExerciseFoundationEditFieldsState extends State<ExerciseFoundationEditFie
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
-                readOnly: true,
+                readOnly: !widget.enableAllFields,
                 controller: controller.nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
                 onChanged: (value) => controller.handleTextFieldChange('name', value),
               ),
               TextField(
-                readOnly: true,
+                readOnly: !widget.enableAllFields,
                 controller: controller.descriptionController,
                 decoration: const InputDecoration(labelText: 'Description'),
                 onChanged: (value) => controller.handleTextFieldChange('description', value),
               ),
               TextField(
-                readOnly: true,
+                readOnly: !widget.enableAllFields,
                 controller: controller.picturePathController,
                 decoration: const InputDecoration(labelText: 'Picture Path'),
                 onChanged: (value) => controller.handleTextFieldChange('picturePath', value),
               ),
               TextField(
-                readOnly: true,
+                readOnly: !widget.enableAllFields,
                 controller: controller.categoriesController,
                 decoration: const InputDecoration(labelText: 'Categories (comma-separated)'),
                 onChanged: (value) => controller.handleTextFieldChange('categories', value),
               ),
               TextField(
-                readOnly: true,
+                  readOnly: !widget.enableAllFields,
                 controller: controller.muscleGroupsController,
                 decoration: const InputDecoration(labelText: 'Muscle Groups (comma-separated)'),
                 onChanged: (value) => controller.handleTextFieldChange('muscleGroups', value),
               ),
               TextField(
-                readOnly: true,
+                readOnly: !widget.enableAllFields,
                 controller: controller.amountOfPeopleController,
                 decoration: const InputDecoration(labelText: 'Amount of People'),
                 keyboardType: TextInputType.number,

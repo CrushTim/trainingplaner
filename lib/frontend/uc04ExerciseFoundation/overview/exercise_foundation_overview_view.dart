@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trainingplaner/frontend/uc04ExerciseFoundation/editFields/exercise_foundation_edit_fields.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/exercise_foundation_provider.dart';
 import 'package:trainingplaner/frontend/uc04ExerciseFoundation/overview/exercise_foundation_paginated_list.dart';
 
@@ -23,6 +24,7 @@ class _ExerciseFoundationOverviewViewState extends State<ExerciseFoundationOverv
 
   @override
   Widget build(BuildContext context) {
+    ExerciseFoundationProvider provider = Provider.of<ExerciseFoundationProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Exercise Foundations'),
@@ -65,7 +67,15 @@ class _ExerciseFoundationOverviewViewState extends State<ExerciseFoundationOverv
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Your existing add foundation logic
+          showDialog(
+            context: context,
+            builder: (context) => ChangeNotifierProvider.value(
+              value: provider,
+              child: const ExerciseFoundationEditFields(enableAllFields: true),
+            ),
+          ).then((_) {
+            provider.resetBusinessClassForAdd();
+          });
         },
         child: const Icon(Icons.add),
       ),
